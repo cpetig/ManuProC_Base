@@ -1,6 +1,6 @@
-// $Id: Zeitpunkt_new.cc,v 1.21 2005/10/01 02:16:08 jacek Exp $
+// $Id: Zeitpunkt_new.cc,v 1.10 2004/02/06 14:33:14 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
- *  Copyright (C) 1998-2005 Adolf Petig GmbH & Co. KG, written by Christof Petig
+ *  Copyright (C) 1998-2000 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,71 +22,22 @@
 #include <Misc/Zeitpunkt_new.h>
 #include <cassert>
 #include <ManuProCConfig.h>
-#include <Misc/itos.h>
-#include <Misc/Ausgabe_neu.h>
 #ifdef DEFAULT_DB // actually we should test for database support
 #include <Misc/FetchIStream.h>
 #endif
 
-Zeitpunkt_new &Zeitpunkt_new::Precision(precision p)
-{ prec=p;
-  switch (prec)
-   {  case days: hour=0; // fall through
-      case hours: minute=0;
-      case minutes: second=0;
-      case seconds: microsecond=0;
-      case milliseconds: microsecond-=microsecond%1000;
-      case microseconds: break;
-      default: assert(0);
-   }
-  return *this;
-}
-
-void Zeitpunkt_new::normalize()
-{
-
-   while (microsecond>=1000000)
-   {microsecond-=1000000; second++;}
-   while (second>=60)
-   {second-=60; minute++;}
-   while (minute>=60)
-   {minute-=60; hour++;}
-   while (hour>=24)
-   {hour-=24; datum++;}
-}
-
-
-void Zeitpunkt_new::Round(precision p)
-{ switch (p)
-   {  case days: if (hour>=12) ++datum; break;
-      case hours: if (minute>=30) ++hour; break;
-      case minutes: if (second>=30) ++minute; break;
-      case seconds: if (microsecond>=500000) ++second; break;
-      case milliseconds: if ((microsecond%1000)>=500) microsecond+=500; break;
-      case microseconds: break;
-      default: assert(0);
-   }
-  normalize();
-  Precision(p);
-}
-
-long Zeitpunkt_new::diff(const Zeitpunkt_new &b, precision destprec) const throw()
-{  switch (destprec)
+int Zeitpunkt_new::operator-(const Zeitpunkt_new &b) const throw()
+{  int prec2=prec<b.prec?prec:b.prec;
+   switch (prec2)
    {  case days: return datum-b.datum;
       case hours: return (datum-b.datum)*24+hour-b.hour+(b.minutes_from_gmt-minutes_from_gmt)/60;
       case minutes: return ((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt);
       case seconds: 
          return (((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second;
       case milliseconds: 
-         return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000+(microsecond-b.microsecond)/1000;
-      case microseconds: 
-         return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000000+microsecond-b.microsecond;
+         return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000000+millisecond-b.millisecond;
       default: assert(0);
    }
-}
-
-int Zeitpunkt_new::operator-(const Zeitpunkt_new &b) const throw()
-{  return diff(b,prec<b.prec?prec:b.prec);
 }
 
 // not tested with different time zones
@@ -103,7 +54,7 @@ bool Zeitpunkt_new::operator<(const Zeitpunkt_new &b) const throw()
    if (minute>(b.minute-mdiff) || prec2==minutes) return false;
    if (second<b.second) return true;
    if (second>b.second || prec2==seconds) return false;
-   return microsecond<b.microsecond;
+   return millisecond<b.millisecond;
 }
 
 const ManuProC::Datum &Zeitpunkt_new::Datum() const throw()
@@ -143,7 +94,7 @@ bool Zeitpunkt_new::operator==(const Zeitpunkt_new &b) const throw()
    if (prec2==minutes) return true;
    if (second!=b.second) return false;
    if (prec2==seconds) return true;
-   return microsecond==b.microsecond;
+   return millisecond==b.millisecond;
 }
 
 Zeitpunkt_new::operator time_t() throw()
@@ -189,7 +140,7 @@ void Zeitpunkt_new::normalize_TZ() const throw()
 }
 
 Zeitpunkt_new::Zeitpunkt_new(time_t t) throw()
-	: microsecond(0), prec(seconds)
+	: millisecond(0), prec(seconds)
 {  struct tm *tm(localtime(&t));
    datum=ManuProC::Datum(tm->tm_mday,tm->tm_mon+1,tm->tm_year+1900);
    hour=tm->tm_hour;
@@ -207,15 +158,6 @@ std::string Zeitpunkt_new::write() const
    char buf[64];
    write(PostgresTimestamp(buf,sizeof buf));
    return buf;
-}
-
-std::string Zeitpunkt_new::Short(const ManuProC::Datum &d) const
-{ std::string res;
-  if (datum!=d) res+=datum.Short()+" ";
-  res+=itos(hour)+":"+(minute<10?"0":"")+itos(minute);
-  if (second || microsecond) res+=std::string(":")+(second<10?"0":"")+itos(second);
-  if (microsecond) res+=","+Formatiere((unsigned long)microsecond,0,6,"","",'0');
-  return res;
 }
 
 #ifdef DEFAULT_DB // actually we should test for database support

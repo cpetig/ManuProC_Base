@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.57 2005/07/01 06:38:01 christof Exp $
+# $Id: Makefile.am,v 1.52 2004/11/09 12:01:46 christof Exp $
 
 if WINDOWS
 WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def 
@@ -6,18 +6,18 @@ DLL_LDADD=libManuProC_Base_res.lo @SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
 else
 WIN_LDFLAGS=
-DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
+DLL_LDADD=
 DLL_DEF=
 endif
 
-libManuProC_Base_sqlite3.def: libManuProC_Base.def libManuProC_Base_sqlite.defadd \
+libManuProC_Base_sqlite.def: libManuProC_Base.def libManuProC_Base_sqlite.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^
 libManuProC_Base_res.lo: libManuProC_Base.rc
 	WINDRES=i586-mingw32msvc-windres $(top_srcdir)/build/win32/lt-compile-resource $< $@
 
 AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION \
-	-I/usr/include/postgresql/server -I/usr/include/postgresql/8.0/server
+	-I/usr/include/postgresql/server
 
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
@@ -47,7 +47,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 		EntryValueDatum.cc $(DB_SRCES) Trace.cc \
 		germanstring.cc TagStream.cc Tag.cc EntryValueTimeStamp.cc \
 		Global_Settings.cc EntryValueSort.cc create_parse.cc \
-		TS_base64.cc $(DLL_DEF) Interval.cc
+		TS_base64.cc
 
 EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
 	FetchIStream.pgcc

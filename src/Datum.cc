@@ -1,4 +1,4 @@
-// $Id: Datum.cc,v 1.34 2005/10/01 02:16:08 jacek Exp $
+// $Id: Datum.cc,v 1.31 2004/10/07 16:34:28 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 1998-2000 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
@@ -17,7 +17,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: Datum.cc,v 1.34 2005/10/01 02:16:08 jacek Exp $ */
+/* $Id: Datum.cc,v 1.31 2004/10/07 16:34:28 christof Exp $ */
 #include "Datum.h"
 #include <time.h>
 #include <ctype.h>
@@ -179,7 +179,6 @@ ManuProC::Datum &ManuProC::Datum::operator--()
       }
       tag=Tage_in_Monat();
    }
-   woche=0;
    return *this;
 }
 
@@ -200,7 +199,6 @@ ManuProC::Datum &ManuProC::Datum::operator++()
          monat=1;
       }
    }
-   woche=0;
    return *this;
 }
 
@@ -223,28 +221,7 @@ ManuProC::Datum ManuProC::Datum::operator+(unsigned int tage) const throw(Datums
       }
    }
    ret.tag=ret_tag;
-   ret.woche=0;
    return ret;
-}
-
-ManuProC::Datum ManuProC::Datum::TruncJahr() const throw(Datumsfehler)
-{
- teste();
- Datum ret(*this);
- ret.tag=ret.monat=1;
- ret.woche=0;
- return ret;
-}
-
-ManuProC::Datum ManuProC::Datum::AddJahr(int jahre) const throw(Datumsfehler)
-{
- teste();
- Datum ret(*this);
- if(Schaltjahr(ret.jahr) && ret.tag==29)
-   ret.tag=28;
- ret.jahr+=jahre;
- ret.woche=0;
- return ret;
 }
 
 ManuProC::Datum ManuProC::Datum::operator-(unsigned int tage) const throw(Datumsfehler)
@@ -260,26 +237,17 @@ ManuProC::Datum ManuProC::Datum::operator-(unsigned int tage) const throw(Datums
       ret_tag+=ret.Tage_in_Monat();
    }
    ret.tag=ret_tag;
-   ret.woche=0;
    return ret;
 }
 
-#if 1 // defined( __GNUC__) && __GNUC__<4
 std::ostream &operator<<(std::ostream&o,const ManuProC::Datum&d) throw()
-#else
-std::ostream &ManuProC::operator<<(std::ostream&o,const ManuProC::Datum&d) throw()
-#endif
 {  int w=o.width(); 
    char f=o.fill(); 
    o << d.tag << "." << std::setfill(f) << std::setw(w) << d.monat << "." << d.jahr;
    return o;
 }
 
-#if 1 // defined( __GNUC__) && __GNUC__<4
 std::ostream &operator<<(std::ostream&o,const ManuProC::Datumsfehler &df)
-#else
-std::ostream &ManuProC::operator<<(std::ostream&o,const ManuProC::Datumsfehler &df)
-#endif
 {  if (df.falsch&ManuProC::Datumsfehler::tagfalsch) o << "d";
    if (df.falsch&ManuProC::Datumsfehler::monatfalsch) o << "m";
    if (df.falsch&ManuProC::Datumsfehler::jahrfalsch) o << "y";

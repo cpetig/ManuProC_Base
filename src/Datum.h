@@ -1,4 +1,4 @@
-/* $Id: Datum.h,v 1.29 2005/10/01 02:16:08 jacek Exp $ */
+/* $Id: Datum.h,v 1.24 2004/03/08 16:12:41 christof Exp $ */
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 1998-2000 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
@@ -24,7 +24,6 @@
 #include <exception>
 #include <Misc/Kalenderwoche.h>
 #include <string>
-#include <Misc/compiler_ports.h>
 
 namespace ManuProC
 {
@@ -34,8 +33,6 @@ class Datum;
 
 #include <iosfwd>
 //namespace std { class ostream; }
-
-std::ostream &operator<<(std::ostream&,const ManuProC::Datumsfehler&);
 
 /// Ein Datum ist ungültig
 class ManuProC::Datumsfehler : public std::exception
@@ -47,11 +44,12 @@ public:
    static const int monatfalsch=2;
    static const int jahrfalsch=4;
    Datumsfehler(int _falsch) throw();
-   friend std::ostream &NOTGCC295(::)operator<<(std::ostream&,const Datumsfehler &);
+   friend std::ostream &operator<<(std::ostream&,const Datumsfehler &);
    virtual const char* what() const throw() { return "ManuProC::Datumsfehler"; }
 };
 
-std::ostream &operator<<(std::ostream&,const ManuProC::Datum&) throw();
+std::ostream &operator<<(std::ostream&,const ManuProC::Datumsfehler&);
+
 
 
 class ManuProC::Datum
@@ -121,17 +119,12 @@ public:
         {  return !(*this==b);  }
         /// erstes Datum vor dem zweiten?
         bool operator<(const Datum &b) const throw(Datumsfehler);
-        bool operator!() const { return !valid(); }
         /** morgen
             noch nicht implementiert */
         Datum &operator++();
         Datum operator++(int);
         Datum operator+(unsigned int) const throw(Datumsfehler);
         Datum operator-(unsigned int) const throw(Datumsfehler);
-        // Schaltet auf das gleiche Datum aber in anderem Jahr
-        Datum AddJahr(int) const throw(Datumsfehler);
-        // gibt als Datum 1. Januar dieses Jahres
-        Datum TruncJahr() const throw(Datumsfehler);
         Datum &operator+=(unsigned int tage)
         {  return *this=*this+tage;
         }
@@ -182,14 +175,14 @@ public:
 			      return quart;
 			 }
 	std::string MonatName() const { return monate[monat-1];}
-	static std::string MonatName(int m) { return monate[m-1];}	
 	
-	friend std::ostream &NOTGCC295(::)operator<<(std::ostream&,const Datum&) throw();
+	friend std::ostream &operator<<(std::ostream&,const Datum&) throw();
 	
 	bool valid() const throw();
 	
 };
 
+std::ostream &operator<<(std::ostream&,const ManuProC::Datum&) throw();
 class FetchIStream;
 FetchIStream &operator>>(FetchIStream &is, ManuProC::Datum &v);
 class ArgumentList;

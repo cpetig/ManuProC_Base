@@ -1,4 +1,4 @@
-// $Id: FetchIStream.pgcc,v 1.58 2005/09/27 09:39:01 christof Exp $
+// $Id: FetchIStream.pgcc,v 1.56 2005/03/17 09:03:18 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 2001 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
@@ -93,10 +93,8 @@ void Query::Execute() throw(SQLerror)
 {  exec sql begin declare section;
    char *COMMAND=const_cast<char*>(query.c_str());
    exec sql end declare section;
-   time_t start=-1;
 
    eof=false;
-   if (debugging.time_queries) start=time(0);
 //   exec sql allocate descriptor X;
 sqlca.sqlcode=0;
    ECPGallocate_desc(__LINE__, descriptor.c_str());
@@ -118,26 +116,14 @@ sqlca.sqlcode=0;
 #endif
    error=sqlca.sqlcode;
    lines=sqlca.sqlerrd[2];
-   
    if (sqlca.sqlcode && sqlca.sqlcode!=100)
    {  eof=true;
-#ifdef OLD_ECPG   
       FetchIStream::mythrow(SQLerror(query)); 
-#else
-      PGresult *lresult=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
-      std::string detail;
-      if (lresult) detail=PQresultErrorField(lresult,PG_DIAG_MESSAGE_DETAIL);
-//      Message(lresult);
-      FetchIStream::mythrow(SQLerror(query,detail)); 
-#endif
    }
    else if (sqlca.sqlcode==100 && Query::debugging.on)
    {  DEBUG_FIS("no lines returned/changed");
    }
    result=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
-   if (debugging.time_queries && (time(0)-start)>4)
-   { std::cerr << (time(0)-start) << " secs: " << query << '\n';
-   }
 }
 
 // note cursor is the name for both the cursor and the descriptor
