@@ -17,6 +17,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifndef D3FB940D_2AF1_44E4_9631_5ED524D1CEFB
+#define D3FB940D_2AF1_44E4_9631_5ED524D1CEFB
 
 /*
    Database and host to use
@@ -42,3 +44,4 @@
 /* deprecated: we use SigC++ 1.2 */
 #undef SIGC1_2
 
+#endif

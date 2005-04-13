@@ -260,7 +260,7 @@ template <int decimals,class Ftype,class Itype>
 }
 #endif
 
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined(DEFAULT_DB) && defined(MANUPROC_WITH_DATABASE)
 #include <Misc/FetchIStream.h>
 
 static inline FetchIStream &operator>>(FetchIStream &is, fixedpoint<0> &v)
