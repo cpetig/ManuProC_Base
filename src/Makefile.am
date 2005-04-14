@@ -6,7 +6,7 @@ DLL_LDADD=libManuProC_Base_res.lo @SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
 else
 WIN_LDFLAGS=
-DLL_LDADD=
+DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=
 endif
 
