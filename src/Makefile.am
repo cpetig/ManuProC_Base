@@ -47,7 +47,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 		EntryValueDatum.cc $(DB_SRCES) Trace.cc \
 		germanstring.cc TagStream.cc Tag.cc EntryValueTimeStamp.cc \
 		Global_Settings.cc EntryValueSort.cc create_parse.cc \
-		TS_base64.cc
+		TS_base64.cc $(DLL_DEF)
 
 EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
 	FetchIStream.pgcc
