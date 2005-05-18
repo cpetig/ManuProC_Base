@@ -42,3 +42,7 @@ bool EntryValueBase::operator<(const EntryValueBase &v) const
    return getStrVal()<v.getStrVal();
 }
 
+#if defined(__GNUC__) && __GNUC__>=3
+// needed for g++ 4.0
+const double EntryValueBase::double_NaN;
+#endif
