@@ -240,14 +240,22 @@ ManuProC::Datum ManuProC::Datum::operator-(unsigned int tage) const throw(Datums
    return ret;
 }
 
+#if 1 // defined( __GNUC__) && __GNUC__<4
 std::ostream &operator<<(std::ostream&o,const ManuProC::Datum&d) throw()
+#else
+std::ostream &ManuProC::operator<<(std::ostream&o,const ManuProC::Datum&d) throw()
+#endif
 {  int w=o.width(); 
    char f=o.fill(); 
    o << d.tag << "." << std::setfill(f) << std::setw(w) << d.monat << "." << d.jahr;
    return o;
 }
 
+#if 1 // defined( __GNUC__) && __GNUC__<4
 std::ostream &operator<<(std::ostream&o,const ManuProC::Datumsfehler &df)
+#else
+std::ostream &ManuProC::operator<<(std::ostream&o,const ManuProC::Datumsfehler &df)
+#endif
 {  if (df.falsch&ManuProC::Datumsfehler::tagfalsch) o << "d";
    if (df.falsch&ManuProC::Datumsfehler::monatfalsch) o << "m";
    if (df.falsch&ManuProC::Datumsfehler::jahrfalsch) o << "y";

@@ -21,8 +21,13 @@
 #include <iostream>
 //#include <cmath>
 
+#ifdef __GNUC__ && __GNUC_MAJOR__ >=4
+# define TEMPLATEltgt template<>
+#else
+# define TEMPLATEltgt 
+#endif
 
-#define FP_STR(D,F,I) \
+#define FP_STR(D,F,I) TEMPLATEltgt \
 std::string fixedpoint<D,F,I>::String(bool _short, unsigned int Ziellaenge, \
 		const char *TausenderTrennzeichen,const char *Komma,\
 		char fuehrendesZeichen) const\
