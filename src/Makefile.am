@@ -17,7 +17,7 @@ libManuProC_Base_res.lo: libManuProC_Base.rc
 	WINDRES=i586-mingw32msvc-windres $(top_srcdir)/build/win32/lt-compile-resource $< $@
 
 AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION \
-	-I/usr/include/postgresql/server
+	-I/usr/include/postgresql/server -I/usr/include/postgresql/8.0/server
 
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
