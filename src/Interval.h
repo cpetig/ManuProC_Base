@@ -1,7 +1,8 @@
-// $Id: Interval.h,v 1.3 2005/07/07 07:39:02 christof Exp $
+// $Id: Interval.h,v 1.4 2005/07/07 10:29:04 jacek Exp $
 
 #ifndef TA734B8C_4F66_4FEF_BEA5_8A6C8FC2C017
 #define TA734B8C_4F66_4FEF_BEA5_8A6C8FC2C017
+
 #include <string>
 
 namespace ManuProC {
@@ -20,5 +21,8 @@ class FetchIStream;
 FetchIStream &operator>>(FetchIStream &is, ManuProC::Interval &v);
 class ArgumentList;
 ArgumentList &operator<<(ArgumentList &, const ManuProC::Interval &v);
+<<<<<<< Interval.h
+
 
 #endif
+
