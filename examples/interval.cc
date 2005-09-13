@@ -1,4 +1,4 @@
-// $Id: interval.cc,v 1.3 2005/09/15 10:53:31 christof Exp $
+// $Id: testKW.cc,v 1.11 2004/05/04 09:09:14 jacek Exp $
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 2005 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
@@ -31,7 +31,9 @@ ManuProC::TimeStamp gerundet(ManuProC::TimeStamp v, ManuProC::TimeStamp::precisi
 { ManuProC::TimeStamp v2(v); v2.Round(prec); return v2; }
 
 ManuProC::Interval add(const ManuProC::Interval &a,const ManuProC::Interval &b)
-{ return a+b;
+{ ManuProC::Interval res(a);
+  res+=b;
+  return res;
 }
 
 int main()
@@ -56,34 +58,20 @@ int main()
      << '\t' << gerundet(t5,ManuProC::TimeStamp::minutes)
      << '\t' << gerundet(t5,ManuProC::TimeStamp::hours)
      << '\t' << gerundet(t5,ManuProC::TimeStamp::days) << '\n';
-     
 #define IR(p) \
      ManuProC::Interval(gerundet(t4,ManuProC::TimeStamp::p), \
                         gerundet(t5,ManuProC::TimeStamp::p))
    std::cout << ManuProC::Interval(t4,t5) << '\t'
-     << IR(milliseconds) << '\t' << IR(seconds) << '\t' 
-     << IR(minutes) << '\t' << IR(hours) << '\t' << IR(days) << '\n';
-
-#define IR2(p) \
-     ManuProC::Interval(gerundet(t5,ManuProC::TimeStamp::p), \
-                        gerundet(t4,ManuProC::TimeStamp::p))
-   std::cout << ManuProC::Interval(t5,t4) << '\t'
-     << IR2(milliseconds) << '\t' << IR2(seconds) << '\t' 
-     << IR2(minutes) << '\t' << IR2(hours) << '\t' << IR2(days) << '\n';
-
+     << IR(milliseconds) << '\t' 
+     << IR(seconds) << '\t' 
+     << IR(minutes) << '\t' 
+     << IR(hours) << '\t' 
+     << IR(days) << '\n';
    std::cout << add(ManuProC::Interval("1 day"),ManuProC::Interval("2 days"))
      << '\t' << add(ManuProC::Interval("12:00"),ManuProC::Interval("12:00"))
      << '\t' << add(ManuProC::Interval("0:30"),ManuProC::Interval("0:30"))
      << '\t' << add(ManuProC::Interval("0:00:30"),ManuProC::Interval("0:00:30"))
      << '\t' << add(ManuProC::Interval("0:00:00.700000"),ManuProC::Interval("0:00:00.3"))
      << '\n';
-   std::cout << add(ManuProC::Interval("1 day"),ManuProC::Interval("-2 days"))
-     << '\t' << add(ManuProC::Interval("2 days"),ManuProC::Interval("-00:00:01"))
-     << '\t' << add(ManuProC::Interval(),ManuProC::Interval("-00:00:01"))
-     << '\t' << add(ManuProC::Interval("12:00"),ManuProC::Interval("-00:00:00.1"))
-     << '\t' << add(ManuProC::Interval("-0:30"),ManuProC::Interval("0:00:00.1"))
-     << '\t' << add(ManuProC::Interval("1:00:00.3"),ManuProC::Interval("-1 day -1:00"))
-     << '\n';
-   std::cout << (ManuProC::Interval("1:00:00.3")-ManuProC::Interval("1 day")) << '\n';
    return 0;
 }
