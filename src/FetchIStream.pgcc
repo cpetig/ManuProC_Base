@@ -24,6 +24,7 @@
 #include <Misc/FetchIStream.h>
 #include <Misc/SQLerror.h>
 #include <Misc/itos.h>
+#include <libpq-fe.h>
 
 exec sql include sqlca;
 
@@ -88,9 +89,22 @@ std::string FetchIStream::getFieldName() const
 
 /// QUERY
 
+struct connection
+{	char const *	name;
+        PGconn *	connection;
+        // ...
+};
+
+extern "C"
+{
+struct connection *ECPGget_connection(char const *name);
+}
+
 // note cursor is the name for both the cursor and the descriptor
 void Query::Execute() throw(SQLerror)
-{  exec sql begin declare section;
+{
+#ifndef USE_PARAMETERS
+   exec sql begin declare section;
    char *COMMAND=const_cast<char*>(query.c_str());
    exec sql end declare section;
 
@@ -134,6 +148,18 @@ sqlca.sqlcode=0;
    {  DEBUG_FIS("no lines returned/changed");
    }
    result=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
+#else // query parameters (using libpq)
+  PGconn *conn=ECPGget_connection(NULL)->connection;
+  eof=false;
+  int numparams=params.size();
+  int binary[params.size()];
+  Oid types[params.size()];
+  char const * values[params.size()];
+  int length[params.size()];
+  memset(binary,0,sizeof(binary));
+  // oder PQsendPrepare PQsendQueryPrepared PQgetResult
+  result=PQexecParams(conn,query.c_str(),numparams,types,values,length,binary,0);
+#endif
 }
 
 // note cursor is the name for both the cursor and the descriptor

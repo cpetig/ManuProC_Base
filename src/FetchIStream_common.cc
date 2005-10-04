@@ -172,7 +172,9 @@ bool needs_quotes(Oid type)
 
 void Query::Execute_if_complete()
 {  if (params.complete())
-   {  std::string expanded;
+   {  
+#ifndef USE_PARAMETERS   
+      std::string expanded;
       const char *p=query.c_str();
       const char *last=p;
       ArgumentList::const_iterator piter=params.begin();
@@ -194,6 +196,7 @@ void Query::Execute_if_complete()
          }
       } while(p);
       query=expanded;
+#endif
       Execute();
    }
 }
@@ -219,8 +222,7 @@ static bool transparent_char(unsigned char x)
           && ((' '<=x&&x<=126) || (128<=x)) 
           && x!='\\'
 #endif
-#warning noch zurückstellen
-#if 1 // ndef USE_PARAMETERS
+#ifndef USE_PARAMETERS
           && x!='\''
 #endif
         );

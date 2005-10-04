@@ -189,6 +189,7 @@ class ArgumentList
 {	unsigned params_needed;
         std::vector<Oid> types;
 	std::vector<std::string> params;
+	std::vector<bool> binary;
 public:
 	typedef std::vector<std::string>::const_iterator const_iterator;
 	ArgumentList() : params_needed(unsigned(-1)) {}
@@ -199,6 +200,7 @@ public:
 	const_iterator begin() const { return params.begin(); }
 	const_iterator end() const { return params.end(); }
 	Oid type_of(const_iterator const& which) const;
+	size_t size() const { return params.size(); }
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
