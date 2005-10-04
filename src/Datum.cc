@@ -376,6 +376,8 @@ ManuProC::Datumsfehler::Datumsfehler(int _falsch) throw()
 {}
 
 #ifdef DEFAULT_DB // actually we should test for database support
+#include <Misc/pg_type.h>
+
 FetchIStream &operator>>(FetchIStream &is, ManuProC::Datum &v)
 {  std::string s;
    int ind;
@@ -386,7 +388,8 @@ FetchIStream &operator>>(FetchIStream &is, ManuProC::Datum &v)
 }
 
 ArgumentList &operator<<(ArgumentList &q, const ManuProC::Datum &v)
-{  q.add_argument(v.postgres_null_if_invalid());
+{  if (!v) q << Query::null();
+   else q.add_argument(itos(v.Jahr())+"-"+itos(v.Monat())+"-"+itos(v.Tag()),DATEOID);
    return q;
 }
 

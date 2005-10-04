@@ -35,12 +35,17 @@
 #ifdef MPC_SQLITE
 #include <algorithm>
 #include <sqlite3.h>
+typedef unsigned long Oid;
 // enum ECPG...
 #else
 #include <ecpgerrno.h>
 extern "C" {
 #include <libpq-fe.h>
 }
+#endif
+
+#ifndef OLD_ECPG
+#define USE_PARAMETERS
 #endif
 
 // please access this class under the new alias "Query::Row"
@@ -182,6 +187,7 @@ struct Query_types
 
 class ArgumentList
 {	unsigned params_needed;
+        std::vector<Oid> types;
 	std::vector<std::string> params;
 public:
 	typedef std::vector<std::string>::const_iterator const_iterator;
@@ -192,10 +198,12 @@ public:
 	unsigned HowManyNeededParams() const { return params_needed; }
 	const_iterator begin() const { return params.begin(); }
 	const_iterator end() const { return params.end(); }
+	Oid type_of(const_iterator const& which) const;
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
-	ArgumentList &add_argument(const std::string &s);
+	__deprecated ArgumentList &add_argument(const std::string &s);
+	ArgumentList &add_argument(const std::string &s, Oid type);
 
 	ArgumentList &operator<<(const std::string &str);
 	ArgumentList &operator<<(int i)
@@ -211,8 +219,7 @@ public:
 	ArgumentList &operator<<(const ArgumentList &list);
 	ArgumentList &operator<<(const char *s)
 	{  return operator<<(std::string(s)); }
-	ArgumentList &operator<<(Query_types::null n)
-	{  return add_argument("null"); }
+	ArgumentList &operator<<(Query_types::null n);
 	
 	template <class T>
 	 ArgumentList &operator<<(const Query_types::NullIf_s<T> &n)
@@ -277,7 +284,9 @@ public:
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
-	Query &add_argument(const std::string &s);
+	__deprecated Query &add_argument(const std::string &s);
+	// this is normal style
+	Query &add_argument(const std::string &s, Oid type);
 
 	// for user defined << operators and temporary queries 
 	// 	you need to insert this one

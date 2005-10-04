@@ -124,7 +124,8 @@ sqlca.sqlcode=0;
 #else
       PGresult *lresult=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
       std::string detail;
-      if (lresult) detail=PQresultErrorField(lresult,PG_DIAG_MESSAGE_DETAIL);
+      if (lresult && PQresultErrorField(lresult,PG_DIAG_MESSAGE_DETAIL)) 
+        detail=PQresultErrorField(lresult,PG_DIAG_MESSAGE_DETAIL);
 //      Message(lresult);
       FetchIStream::mythrow(SQLerror(query,detail)); 
 #endif

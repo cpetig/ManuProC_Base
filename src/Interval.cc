@@ -138,6 +138,8 @@ ManuProC::Interval ManuProC::Interval::operator+(const Interval &b) const
 }
 
 #ifdef DEFAULT_DB // actually we should test for database support
+#include <Misc/pg_type.h>
+
 FetchIStream &operator>>(FetchIStream &is, ManuProC::Interval &v)
 {  std::string s;
    is >> s;
@@ -146,7 +148,7 @@ FetchIStream &operator>>(FetchIStream &is, ManuProC::Interval &v)
 }
 
 ArgumentList &operator<<(ArgumentList &q, const ManuProC::Interval &v)
-{  q.add_argument("'"+v.str()+"'");
+{  q.add_argument(v.str(),INTERVALOID);
    return q;
 }
 

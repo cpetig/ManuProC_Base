@@ -1,6 +1,6 @@
 // $Id: FetchIStream_common.cc,v 1.19 2004/11/18 16:45:44 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
- *  Copyright (C) 2001-2004 Adolf Petig GmbH & Co. KG, written by Christof Petig
+ *  Copyright (C) 2001-2005 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <Misc/FetchIStream.h>
 #include <Misc/SQLerror.h>
 #include <Misc/itos.h>
+#include <Misc/pg_type.h>
 
 #ifdef MPC_SQLITE
 #include <sqlite3.h>
@@ -147,6 +148,28 @@ const char *ArgumentList::next_insert(const char *text)
     return (*ptr == '\0') ? 0 : ptr;
 }
 
+Oid ArgumentList::type_of(const_iterator const& which) const
+{ return types[which-begin()];
+}
+
+bool needs_quotes(Oid type)
+{ switch (type)
+  { case CHAROID:
+    case INTERVALOID:
+    case TEXTOID: return true;
+    
+    case INT8OID:
+    case INT4OID:
+    case NUMERICOID:
+    case FLOAT4OID:
+    case FLOAT8OID:
+    case VOIDOID: return false;
+    
+    default: std::cerr << "Oid " << type << " is unknown\n"; 
+      return true;
+  }
+}
+
 void Query::Execute_if_complete()
 {  if (params.complete())
    {  std::string expanded;
@@ -160,7 +183,11 @@ void Query::Execute_if_complete()
          else
          {  expanded+=std::string(last,p-last);
             assert(piter!=params.end());
-            expanded+=*piter;
+            Oid type=params.type_of(piter);
+            if (type==CHAROID || type==TEXTOID)
+            { expanded+="'"+*piter+"'";
+            }
+            else expanded+=*piter;
             ++p;
             ++piter;
             last=p;
@@ -171,65 +198,97 @@ void Query::Execute_if_complete()
    }
 }
 
-Query &Query::add_argument(const std::string &s)
-{  params.add_argument(s);
+Query &Query::add_argument(const std::string &s, Oid type)
+{  params.add_argument(s,type);
    Execute_if_complete();
    return *this;
 }
 
-ArgumentList &ArgumentList::add_argument(const std::string &x)
+ArgumentList &ArgumentList::add_argument(const std::string &x, Oid type)
 {  if (complete())
       FetchIStream::mythrow(SQLerror("",ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
    params.push_back(x);
+   types.push_back(type);
    --params_needed;
    return *this;
 }
 
-ArgumentList &ArgumentList::operator<<(const std::string &str)
-{  std::string p="'";
-   for (std::string::const_iterator i=str.begin();i!=str.end();++i)
-   {  if (*i=='\'') p+=*i;
-#ifndef MPC_SQLITE   
-      else if (*i=='\\') p+=*i;
+static bool transparent_char(unsigned char x)
+{ return (true
+#ifndef MPC_SQLITE // escape these
+          && ((' '<=x&&x<=126) || (128<=x)) 
+          && x!='\\'
 #endif
-      p+=*i;
-   }
-   p+='\'';
-   return add_argument(p);
+#warning noch zurückstellen
+#if 1 // ndef USE_PARAMETERS
+          && x!='\''
+#endif
+        );
+}
+
+ArgumentList &ArgumentList::operator<<(const std::string &str)
+{ // do we need to escape it?
+  // do we need bytea?
+#if defined(MPC_SQLITE) && defined(USE_PARAMETERS)
+  return add_argument(str,TEXTOID);
+#else
+  std::string p;
+  for (std::string::const_iterator i=str.begin();i!=str.end();++i)
+  {  if (transparent_char(*i)) p+=*i;
+     else 
+     { p+='\\';
+       p+='0'+((*i>>6)&0x3);
+       p+='0'+((*i>>3)&0x7);
+       p+='0'+(*i&0x7);
+     }
+  }
+  return add_argument(p,TEXTOID);
+#endif
 }
 
 ArgumentList &ArgumentList::operator<<(long i)
-{  return add_argument(itos(i));
+{ return add_argument(itos(i),INT4OID);
 }
 
 ArgumentList &ArgumentList::operator<<(unsigned long i)
-{  return add_argument(ulltos(i));
+{  return add_argument(ulltos(i),INT4OID);
 }
 
 ArgumentList &ArgumentList::operator<<(unsigned long long i)
-{  return add_argument(ulltos(i));
+{  return add_argument(ulltos(i),INT8OID);
 }
 
 ArgumentList &ArgumentList::operator<<(double i)
-{  return add_argument(dtos(i));
+{  return add_argument(dtos(i),FLOAT4OID);
 }
 
 ArgumentList &ArgumentList::operator<<(bool i)
-{  return add_argument(btos(i));
+{  return add_argument(btos(i),BOOLOID);
 }
 
 ArgumentList &ArgumentList::operator<<(char i)
-{  char x[4];
-   x[0]='\'';
-   x[1]=i;
-   x[2]='\'';
-   x[3]=0;
-   return add_argument(x);
+{  char x[8];
+   if (transparent_char(i))
+   { x[0]=i;
+     x[1]=0;
+   }
+   else
+#ifdef MPC_SQLITE // there's no escaping here, hopefully we use parameters
+     return add_argument(std::string(1,i));
+#else   
+   { x[0]='\\';
+     x[1]='0'+((i>>6)&0x3);
+     x[2]='0'+((i>>3)&0x7);
+     x[3]='0'+(i&0x7);
+     x[4]=0;
+   }
+#endif   
+   return add_argument(x,CHAROID);
 }
 
 ArgumentList &ArgumentList::operator<<(const ArgumentList &list)
 {  for (const_iterator i=list.begin();i!=list.end();++i) 
-      add_argument(*i);
+      add_argument(*i,list.type_of(i));
    return *this;
 }
 
@@ -387,3 +446,7 @@ FetchIStream::Fake::~Fake()
 {  if (result) free(const_cast<void*>((const void*)result));
 }
 #endif
+
+ArgumentList &ArgumentList::operator<<(Query_types::null n)
+{ return add_argument("null",VOIDOID);
+}
