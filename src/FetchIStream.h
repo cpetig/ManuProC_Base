@@ -105,7 +105,7 @@ public:
 #ifdef MPC_POSTGRESQL
         std::string getFieldName() const;
 #endif
-	bool good() const; // noch Spalten verfgbar
+	bool good() const; // noch Spalten verfügbar
 	
 	FetchIStream &operator>>(std::string &str);
 	FetchIStream &operator>>(int &i);

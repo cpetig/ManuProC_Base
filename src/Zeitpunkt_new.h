@@ -28,8 +28,8 @@
 #include <time.h>
 
 //: Zeitpunkt an einem Tag
-// m�licherweise von Datum ableiten?
-// Dann wrde allerdings manches komplizierter werden !!!
+// möglicherweise von Datum ableiten?
+// Dann würde allerdings manches komplizierter werden !!!
 class Zeitpunkt_new
 {public:
    class Days 
