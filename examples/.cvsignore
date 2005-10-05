@@ -1,0 +1,10 @@
+.deps
+.libs
+Makefile
+Makefile.in
+test_pgsql_conv
+testHandles
+testKW
+FetchIStream.cc
+FetchIStream
+fixedpoint

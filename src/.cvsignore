@@ -1,0 +1,16 @@
+.deps
+Makefile
+Makefile.in
+SQLerror_postgres.cc
+dbconnect.cc
+Transaction.cc
+FetchIStream.cc
+.libs
+*.lo
+libManuProC_Base.la
+ManuProCConfig.h
+stamp-h
+stamp-h1
+stamp-h.in
+libManuProC_Base.rc
+Global_Settings_sql.cc
