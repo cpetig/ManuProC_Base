@@ -62,7 +62,7 @@ private:
 	unsigned nfields;
 #else
 protected:
-	const PGresult * /* const */ result;
+        const PGresult * /* const */ result;
 private:
 #endif	
 
@@ -242,7 +242,10 @@ class Query : public Query_types
 	const char * const *result;
 	unsigned nfields;
 #else	
-	const PGresult *result;
+#ifndef USE_PARAMETERS
+	const 
+#endif	
+	      PGresult *result;
 #endif	
 	std::string query;
 	ArgumentList params;
@@ -258,6 +261,8 @@ class Query : public Query_types
 	// perform it
 	void Execute() throw(SQLerror);
 	void Execute_if_complete();
+	void raise(std::string const& state, int code, std::string const& message, std::string const& detail=std::string());
+	void raise(char const* state, int code, char const* message, char const* detail=0);
 
 public:
         typedef FetchIStream Row;
