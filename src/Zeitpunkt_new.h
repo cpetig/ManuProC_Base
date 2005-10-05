@@ -1,4 +1,4 @@
-// $Id: Zeitpunkt_new.h,v 1.18 2005/09/08 10:08:16 christof Exp $
+// $Id: Zeitpunkt_new.h,v 1.20 2005/09/27 09:38:58 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 1998-2000 Adolf Petig GmbH & Co. KG, written by Christof Petig
  *
@@ -28,8 +28,8 @@
 #include <time.h>
 
 //: Zeitpunkt an einem Tag
-// möglicherweise von Datum ableiten?
-// Dann würde allerdings manches komplizierter werden !!!
+// mï¿½licherweise von Datum ableiten?
+// Dann wrde allerdings manches komplizierter werden !!!
 class Zeitpunkt_new
 {public:
    class Days 
@@ -69,6 +69,7 @@ private:
    
    void calculate_TZ(int isdst=-1) const throw();
    void normalize_TZ() const throw();
+   void normalize();
 public:
    Zeitpunkt_new() throw() : hour(0), minute(0), second(0), microsecond(0), minutes_from_gmt(0), prec(days) {}
    Zeitpunkt_new(ManuProC::Datum d) throw() 
