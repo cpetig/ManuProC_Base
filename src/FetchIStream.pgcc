@@ -24,7 +24,10 @@
 #include <Misc/FetchIStream.h>
 #include <Misc/SQLerror.h>
 #include <Misc/itos.h>
+#ifdef USE_PARAMETERS
 #include <libpq-fe.h>
+#include <Misc/pg_type.h>
+#endif
 
 exec sql include sqlca;
 
@@ -41,6 +44,7 @@ extern "C" {
 extern PGresult **ECPGdescriptor_lvalue(int line, const char *descriptor);
 }
 
+#ifdef USE_PARAMETERS
 #define ECPG_SQLSTATE_NO_DATA				"02000"
 #define ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS	"07001"
 #define ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS		"07002"
@@ -63,6 +67,7 @@ extern PGresult **ECPGdescriptor_lvalue(int line, const char *descriptor);
 /* implementation-defined internal errors of ecpg */
 #define ECPG_SQLSTATE_ECPG_INTERNAL_ERROR	"YE000"
 #define ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY	"YE001"
+#endif
 
 // ecpg incoming descriptor has to be FetchIStream
 
@@ -112,6 +117,7 @@ std::string FetchIStream::getFieldName() const
 
 /// QUERY
 
+#ifdef USE_PARAMETERS
 struct connection
 {	char const *	name;
         PGconn *	connection;
@@ -122,13 +128,15 @@ extern "C"
 {
 struct connection *ECPGget_connection(char const *name);
 }
+#endif
 
 void Query::raise(std::string const& state, int code, std::string const& message, std::string const& detail)
 { memcpy(sqlca.sqlstate,state.c_str(),5);
   sqlca.sqlcode=code;
   error=code;
   strncpy(sqlca.sqlerrm.sqlerrmc, message.c_str(), sizeof(sqlca.sqlerrm.sqlerrmc));
-  Row::mythrow(SQLerror(query,detail.empty()?message:detail));
+  if (code!=ECPG_NOT_FOUND)
+    Row::mythrow(SQLerror(query,detail.empty()?message:detail));
 }
 
 void Query::raise(char const* state, int code, char const* message, char const* detail)
@@ -201,11 +209,20 @@ sqlca.sqlcode=0;
       "with params: ";
   unsigned idx=0;
   for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i,++idx)
-  { values[idx]=i->c_str();
-    length[idx]=i->size();
-    types[idx]=params.type_of(i);
-    binary[idx]=false;
-    if (Query::debugging.on) std::cerr << *i << ",";
+  { if (params.type_of(i)==VOIDOID)
+    { values[idx]=0;
+      length[idx]=0;
+      types[idx]=TEXTOID; // or INT4OID ?, gibt sonst "-400 konnte Datentyp von Parameter $2 nicht ermitteln"
+      binary[idx]=false;
+      if (Query::debugging.on) std::cerr << "<NULL>,";
+    }
+    else
+    { values[idx]=i->c_str();
+      length[idx]=i->size();
+      types[idx]=params.type_of(i);
+      binary[idx]=false;
+      if (Query::debugging.on) std::cerr << *i << ",";
+    }
   }
   if (Query::debugging.on) std::cerr << "\n";
   // oder PQsendPrepare PQsendQueryPrepared PQgetResult

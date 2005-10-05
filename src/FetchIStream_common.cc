@@ -186,12 +186,29 @@ void Query::Execute_if_complete()
          {  expanded+=std::string(last,p-last);
             assert(piter!=params.end());
             Oid type=params.type_of(piter);
-            if (type==CHAROID || type==TEXTOID)
+            if (needs_quotes(type))
             { expanded+="'"+*piter+"'";
             }
             else expanded+=*piter;
             ++p;
             ++piter;
+            last=p;
+         }
+      } while(p);
+      query=expanded;
+#else // replace ? by $N
+      std::string expanded;
+      const char *p=query.c_str();
+      const char *last=p;
+      unsigned idx=1;
+      
+      do
+      {  p=ArgumentList::next_insert(p);
+         if (!p) expanded+=last;
+         else
+         {  expanded+=std::string(last,p-last);
+            expanded+="$"+itos(idx++);
+            ++p;
             last=p;
          }
       } while(p);
