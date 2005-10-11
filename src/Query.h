@@ -199,6 +199,7 @@ public:
 	unsigned HowManyNeededParams() const { return params_needed; }
 	const_iterator begin() const { return params.begin(); }
 	const_iterator end() const { return params.end(); }
+	bool empty() const { return params.empty(); }
 	Oid type_of(const_iterator const& which) const;
 	size_t size() const { return params.size(); }
 
@@ -276,7 +277,7 @@ public:
 
 	Query(const std::string &command);
 	Query(std::string const& portal_name, const std::string &command);
-	Query(PreparedQuery const& prep);
+	Query(PreparedQuery& prep);
 	~Query();
 
 	bool good() const 
@@ -357,6 +358,8 @@ class PreparedQuery
         std::string name;
         bool active;
         std::vector<Oid> types;
+        
+        friend class Query;
 #endif
 public:
         PreparedQuery(std::string const& cmd) : command(cmd), active() {}
