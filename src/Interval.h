@@ -33,8 +33,8 @@ struct Interval
 };
 }
 
-class FetchIStream;
-FetchIStream &operator>>(FetchIStream &is, ManuProC::Interval &v);
+class Query_Row;
+Query_Row &operator>>(Query_Row &is, ManuProC::Interval &v);
 class ArgumentList;
 ArgumentList &operator<<(ArgumentList &, const ManuProC::Interval &v);
 

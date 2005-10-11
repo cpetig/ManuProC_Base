@@ -142,8 +142,8 @@ public:
 };
 
 std::ostream &operator<<(std::ostream&,const Zeitpunkt_new&);
-class FetchIStream;
-FetchIStream &operator>>(FetchIStream &is, Zeitpunkt_new &v);
+class Query_Row;
+Query_Row &operator>>(Query_Row &is, Zeitpunkt_new &v);
 class ArgumentList;
 ArgumentList &operator<<(ArgumentList &, const Zeitpunkt_new &v);
 

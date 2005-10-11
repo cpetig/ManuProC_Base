@@ -190,8 +190,8 @@ public:
 	
 };
 
-class FetchIStream;
-FetchIStream &operator>>(FetchIStream &is, ManuProC::Datum &v);
+class Query_Row;
+Query_Row &operator>>(Query_Row &is, ManuProC::Datum &v);
 class ArgumentList;
 ArgumentList &operator<<(ArgumentList &, const ManuProC::Datum &v);
 

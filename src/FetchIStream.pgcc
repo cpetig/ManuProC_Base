@@ -71,7 +71,7 @@ extern PGresult **ECPGdescriptor_lvalue(int line, const char *descriptor);
 
 // ecpg incoming descriptor has to be FetchIStream
 
-FetchIStream::FetchIStream(const std::string &descr, int line)
+Query_Row::Query_Row(const std::string &descr, int line)
 	: naechstesFeld(0), zeile(line), result(0)
 {  PGresult **r=ECPGdescriptor_lvalue(__LINE__,descr.c_str());
    if (r) result=*r;
