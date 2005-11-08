@@ -44,4 +44,10 @@
 /* deprecated: we use SigC++ 1.2 */
 #undef SIGC1_2
 
+/* Define to 1 if PQprepare is available in libpq. */
+#undef HAVE_PQPREPARE
+
+/* Define to 1 if libpq-int.h is includeable. */
+#undef HAVE_LIBPQ_INT_H
+
 #endif
