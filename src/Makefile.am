@@ -66,7 +66,7 @@ include_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 	germanstring.h TagStream.h Tag.h recodestream.h \
 	callbackbuf.h TraceNV.h EntryValueTimeStamp.h \
 	Event.h bitmask.h Global_Settings.h algorithm.h \
-	ManuProcEntity.cc
+	ManuProcEintrag.h ManuProcEntity.h ManuProcVorgang.h
 
 CLEANFILES= *~ $(BUILT_SOURCES)
 
