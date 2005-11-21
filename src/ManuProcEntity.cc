@@ -28,7 +28,7 @@ bool ManuProcEntity::Valid(ID i) //const
 }
 #endif
 
-#if __GNUC__ <4
+#if __GNUC__ <3 || (__GNUC__==3 && __GNUC_MINOR__<4)
 const ManuProcEntity<>::ID ManuProcEntity<>::none_id;
 #else
 template<> const ManuProcEntity<>::ID ManuProcEntity<>::none_id;
