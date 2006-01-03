@@ -274,7 +274,11 @@ Query &Query::add_argument(const std::string &s, Oid type)
 ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 { if (complete())
       Query_Row::mythrow(SQLerror("",ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
+#ifdef USE_PARAMETERS      
   params.push_back(std::string());
+#else
+  params.push_back("NULL");
+#endif
   types.push_back(n.type);
   null.push_back(true);
   binary.push_back(false);
