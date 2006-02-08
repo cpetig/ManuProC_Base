@@ -68,7 +68,7 @@ void TagStream::de_xml(std::string &cont)
       {  std::string::iterator endtag(std::find(verbatim,cont.end(),';'));
          if (endtag!=cont.end()) ++endtag;
          std::string tag(verbatim,endtag);
-std::cerr << long(verbatim-cont.begin()) << ' ' << long(endtag-cont.begin()) << ' ' << cont << '\n';
+//std::cerr << long(verbatim-cont.begin()) << ' ' << long(endtag-cont.begin()) << ' ' << cont << '\n';
          i=verbatim-cont.begin();
          if (tag[1]=='#' && tag[2]=='x')
          {  int c=0;  // hex coded
