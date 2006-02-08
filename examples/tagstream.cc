@@ -57,5 +57,18 @@ int main()
       ts.write(std::cout,true);
       std::cout << '\n';
    }
+   std::cout << "===== parsing ampersands =====\n";
+   {  const char * const Testcase1="﻿<?xml version=\"1.0\"?><test><Text Größe=\"8\">&amp; &amp; abc&#x0A;d</Text></test>";
+      TagStream ts(Testcase1);
+      ts.debug(10);
+      ts.write(std::cout,true);
+      std::cout << '\n';
+   }
+   {  const char * const Testcase1="﻿<?xml version=\"1.0\"?><test><Text>&amp; &amp; &#x0A;d</Text></test>";
+      TagStream ts(Testcase1);
+      ts.debug(10);
+      ts.write(std::cout,true);
+      std::cout << '\n';
+   }
    return 0;
 }
