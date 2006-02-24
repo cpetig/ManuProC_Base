@@ -285,7 +285,7 @@ class Query : public Query_types
 	void Execute_if_complete();
 	void raise(std::string const& state, int code, std::string const& message, std::string const& detail=std::string());
 	void raise(char const* state, int code, char const* message, char const* detail=0);
-	static std::string Query::standardize_parameters(std::string const& in);
+	static std::string standardize_parameters(std::string const& in);
 	bool already_run() const { return result; }
 
 public:
