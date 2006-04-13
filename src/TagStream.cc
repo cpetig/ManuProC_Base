@@ -461,7 +461,14 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
          o << ' ' << attname << "=\"" << attval << '\"';
       }
       // save content ...
-      if (t.begin()!=t.end() || !t.Value().empty())
+      if (t.Type()=="!--") // Comment
+      {  o << ' ';
+         std::string tval(t.Value());
+         if (recode_save_vfunc) (*recode_save_vfunc)(tval);
+         toXML(tval);
+         o << tval << '>';
+      }
+      else if (t.begin()!=t.end() || !t.Value().empty())
       {  indent++;
          o << '>';
          std::string tval(t.Value());
