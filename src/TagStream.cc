@@ -431,7 +431,7 @@ static void toXML(std::string &s)
    for (unsigned i=0;i<s.size();)
    {  if (isalnum(s[i]) 
 		|| (unsigned char)s[i]>=160
-		|| strchr("# @^+-*/.,?!$'|~[]{}()_:;=",s[i])) 
+		|| (s[i] && strchr("# @^+-*/.,?!$'|~[]{}()_:;=",s[i]))) 
          ++i;
       else if (s[i]=='&') { s.replace(i,1,"&amp;"); i+=5; }
       else if (s[i]=='<') { s.replace(i,1,"&lt;"); i+=4; }
