@@ -58,7 +58,10 @@ Query::debug_environment::~debug_environment()
 }
 
 void Query::swap(Query &b)
-{ std::swap(descriptor,b.descriptor);
+{
+#ifdef MPC_POSTGRESQL
+  std::swap(descriptor,b.descriptor);
+#endif
   std::swap(eof,b.eof);
   std::swap(line,b.line);
   std::swap(result,b.result);
@@ -376,7 +379,7 @@ ArgumentList &ArgumentList::operator<<(char i)
    }
    else
 #ifdef MPC_SQLITE // there's no escaping here, hopefully we use parameters
-     return add_argument(std::string(1,i));
+     return add_argument(std::string(1,i),TEXTOID);
 #else   
    { x[0]='\\';
      x[1]='0'+((i>>6)&0x3);
