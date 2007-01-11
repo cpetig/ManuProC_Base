@@ -236,7 +236,7 @@ template <class T>
 }
 
 template <class T>
- T Tag::getAttr_def(const std::string &name, const T &def=T()) const throw()
+ T Tag::getAttr_def(const std::string &name, const T &def) const throw()
 {  const_attiterator t=attfind(name);
    if (t==attend()) return def;
    return parse_value_def<T>(t->second,def);
