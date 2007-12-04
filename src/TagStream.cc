@@ -68,6 +68,11 @@ void TagStream::de_xml(std::string &cont)
       {  std::string::iterator endtag(std::find(verbatim,cont.end(),';'));
          if (endtag!=cont.end()) ++endtag;
          std::string tag(verbatim,endtag);
+         static std::string s_amp="&amp;";
+         static std::string s_lt="&lt;";
+         static std::string s_gt="&gt;";
+         static std::string s_quot="&quot;";
+         static std::string s_auml="&auml;";
 //std::cerr << long(verbatim-cont.begin()) << ' ' << long(endtag-cont.begin()) << ' ' << cont << '\n';
          i=verbatim-cont.begin();
          if (tag[1]=='#' && tag[2]=='x')
@@ -88,11 +93,11 @@ void TagStream::de_xml(std::string &cont)
             cont.replace(verbatim,endtag,1,char(c));
             ++i;
          }
-         else if (tag=="&amp;") { cont.replace(verbatim,endtag,1,'&'); ++i; }
-         else if (tag=="&lt;") { cont.replace(verbatim,endtag,1,'<'); ++i; }
-         else if (tag=="&gt;") { cont.replace(verbatim,endtag,1,'>'); ++i; }
-         else if (tag=="&quot;") { cont.replace(verbatim,endtag,1,'"'); ++i; }
-         else if (tag=="&auml;") 
+         else if (tag==s_amp) { cont.replace(verbatim,endtag,1,'&'); ++i; }
+         else if (tag==s_lt) { cont.replace(verbatim,endtag,1,'<'); ++i; }
+         else if (tag==s_gt) { cont.replace(verbatim,endtag,1,'>'); ++i; }
+         else if (tag==s_quot) { cont.replace(verbatim,endtag,1,'"'); ++i; }
+         else if (tag==s_auml) 
          {  std::string nw="ä"; // assumes host_encoding=="UTF-8"
             if (recode_load_vfunc) (*recode_load_vfunc)(nw);
             cont.replace(verbatim,endtag,nw); 
@@ -140,11 +145,12 @@ TagStream::TagStream()
 void TagStream::setEncoding(const std::string &s)
 {  if (s.empty()) encoding=host_encoding;
    else encoding=s;
+   static std::string s_UTF8="UTF-8", s_ISO8859="ISO-8859-1";
    if (encoding==host_encoding) 
    {  recode_load_vfunc=recode_save_vfunc=0; }
-   else if (encoding=="UTF-8" && host_encoding=="ISO-8859-1")
+   else if (encoding==s_UTF8 && host_encoding==s_ISO8859)
    {  recode_load_vfunc=&utf82iso; recode_save_vfunc=&iso2utf8; }
-   else if (host_encoding=="UTF-8" && encoding=="ISO-8859-1")
+   else if (host_encoding==s_UTF8 && encoding==s_ISO8859)
    {  recode_save_vfunc=&utf82iso; recode_load_vfunc=&iso2utf8; }
    else
    {  std::cerr << "don't know how to convert " << encoding << "<->" << host_encoding << '\n';
@@ -268,13 +274,14 @@ char *TagStream::next_tag(Tag *parent)
          
          std::string newtagtype=std::string(tag+1,tagend-(tag+1));
 	 if (recode_load_vfunc) (*recode_load_vfunc)(newtagtype);         
-         Tag *newtag(&parent->push_back(Tag(newtagtype,"")));
+         Tag *newtag(&parent->push_back(Tag(newtagtype,std::string())));
          while (tagend)
          {  while (isspace(*tagend)) tagend++;
             if (*tagend=='?')
             {  if (tagend[1]!='>') ERROR2("strange tag end (?[^>])",tag);
                set_pointer(tagend+2);
-               if (newtag->Type()=="?xml") 
+               static std::string s_xml="?xml";
+               if (newtag->Type()==s_xml) 
                {  setEncoding(newtag->getAttr("encoding"));
                }
                goto continue_outer;
@@ -345,7 +352,7 @@ char *TagStream::next_tag(Tag *parent)
          
          std::string newtagtype=std::string(tag+1,tagend-(tag+1));
 	 if (*recode_load_vfunc) (*recode_load_vfunc)(newtagtype);
-         Tag *newtag(&parent->push_back(Tag(newtagtype,"")));
+         Tag *newtag(&parent->push_back(Tag(newtagtype,std::string())));
          // read attributes
          while (tagend)
          {  while (isspace(*tagend)) tagend++;
@@ -496,7 +503,8 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
 }
 
 void TagStream::write(std::ostream &o,bool compact) const
-{  if (encoding=="UTF-8") // BOM
+{ static std::string s_UTF8="UTF-8"; 
+  if (encoding==s_UTF8) // BOM
       o << "﻿"; // BOM
    o << "<?xml version=\"1.0\" encoding=\"" << encoding << "\"?>";
    if (!compact) o << '\n';
