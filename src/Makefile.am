@@ -30,7 +30,8 @@ AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@ $(WIN_LDFLAGS)
 if DATABASE
 DB_SRCES=dbconnect.cc SQLerror_postgres.cc Transaction.cc Query.cc \
 	Event.cc Global_Settings_db.cc dbconnect_shared.cc \
-	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc
+	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc \
+	Transaction_sqlite.cc
 else 
 DB_SRCES=
 endif

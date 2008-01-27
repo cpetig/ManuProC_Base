@@ -9,7 +9,7 @@ AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
 if DATABASE
-DB_PRGS=FetchIStream
+DB_PRGS=FetchIStream Query
 B_SRCES=FetchIStream.cc
 else
 DB_PRGS=
@@ -18,7 +18,7 @@ endif
 
 EXTRA_PROGRAMS=FetchIStream test_pgsql_conv testHandles testKW fixedpoint \
 	Zeitpunkt mvc trace rexml tagstream tag_speed algorithm extra_cols \
-	interval
+	interval Query
 
 test_pgsql_conv_SOURCES=test_pgsql_conv.cc
 testHandles_SOURCES=testHandles.cc
@@ -34,6 +34,7 @@ tag_speed_SOURCES=tag_speed.cc
 algorithm_SOURCES=algorithm.cc
 extra_cols_SOURCES=extra_cols.cc
 interval_SOURCES=interval.cc
+Query_SOURCES=Query.cc
 
 tagstream.res: tagstream$(EXEEXT)
 	./tagstream | sed -e 's/P0x[0-9a-fA-F]*/P*/' \
