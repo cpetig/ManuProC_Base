@@ -19,7 +19,9 @@
 
 #include <Misc/Trace.h>
 #include <cassert>
-#include <unistd.h>
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 static int enabled_parts;
 static int depth;

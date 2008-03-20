@@ -56,7 +56,7 @@ template <>
 double fixedpoint_dyn<double,long>::as_float() const
 { // I don't know why *pow(10,-Scale()) does not work ...
 #if !defined(__GNUC__ ) || __GNUC__<3 || defined(__MINGW32__)
-  return scaled/pow(10,Scale());
+  return scaled/pow(10.0,int(Scale()));
 #else
   return scaled/exp10(Scale());
 #endif

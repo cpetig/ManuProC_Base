@@ -22,7 +22,9 @@
 
 #include <iostream>
 #include <Misc/exception.h>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <typeinfo>
 //#include <stddef.h>
 
@@ -91,7 +93,7 @@ void ManuProC::PrintUncaughtExceptions() throw()
 #if __GNUC__ == 2 || ( __GNUC__ == 3 && __GNUC_MINOR__ < 2 )
    std::set_unexpected(print_exception_u);
    std::set_terminate(print_exception_t);
-#else
+#elif defined(__GNUC__)
    std::set_terminate (__gnu_cxx::__verbose_terminate_handler);
    std::set_unexpected (__gnu_cxx::__verbose_terminate_handler);
 #endif   

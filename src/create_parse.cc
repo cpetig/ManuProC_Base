@@ -21,6 +21,11 @@
 #include <iostream>
 #include <locale.h>
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#define snprintf _snprintf
+#endif
+
 #define DE
 
 template <>

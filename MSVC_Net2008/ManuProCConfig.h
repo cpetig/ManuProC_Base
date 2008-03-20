@@ -25,11 +25,11 @@
    Database and host to use
    */
 
-#define DEFAULT_DB "christof"
-#define DEFAULT_DBHOST "localhost"
+#undef DEFAULT_DB
+#undef DEFAULT_DBHOST
 
 /* we have support for pgsql/ecpg */
-#define MANUPROC_WITH_DATABASE 1
+#undef MANUPROC_WITH_DATABASE
 
 /* which SigC++ version to use (e.g. 0x120) */
 #define MPC_SIGC_VERSION 0x200
@@ -46,6 +46,6 @@
 /* #undef SIGC1_2 */
 
 /* Define to 1 if PQprepare is available in libpq. */
-#define HAVE_PQPREPARE 1
+#undef HAVE_PQPREPARE
 
 #endif

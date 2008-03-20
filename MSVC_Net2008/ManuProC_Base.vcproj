@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="../src;.;../../libsigc++-2.0.18;../../libsigc++-2.0.18/MSVC_Net2003"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="sigc-2.0d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\libsigc++-2.0.18\MSVC_Net2003\Debug"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -114,6 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="../src;.;../../libsigc++-2.0.18;../../libsigc++-2.0.18/MSVC_Net2003"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -132,7 +136,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="sigc-2.0.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\libsigc++-2.0.18\MSVC_Net2003\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -219,15 +225,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\ExtraColumns.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\fixedpoint.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\fixedpoint_null.cc"
 				>
 			</File>
 			<File

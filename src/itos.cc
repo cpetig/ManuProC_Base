@@ -25,14 +25,17 @@
 extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
 #endif
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#define snprintf _snprintf
+#endif
+
 std::string itos0p(int i, int c,bool show_plus)
 {
   if(i==c) return "";
   if(!show_plus || i<0) return itos(i) ;
   return  "+"+itos(i) ;
 }
-
-
 
 std::string itos0pad(int i,int p)
 {

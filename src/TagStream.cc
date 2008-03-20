@@ -19,7 +19,9 @@
 
 #include <Misc/TagStream.h>
 #include <cstring>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <algorithm>
 #include <iostream>
 #include <Misc/inbetween.h>
@@ -220,13 +222,22 @@ char *TagStream::next_tag_pointer(Tag *parent)
 	  std::cerr << "'\n"; \
 	  return 0; \
 	}
-#endif	
+#endif
+#ifdef _MSC_VER
+#define ERROR2(name,ptr) \
+	do { std::cerr << name " @'"; \
+	  std::cerr.write(ptr,10); \
+	  std::cerr << "'\n"; \
+	  return 0; \
+	} while(0)
+#else
 #define ERROR2(name,ptr) \
 	({ std::cerr << name " @'"; \
 	  std::cerr.write(ptr,10); \
 	  std::cerr << "'\n"; \
 	  return 0; \
 	})
+#endif
 
 // hacked to accept UTF-8 literals, this is not a generally good idea
 

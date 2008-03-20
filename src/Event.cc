@@ -48,7 +48,7 @@ ManuProC::Event::Event(const std::string &channel,const std::string &key,const s
 void ManuProC::Event::connect(bool ignore_old) {}
 int ManuProC::Event::filedesc() { return -1; }
 
-#else
+#elif defined(MANUPROC_WITH_DATABASE)
 #include <Misc/Query.h>
 #include <libpq-fe.h>
 #include <Misc/Transaction.h>

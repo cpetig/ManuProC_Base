@@ -172,7 +172,7 @@ void Zeitpunkt_new::calculate_TZ(int isdst) const throw()
    tm.tm_year=datum.Jahr()-1900;
    tm.tm_isdst=isdst;
    mktime(&tm);
-#ifdef __MINGW32__
+#if defined __MINGW32__ || defined (_MSC_VER)
    minutes_from_gmt=tm.tm_isdst?120:60;
 #else
    minutes_from_gmt=tm.tm_gmtoff/60;
@@ -195,7 +195,7 @@ Zeitpunkt_new::Zeitpunkt_new(time_t t) throw()
    hour=tm->tm_hour;
    minute=tm->tm_min;
    second=tm->tm_sec;
-#ifdef __MINGW32__
+#if defined __MINGW32__ || defined _MSC_VER
    minutes_from_gmt=tm->tm_isdst?120:60;
 #else
    minutes_from_gmt=tm->tm_gmtoff/60;
