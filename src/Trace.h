@@ -59,10 +59,11 @@ template <class T>
 	// operator<< is at the end of this file
 };
 
+#ifndef _MSC_VER
 template <class T>
  struct NameValue_s<T> NameValue(const std::string &n, const T &v)
  { return NameValue_s<T>(n,v); }
-
+#endif
 
 class Trace
 {	bool enabled;

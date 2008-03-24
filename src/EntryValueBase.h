@@ -29,7 +29,11 @@ class EntryValueBase : public HandleContent
 {
 public:
  static LIBMPC_BASE_API const int int_NaN=-1;
- static LIBMPC_BASE_API const double double_NaN=-1;
+ static LIBMPC_BASE_API const double double_NaN
+#ifndef _MSC_VER
+	 =-1
+#endif
+	 ;
  virtual operator const std::string() const { return getStrVal(); }
  virtual const std::string getStrVal() const { return std::string(); }
  virtual bool operator==(const EntryValueBase &v) const;
