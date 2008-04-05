@@ -29,33 +29,33 @@
 // WOW prepare for black template magic
 // The compiler optimizes this fully away (once -O is used)
 template <int N> 
-static inline double zehnhochminus()
+inline double zehnhochminus()
 {  typedef typename ctime_assert<(N>0)>::_true failed;
    return 0.1*zehnhochminus<N-1>();
 }
 
 template <>
-static inline double zehnhochminus<0>()
+inline double zehnhochminus<0>()
 { return 1; }
 
 template <int N> 
-static inline double zehnhochplus()
+inline double zehnhochplus()
 {  typedef typename ctime_assert<(N>0)>::_true failed;
    return 10*zehnhochplus<N-1>();
 }
 
 template <>
-static inline double zehnhochplus<0>()
+inline double zehnhochplus<0>()
 { return 1; }
 
 template <int N> 
-static inline int zehnhochplusI()
+inline int zehnhochplusI()
 {  typedef typename ctime_assert<(N>0)>::_true failed;
    return 10*zehnhochplusI<N-1>();
 }
 
 template <>
-static inline int zehnhochplusI<0>()
+inline int zehnhochplusI<0>()
 { return 1; }
 
 // intermediate class which is easier to format/parse (less instantiations)

@@ -20,6 +20,8 @@
 #include "Ausgabe_neu.h"
 #include <iostream>
 #include <cassert>
+#include <string.h>
+#include <stdlib.h> // abort
 
 std::ostream &Formatiere(std::ostream &os,unsigned long Zahl, 
 		unsigned int Nachkommastellen,

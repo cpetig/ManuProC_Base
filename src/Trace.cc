@@ -22,6 +22,7 @@
 #ifndef _MSC_VER
 # include <unistd.h>
 #endif
+#include <cstdlib>
 
 static int enabled_parts;
 static int depth;

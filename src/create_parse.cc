@@ -20,6 +20,8 @@
 #include <Misc/create_parse.h>
 #include <iostream>
 #include <locale.h>
+#include <cstring>
+#include <cstdlib>
 
 #ifdef _MSC_VER
 #define strcasecmp _stricmp

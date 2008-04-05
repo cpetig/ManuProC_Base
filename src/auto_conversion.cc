@@ -23,6 +23,7 @@
 #include <cctype>
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 void ManuProC::Datum::from_auto(const char *datum,const char **endptr) throw(Datumsfehler,Formatfehler)
 {   

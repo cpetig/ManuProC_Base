@@ -8,6 +8,7 @@
 #include <Misc/itos.h>
 #include <cassert>
 #include <Misc/Ausgabe_neu.h>
+#include <cstdlib>
 
 static const int million=1000000;
 static const int secs_per_day=24*60*60;
