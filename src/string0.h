@@ -53,7 +53,9 @@ static inline char *strncpy0(char *dest,const char *src, unsigned long n)
 }
 
 #define strcpyx(dest,src) strncpy0((dest),(src),sizeof(dest))
+#ifndef _MSC_VER
 #define sprintfx(dest,src,val...) snprintf0((dest),sizeof(dest),src,##val)
+#endif
 
 #ifdef __cplusplus
 }
