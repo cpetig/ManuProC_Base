@@ -22,6 +22,7 @@
 #include <utility> // pair
 #include <locale.h>
 #include <iostream>
+#include <cstring>
 
 #ifdef __MINGW32__
 extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }

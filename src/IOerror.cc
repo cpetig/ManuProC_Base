@@ -21,6 +21,7 @@
 #include <Misc/IOerror.h>
 #include <errno.h>
 #include <Misc/Ausgabe_neu.h>
+#include <string.h>
 
 IOerror::IOerror() throw() : IOerrno(errno)
 {}

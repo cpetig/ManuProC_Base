@@ -26,6 +26,7 @@
 #include <Misc/SQLerror.h>
 #include <Misc/itos.h>
 #include <Misc/pg_type.h>
+#include <cstdlib>
 
 #ifdef MPC_SQLITE
 #include <sqlite3.h>

@@ -20,6 +20,9 @@
 #include <ManuProCConfig.h>
 #include <Misc/dbconnect.h>
 #include <cassert>
+#include <cstring>
+//#include <unistd.h>
+#include <cstdlib>
 
 ManuProC::Connection::Connection(const std::string &h, const std::string &d, 
 		const std::string &u,const std::string &n, const int p)
@@ -57,8 +60,8 @@ void ManuProC::dbdisconnect_nt(const std::string &name) throw()
 
 
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
 const std::string ManuProC::Connection::Pass() const throw(AuthError)
 {

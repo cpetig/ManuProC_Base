@@ -1,6 +1,7 @@
 // $Id: Zeitpunkt_new.cc,v 1.25 2006/06/26 07:53:01 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 1998-2005 Adolf Petig GmbH & Co. KG, written by Christof Petig
+ *  Copyright (C) 2008 Christof Petig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 #ifdef DEFAULT_DB // actually we should test for database support
 #include <Misc/Query.h>
 #endif
+#include <iostream>
 
 Zeitpunkt_new &Zeitpunkt_new::Precision(precision p)
 { prec=p;

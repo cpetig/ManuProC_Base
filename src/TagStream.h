@@ -23,6 +23,7 @@
 #include <ManuProCConfig.h>
 #include <Misc/Tag.h>
 #include <iostream>
+#include <cstring>
 
 class TagStream : public Tag
 {	// ---- for reading -----

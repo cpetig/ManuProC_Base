@@ -20,6 +20,8 @@
 #include <cstdio>
 #include <Misc/itos.h>
 #include <strstream>
+#include <string.h>
+#include <malloc.h>
 
 #ifdef __MINGW32__
 extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
