@@ -38,7 +38,7 @@
 #include <sqlite3.h>
 typedef unsigned long Oid;
 // enum ECPG...
-#else
+#elif defined (MANUPROC_WITH_DATABASE)
 #include <ecpgerrno.h>
 extern "C" {
 #include <libpq-fe.h>
