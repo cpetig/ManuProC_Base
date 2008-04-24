@@ -31,7 +31,13 @@ int main()
    std::cout << "simple use " << Query("select 1").FetchOne<int>() << '\n';
 
 // now test it   
-  {Query query("select now(),date('yesterday'),null,null,200,20.5,'t'");
+  {Query query("select "
+#ifdef MPC_SQLITE
+                  "'2008-04-24 23:13:04.577404+02','2008-04-23',"
+#else
+                  "now(),date('yesterday'),"
+#endif
+                  "null,null,200,20.5,'t'");
    std::string s,s2,s3,s4;
    bool b;
    int i;
@@ -119,6 +125,7 @@ int main()
    std::cout << v.size() << '\n';
   }
   std::cerr << "--- advanced: declare cursor with params\n";
+#ifndef MPC_SQLITE
   { // by foot
    Transaction tr;
    Query q("declare mycurs cursor for select relname from pg_class where relname like ?");
@@ -127,6 +134,7 @@ int main()
    std::cout << f.FetchOne<std::string>() << '\n';
    Query("close mycurs");
   }
+#endif
   { // by API
    Transaction tr;
    Query q("mycurs","select relname from pg_class where relname like ? limit 1");
