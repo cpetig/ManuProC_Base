@@ -527,6 +527,24 @@ Query::Query(const std::string &command)
    Execute_if_complete();
 }
 
+Query::Query(std::string const& portal, std::string const& command)
+: eof(true), line(), result(), query(command), num_params(), 
+	error(ECPG_TOO_FEW_ARGUMENTS), lines()
+{  const char *p=query.c_str();
+   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+   params.setNeededParams(num_params);
+   Execute_if_complete();
+}
+
+Query::Query(PreparedQuery &pq)
+: eof(true), line(), result(), query(pq.Command()), num_params(), 
+	error(ECPG_TOO_FEW_ARGUMENTS), lines()
+{  const char *p=query.c_str();
+   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+   params.setNeededParams(num_params);
+   Execute_if_complete();
+}
+
 Query::~Query()
 {  if (!params.complete())
    {  std::cerr << "The query " << query << " still needed " 
@@ -542,6 +560,11 @@ Query::~Query()
 
 int Query::Code() 
 {  return SQLerror::last_code; 
+}
+
+void Query::Execute(std::string const& command2) throw(SQLerror)
+{
+  Query q(command2);
 }
 
 bool Query_Row::good() const
