@@ -33,6 +33,10 @@
 #include <cassert>
 #include <cstdlib>
 
+//#ifdef HAVE_LIBECPG6_UP
+//#define ECPGget_connection ecpg_get_connection
+//#endif
+
 exec sql include sqlca;
 
 #ifdef OLD_ECPG
@@ -141,16 +145,17 @@ std::string Query_Row::getFieldName() const
 /// QUERY
 
 #ifdef USE_PARAMETERS
-struct connection_s
-{	char const *	name;
-        PGconn *	connection;
-        // ...
+#ifndef HAVE_LIBECPG6_UP
+struct ecpg_connection // stolen from ecpg internals
+{   char	   *name;
+    PGconn	   *connection;
+    // ...
 };
 
-extern "C"
-{
-struct connection_s *ECPGget_connection(char const *name);
-}
+extern "C" ecpg_connection *ECPGget_connection(const char *);
+#else
+extern "C" PGconn* ECPGget_PGconn(const char *connection_name);
+#endif
 
 void Query::raise(std::string const& state, int code, std::string const& message, std::string const& detail)
 { strncpy(sqlca.sqlstate,state.c_str(),5);
@@ -229,7 +234,11 @@ sqlca.sqlcode=0;
    }
    result=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
 #else // query parameters (using libpq)
+#ifndef HAVE_LIBECPG6_UP
   PGconn *conn=ECPGget_connection(NULL)->connection;
+#else 
+  PGconn *conn=ECPGget_PGconn(NULL);
+#endif
   eof=false;
   sqlca.sqlcode=0;
   int numparams=params.size();

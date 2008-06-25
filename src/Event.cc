@@ -19,26 +19,21 @@
 
 #include <Misc/Event.h>
 
+//#ifdef HAVE_LIBECPG6_UP
+//#define ECPGget_connection ecpg_get_connection
+//#endif
+
 ManuProC::Event::fullsignal_t ManuProC::Event::event_sig;
 bool ManuProC::Event::connected;
 ManuProC::TimeStamp ManuProC::Event::last_processed;
 void *ManuProC::Event::PGconnection;
 
-#if MPC_SIGC_VERSION<0x120
-// if you care about memory leaks use gtk2.0!!!
-safemap<std::string, ManuProC::Event::filteredsignal_t*> ManuProC::Event::channels;
-#else
 safemap<std::string, ManuProC::Event::filteredsignal_t> ManuProC::Event::channels;
-#endif
 
-SigC::Connection ManuProC::Event::connect(const std::string &channel,
-   		const SigC::Slot2<void,const std::string &,const std::string &> &slot)
-#if MPC_SIGC_VERSION>=0x120 // es kann so einfach sein ...
+#if 0
+sigc::connection ManuProC::Event::connect(const std::string &channel,
+   		const sigc::slot<void,const std::string &,const std::string &> &slot)
 {  return signal_event(channel).connect(slot); }
-#else
-{  if (!channels[channel]) channels[channel]=new filteredsignal_t();
-   return (*channels[channel]).connect(slot);
-}
 #endif
 
 #ifdef MPC_SQLITE
@@ -86,12 +81,7 @@ void ManuProC::Event::read_notifications()
       	 >> Query::Row::MapNull(key)
       	 >> Query::Row::MapNull(data);
       event_sig(channel,key,data);
-#if MPC_SIGC_VERSION<0x120
-      if (!channels[channel]) channels[channel]=new filteredsignal_t();
-      (*channels[channel])(key,data);
-#else      
       channels[channel](key,data);
-#endif      
    }
    tr.commit();
    last_processed=bis;
@@ -105,6 +95,7 @@ ManuProC::Event::Event(const std::string &channel,const std::string &key,const s
 }
 
 namespace {
+#ifndef HAVE_LIBECPG6_UP
 struct ecpg_connection // stolen from ecpg internals
 {   char	   *name;
     PGconn	   *connection;
@@ -112,12 +103,19 @@ struct ecpg_connection // stolen from ecpg internals
 };
 
 extern "C" ecpg_connection *ECPGget_connection(const char *);
+#else
+extern "C" PGconn* ECPGget_PGconn(const char *connection_name);
+#endif
 }
 
 void ManuProC::Event::connect(bool ignore_old)
 {  Query("LISTEN events");
    connected=true;
+#ifdef HAVE_LIBECPG6_UP
+   PGconnection=ECPGget_PGconn(0);
+#else
    PGconnection=ECPGget_connection(0)->connection;
+#endif
    if (ignore_old)
    {  Query("SELECT now()") >> last_processed;
       while (PQnotifies((PGconn *)PGconnection));

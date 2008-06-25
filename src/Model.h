@@ -21,11 +21,7 @@
 #ifndef MANUPROC_MODEL_H
 #define MANUPROC_MODEL_H
 #include <ManuProCConfig.h>
-#if MPC_SIGC_VERSION >= 0x120
 # include <sigc++/signal.h>
-#else
-# include <sigc++/basic_signal.h>
-#endif
 
 // The pointer is needed to distinguish between elements in a shared
 // signal environment. But the syntax is so complex it's hardly worth 
@@ -33,8 +29,8 @@
 
 class Model_Base
 {public:
-	SigC::Signal1<void,void*> changed;
-	SigC::Signal1<void,void*> &signal_changed()
+	sigc::signal<void,void*> changed;
+	sigc::signal<void,void*> &signal_changed()
 	{ return changed; }
 };
 
@@ -112,19 +108,19 @@ public:
 template <class T>
  class Model_ref
 {	T *value;
-	SigC::Signal1<void,void*> *changed;
+	sigc::signal<void,void*> *changed;
 public:
 	Model_ref(Model<T> &model)
 	: value(model.Valueptr()), changed(&model.changed) {}
-	Model_ref(T &v, SigC::Signal1<void,void*> &sig)
+	Model_ref(T &v, sigc::signal<void,void*> &sig)
 	: value(&v), changed(&sig) {}
-	Model_ref(T *v, SigC::Signal1<void,void*> &sig)
+	Model_ref(T *v, sigc::signal<void,void*> &sig)
 	: value(v), changed(&sig) {}
 	Model_ref() : value(), changed() {}
 
 	bool valid() const { return value && changed; }
 	bool operator!() const { return !valid(); }
-	SigC::Signal1<void,void*> &signal_changed() const
+	sigc::signal<void,void*> &signal_changed() const
 	{  return *changed; }
 	// g++ 2.95 does not use this ...
 	operator T() const

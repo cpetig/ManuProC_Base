@@ -47,4 +47,7 @@
 /* Define to 1 if PQprepare is available in libpq. */
 #undef HAVE_PQPREPARE
 
+/* Define to 1 if using 8.3+ ecpg. */
+#define HAVE_LIBECPG6_UP 1
+
 #endif

@@ -22,23 +22,17 @@
 #define MISC_EVENT_H
 
 #include <BaseObjects/Model.h> // for SigC headers
-#if MPC_SIGC_VERSION>=0x200
 # include <sigc++/connection.h>
 # include <sigc++/slot.h>
-#endif
 #include <string>
 #include <Misc/safemap.h>
 #include <Misc/TimeStamp.h>
 
 namespace ManuProC {  
 class Event
-{	typedef SigC::Signal3<void,const std::string &,const std::string &,const std::string &> fullsignal_t;
-	typedef SigC::Signal2<void,const std::string &,const std::string &> filteredsignal_t;
-#if MPC_SIGC_VERSION<0x120
-	static safemap<std::string, filteredsignal_t *> channels;
-#else
+{	typedef sigc::signal<void,const std::string &,const std::string &,const std::string &> fullsignal_t;
+	typedef sigc::signal<void,const std::string &,const std::string &> filteredsignal_t;
 	static safemap<std::string, filteredsignal_t> channels;
-#endif
 	static fullsignal_t event_sig;
 	static TimeStamp last_processed;
 	static bool connected;
@@ -50,10 +44,8 @@ public:
 	Event(const std::string &channel,const std::string &key="",const std::string &data="");
    	static fullsignal_t &signal_event()
    	{  return event_sig; }
-#if MPC_SIGC_VERSION>=0x120   	
    	static filteredsignal_t &signal_event(const std::string &channel)
    	{  return channels[channel]; }
-#endif   	
    	
    	// connect to database
    	static void connect(bool ignore_old=true);
@@ -65,10 +57,6 @@ public:
 
 	// file descriptor to select for notifications
    	static int filedesc();
-
-	// needed for 1.0 compatibility - @$§!   	
-   	static SigC::Connection connect(const std::string &channel,
-   		const SigC::Slot2<void,const std::string &,const std::string &> &slot);
 };
 }
 
