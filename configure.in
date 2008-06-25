@@ -84,8 +84,13 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
             ],[AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.])
                     AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
     fi
+
+   AC_MSG_CHECKING(for libecpg 6+)
+   AC_TRY_LINK_FUNC([ECPGdescriptor_lvalue], [ac_no_descriptor_lvalue=no
+		], [ac_no_descriptor_lvalue=yes; AC_DEFINE(HAVE_LIBECPG6_UP, 1, [Define to 1 if using 8.3+ ecpg (no ECPGdescriptor_lvalue).])])
+   AC_MSG_RESULT($ac_no_descriptor_lvalue)
    CXXFLAGS="$tmp_CXXFLAGS"
-   
+
    AC_MSG_CHECKING(for standard database name)
    DEFAULT_DB="$USER"
    DEFAULT_DBHOST="localhost"
