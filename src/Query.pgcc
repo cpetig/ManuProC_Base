@@ -75,6 +75,7 @@ exec sql include sqlca;
 
 //#ifndef USE_PARAMETERS
 // this is still used somewhere within Komponenten ...
+#ifndef HAVE_LIBECPG6_UP
 extern "C" {
 extern PGresult **ECPGdescriptor_lvalue(int line, const char *descriptor);
 }
@@ -84,6 +85,8 @@ Query_Row::Query_Row(const std::string &descr, int line)
 {  PGresult **r=ECPGdescriptor_lvalue(__LINE__,descr.c_str());
    if (r) result=*r;
 }
+#endif
+
 //#endif
 
 Query_Row &Query_Row::operator>>(std::string &str)
