@@ -32,21 +32,21 @@ template <>
 //
  class Model_ref<bvector_item>
 {	bvector_iterator value;
-	SigC::Signal1<void,bvector_iterator> *changed;
+	sigc::signal<void,bvector_iterator> *changed;
 public:
-	Model_ref(const bvector_iterator &v, SigC::Signal1<void,bvector_iterator> &sig)
+	Model_ref(const bvector_iterator &v, sigc::signal<void,bvector_iterator> &sig)
 	: value(v), changed(&sig) {}
 // dangerous - depends on internal representation
 // please use  Model_ref<bvector_item>(v.begin()+n,signal);
 #if 0
-	Model_ref(const bvector_reference &v, SigC::Signal1<void,bvector_iterator> &sig)
+	Model_ref(const bvector_reference &v, sigc::signal<void,bvector_iterator> &sig)
 	: value(v._M_p,v._M_mask), changed(&sig) {}
 #endif
 	Model_ref() : value(), changed() {}
 
 	bool valid() const { return value!=bvector_iterator() && changed; }
 	bool operator!() const { return !valid(); }
-	SigC::Signal1<void,bvector_iterator> &signal_changed() const
+	sigc::signal<void,bvector_iterator> &signal_changed() const
 	{  return *changed; }
 	// g++ 2.95 does not use this ...
 	operator bvector_reference() const
