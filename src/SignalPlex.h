@@ -25,25 +25,23 @@
 
 #include <ManuProCConfig.h>
 
-#if MPC_SIGC_VERSION<0x120
-#error this class needs SigC 1.2+
+#if MPC_SIGC_VERSION<0x200
+#error this class needs SigC 2.0+
 #endif
 #include <sigc++/signal.h>
 #include <sigc++/object_slot.h>
-#if MPC_SIGC_VERSION>0x120
-#  include <sigc++/compatibility.h>
-#endif
+#include <sigc++/connection.h>
 
 // one way variant - two way variant should be similar to ModelPlex
 template <class S>
  class SignalPlex1 : 
 #if MPC_SIGC_VERSION<0x200
- 			public SigC::Object,
+ 			public sigc::trackable,
 #endif
  			public S
 {	typedef SignalPlex1<S> this_t;
 	
-	SigC::Connection con;
+	sigc::connection con;
 	S *actback;
 
 	// forbid assignment

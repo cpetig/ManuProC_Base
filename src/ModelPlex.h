@@ -38,14 +38,8 @@
 ***********************************/
 
 #include <BaseObjects/Model.h>
-
-#if MPC_SIGC_VERSION<0x120
-#error this class needs SigC 1.2+
-#endif
 #include <sigc++/object_slot.h>
-#if MPC_SIGC_VERSION > 0x120
-#  include <sigc++/compatibility.h>
-#endif
+#include <sigc++/connection.h>
 
 #if 0
 #include <Misc/Trace.h>
@@ -57,10 +51,10 @@ extern ManuProC::Tracer::Channel modelplex_chan;
 #endif
 
 template <class T>
- class ModelPlex : public SigC::Object, public Model_copyable<T>
+ class ModelPlex : public sigc::trackable, public Model_copyable<T>
 {	typedef ModelPlex<T> this_t;
 	
-	SigC::Connection mv_con, cm_con;
+	sigc::connection mv_con, cm_con;
 	Model_ref<T> actmodel;
 
 	// model ist actmodel, we+we ist this
@@ -87,15 +81,15 @@ public:
 	ModelPlex(const Model_ref<T> &m=Model_ref<T>())
 	{ MODELPLEX_DEBUG(__FUNCTION__,Id(),m.Id());
 	  cm_con=this->signal_changed().connect(
-			SigC::slot(*this,&this_t::we2actmodel));
+			sigc::mem_fun(*this,&this_t::we2actmodel));
 	  if (m.valid()) set_model(m); 
 	}
 //#if defined(MODELPLEX_DEBUG_ON)	
 	ModelPlex(const ModelPlex<T> &a)
-	: SigC::Object(a), Model_copyable<T>(a)
+	: sigc::trackable(a), Model_copyable<T>(a)
 	{  MODELPLEX_DEBUG(__PRETTY_FUNCTION__,Id(),a.Id());
 	   cm_con=this->signal_changed().connect(
-			SigC::slot(*this,&this_t::we2actmodel));
+			sigc::mem_fun(*this,&this_t::we2actmodel));
 	   if (a.actmodel.valid()) set_model(a.actmodel);
 	}
 //#endif
@@ -107,7 +101,7 @@ public:
 	   actmodel2us();
 	   if (actmodel.valid())
 	      mv_con=actmodel.signal_changed().connect(
-	      		SigC::slot(*this,&this_t::actmodel_value_changed));
+	      		sigc::mem_fun(*this,&this_t::actmodel_value_changed));
 	}
 	
 	const T &operator=(const T &v)
