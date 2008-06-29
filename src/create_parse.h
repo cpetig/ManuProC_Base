@@ -25,11 +25,11 @@
 
 namespace ManuProC
 {       template <class T>
-    	 static T parse(const std::string &val) throw(std::out_of_range);
+    	 T parse(const std::string &val) throw(std::out_of_range);
     	template <class T>
     	 static T parse_def(const std::string &val, const T &def=T());
     	template <class T>
-    	 static std::string create(const T &val);
+    	 std::string create(const T &val);
 }
 
 // you can skip these declarations while reading this file
