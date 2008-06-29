@@ -28,7 +28,7 @@
 #include <vector>
 
 // excluding options
-class RadioModel : public SigC::Object
+class RadioModel : public sigc::trackable
 {	typedef std::vector<Model_ref<bool> > v_t;
 	v_t v;
 
@@ -44,7 +44,7 @@ class RadioModel : public SigC::Object
 	}
 	void connect()
 	{  for (v_t::iterator i=v.begin();i!=v.end();++i)
-	      i->signal_changed().connect(SigC::slot(*this,&RadioModel::callback));
+	      i->signal_changed().connect(sigc::mem_fun(*this,&RadioModel::callback));
 	}
 public:
 	RadioModel(Model_ref<bool> a,Model_ref<bool> b)
