@@ -56,7 +56,7 @@ public:
 	void set_signal(S &s)
 	{  con.disconnect();
 	   actback=&s;
-	   con=s.connect(this->slot());
+	   con=s.connect(this->make_slot());
 	}
 	void unset_signal()
 	{  con.disconnect();
