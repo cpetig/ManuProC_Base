@@ -8,6 +8,7 @@ copy Model.h BaseObjects
 copy ModelPlex.h BaseObjects
 copy Model_ref_bvector.h BaseObjects
 copy RadioModel.h BaseObjects
+copy SignalPlex.h BaseObjects
 md Misc
 copy Ausgabe_neu.h Misc
 copy CacheStatic.h Misc
@@ -43,7 +44,6 @@ copy Rundungsmacros.h Misc
 copy SQLerror.h Misc
 copy SQLerror_postgres.h Misc
 copy SQLerror_sqlite.h Misc
-copy SignalPlex.h Misc
 copy Tag.h Misc
 copy TagStream.h Misc
 copy TemporaryValue.h Misc
