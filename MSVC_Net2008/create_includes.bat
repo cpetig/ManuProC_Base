@@ -7,6 +7,7 @@ copy MVC.h BaseObjects
 copy Model.h BaseObjects
 copy ModelPlex.h BaseObjects
 copy Model_ref_bvector.h BaseObjects
+copy RadioModel.h BaseObjects
 md Misc
 copy Ausgabe_neu.h Misc
 copy CacheStatic.h Misc
@@ -38,7 +39,6 @@ copy Long.h Misc
 copy Pointer.h Misc
 copy Postgres.h Misc
 copy Query.h Misc
-copy RadioModel.h Misc
 copy Rundungsmacros.h Misc
 copy SQLerror.h Misc
 copy SQLerror_postgres.h Misc
