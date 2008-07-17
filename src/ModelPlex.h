@@ -46,8 +46,10 @@
 extern ManuProC::Tracer::Channel modelplex_chan;
 #define MODELPLEX_DEBUG(msg,arg...) ManuProC::Trace _mpx(modelplex_chan,msg,##arg)
 #define MODELPLEX_DEBUG_ON
+#elif defined(_MSC_VER)
+# define MODELPLEX_DEBUG(msg,arg,arg2)
 #else
-#define MODELPLEX_DEBUG(msg,arg...)
+# define MODELPLEX_DEBUG(msg,arg...)
 #endif
 
 template <class T>

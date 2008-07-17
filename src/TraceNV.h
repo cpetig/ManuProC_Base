@@ -24,11 +24,20 @@
 
 #include <Misc/Trace.h>
 
+#ifndef _MSC_VER // have to solve this later
 template <class T> 
  struct ManuProC::NameValue_s<T> NV(const std::string &n, const T &v)
  { return ManuProC::NameValue_s<T>(n,v); }
 
 // NV1(a+b) gives NV("a+b",a+b)
 #define NV1(x) NV(#x,x)
+#else
+template <typename T> 
+ typename ManuProC::NameValue_s<T> NV(const std::string &n, const T &v)
+ { return ManuProC::NameValue_s<T>(n,v); }
+
+// NV1(a+b) gives NV("a+b",a+b)
+#define NV1(x) NV(#x,x)
+#endif
 
 #endif

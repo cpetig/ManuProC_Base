@@ -225,7 +225,7 @@ inline void Tag::setBoolAttr(const std::string &name, bool val)
 template <class T>
  T Tag::parse_value_def(const std::string &val, const T &def)
 {  try { return parse_value<T>(val); } 
-   catch (std::out_of_range &e) { return def; }
+   catch (std::out_of_range &) { return def; }
 }
 
 template <class T>

@@ -50,7 +50,7 @@ namespace Tracer {
 
 // never use this class to store information, it's only designed to 
 //  pass it's arguments immediately to an operator<<, not to store them
-template <class T> 
+template <typename T> 
  struct NameValue_s
 {	const std::string &name;
 	const T &value;
@@ -62,6 +62,10 @@ template <class T>
 #ifndef _MSC_VER
 template <class T>
  struct NameValue_s<T> NameValue(const std::string &n, const T &v)
+ { return NameValue_s<T>(n,v); }
+#else
+template <typename T>
+ typename NameValue_s<T> NameValue(const std::string &n, const typename T &v)
  { return NameValue_s<T>(n,v); }
 #endif
 
