@@ -1,18 +1,33 @@
 EXPORTS
-	?FunctionEnd@Tracer@ManuProC@@YAXXZ
-	?FunctionStart@Tracer@ManuProC@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
-	?enabled@Tracer@ManuProC@@YA_NI@Z
-	?itos@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
-	??1TagStream@@QAE@XZ
-	?write@TagStream@@QBEXAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@_N@Z
-	?find@Tag@@QAEPAV1@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?getContent@TagStream@@QAEAAVTag@@XZ
-	??Mgermanstring@@QBE_NABV0@@Z
-	?debug@Tag@@QBEXHH@Z
-	?channels@Tracer@ManuProC@@3VUniqueValue@@A
-	?itos0p@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HH_N@Z
+	??$create_value@H@Tag@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABH@Z
+	??$create_value@N@Tag@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABN@Z
+	??$create_value@_N@Tag@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AB_N@Z
 	??$parse_value@H@Tag@@SAHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	??$parse_value@M@Tag@@SAMABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	?utf82iso@TagStream@@SAXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??$parse_value@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Tag@@SA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABV12@@Z
+	??$parse_value@_N@Tag@@SA_NABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??0Environment@Tracer@ManuProC@@QAE@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@I@Z
+	??0TagStream@@QAE@AAV?$basic_istream@DU?$char_traits@D@std@@@std@@@Z
+	??0TagStream@@QAE@XZ
+	??1TagStream@@QAE@XZ
+	??Mgermanstring@@QBE_NABV0@@Z
+	?FunctionEnd@Tracer@ManuProC@@YAXXZ
+	?FunctionStart@Tracer@ManuProC@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
+	?attfind@Tag@@QBE?AVconst_iterator@?$_Tree@V?$_Tmap_traits@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@U?$less@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@2@V?$allocator@U?$pair@$$CBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V12@@std@@@2@$0A@@std@@@std@@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
+	?channels@Tracer@ManuProC@@3VUniqueValue@@A
+	?debug@Tag@@QBEXHH@Z
+	?dtos@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@N@Z
+	?enabled@Tracer@ManuProC@@YA_NI@Z
+	?find@Tag@@QAEPAV1@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?find@Tag@@QBEPBV1@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?getContent@TagStream@@QAEAAVTag@@XZ
 	?hasAttr@Tag@@QBE_NABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-	
+	?itos0p@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HH_N@Z
+	?itos@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
+	?push_back@Tag@@QAEAAV1@V1@@Z
+	?remove_last_from@ManuProC@@YAXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABV23@@Z
+	?setAttr_ll@Tag@@QAEXABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0@Z
+	?setEncoding@TagStream@@QAEXABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?set_impl@Global_Settings@@SAXP6A?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HABV23@0@ZP6AXH000@Z@Z
+	?utf82iso@TagStream@@SAXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?write@TagStream@@QBEXAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@_N@Z
