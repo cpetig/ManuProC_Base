@@ -43,7 +43,7 @@
 				AdditionalOptions="/wd4290 /wd4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="../src;.;../../libsigc++-2.0.18;../../libsigc++-2.0.18/MSVC_Net2003;../../libsigc++-2.2.2;../../libsigc++-2.2.2/MSVC_Net2003"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS;libManuProC_Base_COMPILATION;DLL_EXPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,6 +65,7 @@
 				AdditionalDependencies="sigc-2.0d.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\libsigc++-2.0.18\MSVC_Net2003\Debug;..\..\libsigc++-2.2.2\MSVC_Net2003\Debug"
+				ModuleDefinitionFile="ManuProC_Base.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -251,6 +252,10 @@
 			</File>
 			<File
 				RelativePath="..\src\itos.cc"
+				>
+			</File>
+			<File
+				RelativePath=".\ManuProC_Base.def"
 				>
 			</File>
 			<File

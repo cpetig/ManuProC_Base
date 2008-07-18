@@ -1,0 +1,18 @@
+EXPORTS
+	?FunctionEnd@Tracer@ManuProC@@YAXXZ
+	?FunctionStart@Tracer@ManuProC@@YAAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@4@@Z
+	?enabled@Tracer@ManuProC@@YA_NI@Z
+	?itos@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z
+	??1TagStream@@QAE@XZ
+	?write@TagStream@@QBEXAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@_N@Z
+	?find@Tag@@QAEPAV1@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?getContent@TagStream@@QAEAAVTag@@XZ
+	??Mgermanstring@@QBE_NABV0@@Z
+	?debug@Tag@@QBEXHH@Z
+	?channels@Tracer@ManuProC@@3VUniqueValue@@A
+	?itos0p@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HH_N@Z
+	??$parse_value@H@Tag@@SAHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	??$parse_value@M@Tag@@SAMABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?utf82iso@TagStream@@SAXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	?hasAttr@Tag@@QBE_NABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+	

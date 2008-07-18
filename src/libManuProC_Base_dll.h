@@ -20,7 +20,7 @@
 #ifndef LIBMPC_BASE_DLL_H
 #define LIBMPC_BASE_DLL_H
 
-#ifdef __MINGW32__
+#if defined __MINGW32__ || defined WIN32
 #if defined(libManuProC_Base_COMPILATION) && defined(DLL_EXPORT)
 #define LIBMPC_BASE_API __declspec(dllexport) 
 #elif !defined(libManuProC_Base_COMPILATION)
