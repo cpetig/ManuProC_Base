@@ -31,3 +31,5 @@ EXPORTS
 	?set_impl@Global_Settings@@SAXP6A?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@HABV23@0@ZP6AXH000@Z@Z
 	?utf82iso@TagStream@@SAXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?write@TagStream@@QBEXAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@_N@Z
+	?Enable@Tracer@ManuProC@@YAXI_N@Z
+	
