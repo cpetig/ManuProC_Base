@@ -1,6 +1,6 @@
 // $Id: TagStream.cc,v 1.10 2004/06/04 10:36:32 christof Exp $
 /*  glade--: C++ frontend for glade (Gtk+ User Interface Builder)
- *  Copyright (C) 1998-2004  Christof Petig
+ *  Copyright (C) 1998-2008  Christof Petig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -287,7 +287,7 @@ char *TagStream::next_tag(Tag *parent)
 	 if (recode_load_vfunc) (*recode_load_vfunc)(newtagtype);         
          Tag *newtag(&parent->push_back(Tag(newtagtype,std::string())));
          while (tagend)
-         {  while (isspace(*tagend)) tagend++;
+         {  while (isspace((unsigned char)*tagend)) tagend++;
             if (*tagend=='?')
             {  if (tagend[1]!='>') ERROR2("strange tag end (?[^>])",tag);
                set_pointer(tagend+2);
@@ -366,7 +366,7 @@ char *TagStream::next_tag(Tag *parent)
          Tag *newtag(&parent->push_back(Tag(newtagtype,std::string())));
          // read attributes
          while (tagend)
-         {  while (isspace(*tagend)) tagend++;
+         {  while (isspace((unsigned char)*tagend)) tagend++;
             if (*tagend=='/')
             {  if (tagend[1]!='>') ERROR2("strange tag end (/[^>])",tag);
                set_pointer(tagend+2);
@@ -447,7 +447,7 @@ static const char HEX[]="0123456789ABCDEF";
 static void toXML(std::string &s)
 {  // for (std::string::iterator i=s.begin();i!=s.end();)
    for (unsigned i=0;i<s.size();)
-   {  if (isalnum(s[i]) 
+   {  if (isalnum((unsigned char)s[i]) 
 		|| (unsigned char)s[i]>=160
 		|| (s[i] && strchr("# @^+-*/.,?!$'|~[]{}()_:;=",s[i]))) 
          ++i;

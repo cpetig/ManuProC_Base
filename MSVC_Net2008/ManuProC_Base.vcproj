@@ -48,6 +48,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				ProgramDataBaseFileName="$(IntDir)\mpc_base_vc90.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
