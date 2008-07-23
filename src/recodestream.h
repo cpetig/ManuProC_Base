@@ -34,7 +34,10 @@ class recodebuf : public std::streambuf
 protected:
    int_type overflow(int_type c) 
       {  if (c!=-1)
-         {  assert(!(c&0x80));
+         {
+#ifndef _MSC_VER // this check assumes glibc ;-)
+			assert(!(c&0x80));
+#endif
             o << char(c);
          }
          return c;
