@@ -19,7 +19,8 @@
 
 #ifndef RECODESTREAM_H
 #define RECODESTREAM_H
-#if defined(__MINGW32__) || MPC_SIGC_VERSION>=0x120
+#include <ManuProCConfig.h>
+#if defined(__MINGW32__) || defined(WIN32) || MPC_SIGC_VERSION>=0x120
 
 #include <iostream>
 #include <Misc/TagStream.h>
