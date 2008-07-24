@@ -32,4 +32,16 @@ EXPORTS
 	?utf82iso@TagStream@@SAXAAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	?write@TagStream@@QBEXAAV?$basic_ostream@DU?$char_traits@D@std@@@std@@_N@Z
 	?Enable@Tracer@ManuProC@@YAXI_N@Z
+	??$create@H@ManuProC@@YA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABH@Z
+	??MEntryValueReverseSort@@UBE_NABVEntryValueBase@@@Z
+	??8EntryValueReverseSort@@UBE_NABVEntryValueBase@@@Z
+	??0Global_Settings@@QAE@HABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@0@Z
+	?create@Global_Settings@@SAXHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@00@Z
+	??8EntryValueSort@@UBE_NABVEntryValueBase@@@Z
+	??MEntryValueSort@@UBE_NABVEntryValueBase@@@Z
+	?Formatiere@@YA?BV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@_KIIPBD1D@Z
+	?PrintUncaughtExceptions@ManuProC@@YAXXZ
+	??BEntryValueBase@@UBE_NXZ
+	??MEntryValueBase@@UBE_NABV0@@Z
+	??8EntryValueBase@@UBE_NABV0@@Z
 	
