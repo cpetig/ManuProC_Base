@@ -44,4 +44,5 @@ EXPORTS
 	??BEntryValueBase@@UBE_NXZ
 	??MEntryValueBase@@UBE_NABV0@@Z
 	??8EntryValueBase@@UBE_NABV0@@Z
+	??$parse@H@ManuProC@@YAHABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
 	
