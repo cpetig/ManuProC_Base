@@ -67,7 +67,11 @@ then
    
    AC_MSG_CHECKING(for ecpg version)
    tmp_CXXFLAGS="$CXXFLAGS"
+   tmp_LIBS="$LIBS"
+   tmp_LDFLAGS="$LDFLAGS"
    CXXFLAGS="$CXXFLAGS $ECPG_INCLUDES"
+   LIBS="$LIBS $ECPG_LIBS"
+   LDFLAGS="$LDFLAGS $ECPG_LDFLAGS"
    AC_COMPILE_IFELSE([
 #include <ecpgtype.h>
 #include <ecpglib.h>
@@ -90,6 +94,8 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
 		], [ac_no_descriptor_lvalue=yes; AC_DEFINE(HAVE_LIBECPG6_UP, 1, [Define to 1 if using 8.3+ ecpg (no ECPGdescriptor_lvalue).])])
    AC_MSG_RESULT($ac_no_descriptor_lvalue)
    CXXFLAGS="$tmp_CXXFLAGS"
+   LDFLAGS="$tmp_LDFLAGS"
+   LIBS="tmp_LIBS"
 
    AC_MSG_CHECKING(for standard database name)
    DEFAULT_DB="$USER"
