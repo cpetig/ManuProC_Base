@@ -26,6 +26,7 @@
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				ProgramDataBaseFileName="$(IntDir)\mpc_base_vc90.pdb"
 				WarningLevel="3"
@@ -77,6 +78,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS;libManuProC_Base_COMPILATION;DLL_EXPORT;TAG_OMIT_DEPRECATED"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"/>
@@ -127,6 +129,9 @@
 			</File>
 			<File
 				RelativePath="..\src\auto_conversion.cc">
+			</File>
+			<File
+				RelativePath="..\..\gtkmm\MSVC_Net2003\blank.cpp">
 			</File>
 			<File
 				RelativePath="..\src\create_parse.cc">
