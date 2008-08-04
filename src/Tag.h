@@ -199,6 +199,7 @@ public:
 		variable=(parent).find(++(variable),(type)))
 
 // you can skip these declarations while reading this file
+#if !defined(_MSC_VER) || _MSC_VER>=1400 // these cause a VC7 internal compiler error
 template <> std::string Tag::create_value<int>(const int &val);
 template <> std::string Tag::create_value<double>(const double &val);
 template <> std::string Tag::create_value<bool>(const bool &val);
@@ -208,6 +209,7 @@ template <> long Tag::parse_value<long>(const std::string &value) throw(std::out
 template <> double Tag::parse_value<double>(const std::string &value) throw(std::out_of_range);
 template <> float Tag::parse_value<float>(const std::string &value) throw(std::out_of_range);
 template <> std::string Tag::parse_value<std::string>(const std::string &value) throw(std::out_of_range);
+#endif 
 template <>
  inline void Tag::setAttr<std::string>(const std::string &name, std::string const& val)
 { setAttr_ll(name,val); }

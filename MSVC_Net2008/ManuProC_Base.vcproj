@@ -1,97 +1,66 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="7.10"
 	Name="ManuProc_Base"
 	ProjectGUID="{C81ADBBC-30CB-402A-951F-3A0C4A48858E}"
 	RootNamespace="ManuProc_Base"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="196613"
-	>
+	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
-			Name="Win32"
-		/>
+			Name="Win32"/>
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			CharacterSet="1">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4290 /wd4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="../src;.;../../libsigc++;../../libsigc++/MSVC_Net2003"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS;libManuProC_Base_COMPILATION;DLL_EXPORT"
-				MinimalRebuild="true"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS;libManuProC_Base_COMPILATION;DLL_EXPORT;TAG_OMIT_DEPRECATED"
+				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				ProgramDataBaseFileName="$(IntDir)\mpc_base_vc90.pdb"
 				WarningLevel="3"
-				DebugInformationFormat="4"
-			/>
+				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sigc-2.0d.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\libsigc++\MSVC_Net2003\Debug"
 				ModuleDefinitionFile="ManuProC_Base.def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="TRUE"
 				SubSystem="2"
-				TargetMachine="1"
-			/>
+				TargetMachine="1"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCManifestTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCResourceCompilerTool"/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
+				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -99,77 +68,51 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				EnableIntrinsicFunctions="true"
+				EnableIntrinsicFunctions="TRUE"
 				AdditionalIncludeDirectories="../src;.;../../libsigc++;../../libsigc++/MSVC_Net2003"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS;libManuProC_Base_COMPILATION;DLL_EXPORT"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MANUPROC_BASE_EXPORTS;libManuProC_Base_COMPILATION;DLL_EXPORT;TAG_OMIT_DEPRECATED"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
+				DebugInformationFormat="3"/>
 			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sigc-2.0.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\libsigc++\MSVC_Net2003\Release"
 				ModuleDefinitionFile="ManuProC_Base.def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				TargetMachine="1"
-			/>
+				TargetMachine="1"/>
 			<Tool
-				Name="VCALinkTool"
-			/>
+				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCManifestTool"
-			/>
+				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCXDCMakeTool"
-			/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCBscMakeTool"
-			/>
+				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCFxCopTool"
-			/>
+				Name="VCResourceCompilerTool"/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
+				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"
-			/>
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -178,459 +121,346 @@
 		<Filter
 			Name="Quelldateien"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
-			>
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\src\Ausgabe_neu.cc"
-				>
+				RelativePath="..\src\Ausgabe_neu.cc">
 			</File>
 			<File
-				RelativePath="..\src\auto_conversion.cc"
-				>
+				RelativePath="..\src\auto_conversion.cc">
 			</File>
 			<File
-				RelativePath="..\src\create_parse.cc"
-				>
+				RelativePath="..\src\create_parse.cc">
 			</File>
 			<File
-				RelativePath="..\src\Datum.cc"
-				>
+				RelativePath="..\src\Datum.cc">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueBase.cc"
-				>
+				RelativePath="..\src\EntryValueBase.cc">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueDatum.cc"
-				>
+				RelativePath="..\src\EntryValueDatum.cc">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueIntGermanString.cc"
-				>
+				RelativePath="..\src\EntryValueIntGermanString.cc">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueIntString.cc"
-				>
+				RelativePath="..\src\EntryValueIntString.cc">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueSort.cc"
-				>
+				RelativePath="..\src\EntryValueSort.cc">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueTimeStamp.cc"
-				>
+				RelativePath="..\src\EntryValueTimeStamp.cc">
 			</File>
 			<File
-				RelativePath="..\src\Event.cc"
-				>
+				RelativePath="..\src\Event.cc">
 			</File>
 			<File
-				RelativePath="..\src\exception.cc"
-				>
+				RelativePath="..\src\exception.cc">
 			</File>
 			<File
-				RelativePath="..\src\fixedpoint.cc"
-				>
+				RelativePath="..\src\fixedpoint.cc">
 			</File>
 			<File
-				RelativePath="..\src\germanstring.cc"
-				>
+				RelativePath="..\src\germanstring.cc">
 			</File>
 			<File
-				RelativePath="..\src\Global_Settings.cc"
-				>
+				RelativePath="..\src\Global_Settings.cc">
 			</File>
 			<File
-				RelativePath="..\src\Handles.cc"
-				>
+				RelativePath="..\src\Handles.cc">
 			</File>
 			<File
-				RelativePath="..\src\Interval.cc"
-				>
+				RelativePath="..\src\Interval.cc">
 			</File>
 			<File
-				RelativePath="..\src\IOerror.cc"
-				>
+				RelativePath="..\src\IOerror.cc">
 			</File>
 			<File
-				RelativePath="..\src\itos.cc"
-				>
+				RelativePath="..\src\itos.cc">
 			</File>
 			<File
-				RelativePath=".\ManuProC_Base.def"
-				>
+				RelativePath=".\ManuProC_Base.def">
 			</File>
 			<File
-				RelativePath="..\src\ManuProcEntity.cc"
-				>
+				RelativePath="..\src\ManuProcEntity.cc">
 			</File>
 			<File
-				RelativePath="..\src\mystring.cc"
-				>
+				RelativePath="..\src\mystring.cc">
 			</File>
 			<File
-				RelativePath="..\src\string0.c"
-				>
+				RelativePath="..\src\string0.c">
 			</File>
 			<File
-				RelativePath="..\src\Tag.cc"
-				>
+				RelativePath="..\src\Tag.cc">
 			</File>
 			<File
-				RelativePath="..\src\TagStream.cc"
-				>
+				RelativePath="..\src\TagStream.cc">
 			</File>
 			<File
-				RelativePath="..\src\time_t_ostr.cc"
-				>
+				RelativePath="..\src\time_t_ostr.cc">
 			</File>
 			<File
-				RelativePath="..\src\Trace.cc"
-				>
+				RelativePath="..\src\Trace.cc">
 			</File>
 			<File
-				RelativePath="..\src\Transaction_sqlite.cc"
-				>
+				RelativePath="..\src\Transaction_sqlite.cc">
 			</File>
 			<File
-				RelativePath="..\src\TS_base64.cc"
-				>
+				RelativePath="..\src\TS_base64.cc">
 			</File>
 			<File
-				RelativePath="..\src\Zeitpunkt_new.cc"
-				>
+				RelativePath="..\src\Zeitpunkt_new.cc">
 			</File>
 			<File
-				RelativePath="..\src\Zeitpunkt_new_ostr.cc"
-				>
+				RelativePath="..\src\Zeitpunkt_new_ostr.cc">
 			</File>
 			<File
-				RelativePath="..\src\Zeitpunkt_new_write.cc"
-				>
+				RelativePath="..\src\Zeitpunkt_new_write.cc">
 			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\src\algorithm.h"
-				>
+				RelativePath="..\src\algorithm.h">
 			</File>
 			<File
-				RelativePath="..\src\Ausgabe_neu.h"
-				>
+				RelativePath="..\src\Ausgabe_neu.h">
 			</File>
 			<File
-				RelativePath="..\src\auto_init.h"
-				>
+				RelativePath="..\src\auto_init.h">
 			</File>
 			<File
-				RelativePath="..\src\bitmask.h"
-				>
+				RelativePath="..\src\bitmask.h">
 			</File>
 			<File
-				RelativePath="..\src\c++ostream.h"
-				>
+				RelativePath="..\src\c++ostream.h">
 			</File>
 			<File
-				RelativePath="..\src\Cache_Pointer.h"
-				>
+				RelativePath="..\src\Cache_Pointer.h">
 			</File>
 			<File
-				RelativePath="..\src\CacheStatic.h"
-				>
+				RelativePath="..\src\CacheStatic.h">
 			</File>
 			<File
-				RelativePath="..\src\callbackbuf.h"
-				>
+				RelativePath="..\src\callbackbuf.h">
 			</File>
 			<File
-				RelativePath="..\src\compiler_ports.h"
-				>
+				RelativePath="..\src\compiler_ports.h">
 			</File>
 			<File
-				RelativePath="..\src\create_parse.h"
-				>
+				RelativePath="..\src\create_parse.h">
 			</File>
 			<File
-				RelativePath="..\src\ctime_assert.h"
-				>
+				RelativePath="..\src\ctime_assert.h">
 			</File>
 			<File
-				RelativePath="..\src\Date.h"
-				>
+				RelativePath="..\src\Date.h">
 			</File>
 			<File
-				RelativePath="..\src\Datum.h"
-				>
+				RelativePath="..\src\Datum.h">
 			</File>
 			<File
-				RelativePath="..\src\dbconnect.h"
-				>
+				RelativePath="..\src\dbconnect.h">
 			</File>
 			<File
-				RelativePath="..\src\EmptyInt_4TeX.h"
-				>
+				RelativePath="..\src\EmptyInt_4TeX.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueBase.h"
-				>
+				RelativePath="..\src\EntryValueBase.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueDatum.h"
-				>
+				RelativePath="..\src\EntryValueDatum.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueEmptyInt.h"
-				>
+				RelativePath="..\src\EntryValueEmptyInt.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueFixed.h"
-				>
+				RelativePath="..\src\EntryValueFixed.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueFixedEinheit.h"
-				>
+				RelativePath="..\src\EntryValueFixedEinheit.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueIntGermanString.h"
-				>
+				RelativePath="..\src\EntryValueIntGermanString.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueIntString.h"
-				>
+				RelativePath="..\src\EntryValueIntString.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueInvert.h"
-				>
+				RelativePath="..\src\EntryValueInvert.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueSort.h"
-				>
+				RelativePath="..\src\EntryValueSort.h">
 			</File>
 			<File
-				RelativePath="..\src\EntryValueTimeStamp.h"
-				>
+				RelativePath="..\src\EntryValueTimeStamp.h">
 			</File>
 			<File
-				RelativePath="..\src\Event.h"
-				>
+				RelativePath="..\src\Event.h">
 			</File>
 			<File
-				RelativePath="..\src\exception.h"
-				>
+				RelativePath="..\src\exception.h">
 			</File>
 			<File
-				RelativePath="..\src\ExtraColumns.h"
-				>
+				RelativePath="..\src\ExtraColumns.h">
 			</File>
 			<File
-				RelativePath="..\src\FetchIStream.h"
-				>
+				RelativePath="..\src\FetchIStream.h">
 			</File>
 			<File
-				RelativePath="..\src\FILEstream.h"
-				>
+				RelativePath="..\src\FILEstream.h">
 			</File>
 			<File
-				RelativePath="..\src\fixedpoint.h"
-				>
+				RelativePath="..\src\fixedpoint.h">
 			</File>
 			<File
-				RelativePath="..\src\germanstring.h"
-				>
+				RelativePath="..\src\germanstring.h">
 			</File>
 			<File
-				RelativePath="..\src\Global_Settings.h"
-				>
+				RelativePath="..\src\Global_Settings.h">
 			</File>
 			<File
-				RelativePath="..\src\Handles.h"
-				>
+				RelativePath="..\src\Handles.h">
 			</File>
 			<File
-				RelativePath="..\src\i18n.h"
-				>
+				RelativePath="..\src\i18n.h">
 			</File>
 			<File
-				RelativePath="..\src\inbetween.h"
-				>
+				RelativePath="..\src\inbetween.h">
 			</File>
 			<File
-				RelativePath="..\src\Interval.h"
-				>
+				RelativePath="..\src\Interval.h">
 			</File>
 			<File
-				RelativePath="..\src\intmap.h"
-				>
+				RelativePath="..\src\intmap.h">
 			</File>
 			<File
-				RelativePath="..\src\IOerror.h"
-				>
+				RelativePath="..\src\IOerror.h">
 			</File>
 			<File
-				RelativePath="..\src\itos.h"
-				>
+				RelativePath="..\src\itos.h">
 			</File>
 			<File
-				RelativePath="..\src\Kalenderwoche.h"
-				>
+				RelativePath="..\src\Kalenderwoche.h">
 			</File>
 			<File
-				RelativePath="..\src\libManuProC_Base_dll.h"
-				>
+				RelativePath="..\src\libManuProC_Base_dll.h">
 			</File>
 			<File
-				RelativePath="..\src\Long.h"
-				>
+				RelativePath="..\src\Long.h">
 			</File>
 			<File
-				RelativePath=".\ManuProCConfig.h"
-				>
+				RelativePath=".\ManuProCConfig.h">
 			</File>
 			<File
-				RelativePath="..\src\ManuProcEintrag.h"
-				>
+				RelativePath="..\src\ManuProcEintrag.h">
 			</File>
 			<File
-				RelativePath="..\src\ManuProcEntity.h"
-				>
+				RelativePath="..\src\ManuProcEntity.h">
 			</File>
 			<File
-				RelativePath="..\src\ManuProcVorgang.h"
-				>
+				RelativePath="..\src\ManuProcVorgang.h">
 			</File>
 			<File
-				RelativePath="..\src\Model.h"
-				>
+				RelativePath="..\src\Model.h">
 			</File>
 			<File
-				RelativePath="..\src\Model_ref_bvector.h"
-				>
+				RelativePath="..\src\Model_ref_bvector.h">
 			</File>
 			<File
-				RelativePath="..\src\ModelPlex.h"
-				>
+				RelativePath="..\src\ModelPlex.h">
 			</File>
 			<File
-				RelativePath="..\src\MVC.h"
-				>
+				RelativePath="..\src\MVC.h">
 			</File>
 			<File
-				RelativePath="..\src\mystream.h"
-				>
+				RelativePath="..\src\mystream.h">
 			</File>
 			<File
-				RelativePath="..\src\mystring.h"
-				>
+				RelativePath="..\src\mystring.h">
 			</File>
 			<File
-				RelativePath="..\src\pg_type.h"
-				>
+				RelativePath="..\src\pg_type.h">
 			</File>
 			<File
-				RelativePath="..\src\Pointer.h"
-				>
+				RelativePath="..\src\Pointer.h">
 			</File>
 			<File
-				RelativePath="..\src\Postgres.h"
-				>
+				RelativePath="..\src\Postgres.h">
 			</File>
 			<File
-				RelativePath="..\src\Query.h"
-				>
+				RelativePath="..\src\Query.h">
 			</File>
 			<File
-				RelativePath="..\src\RadioModel.h"
-				>
+				RelativePath="..\src\RadioModel.h">
 			</File>
 			<File
-				RelativePath="..\src\recodestream.h"
-				>
+				RelativePath="..\src\recodestream.h">
 			</File>
 			<File
-				RelativePath="..\src\relops.h"
-				>
+				RelativePath="..\src\relops.h">
 			</File>
 			<File
-				RelativePath="..\src\Rundungsmacros.h"
-				>
+				RelativePath="..\src\Rundungsmacros.h">
 			</File>
 			<File
-				RelativePath="..\src\safemap.h"
-				>
+				RelativePath="..\src\safemap.h">
 			</File>
 			<File
-				RelativePath="..\src\SignalPlex.h"
-				>
+				RelativePath="..\src\SignalPlex.h">
 			</File>
 			<File
-				RelativePath="..\src\SQLerror.h"
-				>
+				RelativePath="..\src\SQLerror.h">
 			</File>
 			<File
-				RelativePath="..\src\SQLerror_postgres.h"
-				>
+				RelativePath="..\src\SQLerror_postgres.h">
 			</File>
 			<File
-				RelativePath="..\src\SQLerror_sqlite.h"
-				>
+				RelativePath="..\src\SQLerror_sqlite.h">
 			</File>
 			<File
-				RelativePath="..\src\string0.h"
-				>
+				RelativePath="..\src\string0.h">
 			</File>
 			<File
-				RelativePath="..\src\Tag.h"
-				>
+				RelativePath="..\src\Tag.h">
 			</File>
 			<File
-				RelativePath="..\src\TagStream.h"
-				>
+				RelativePath="..\src\TagStream.h">
 			</File>
 			<File
-				RelativePath="..\src\TemporaryValue.h"
-				>
+				RelativePath="..\src\TemporaryValue.h">
 			</File>
 			<File
-				RelativePath="..\src\TimeStamp.h"
-				>
+				RelativePath="..\src\TimeStamp.h">
 			</File>
 			<File
-				RelativePath="..\src\Trace.h"
-				>
+				RelativePath="..\src\Trace.h">
 			</File>
 			<File
-				RelativePath="..\src\TraceNV.h"
-				>
+				RelativePath="..\src\TraceNV.h">
 			</File>
 			<File
-				RelativePath="..\src\Transaction.h"
-				>
+				RelativePath="..\src\Transaction.h">
 			</File>
 			<File
-				RelativePath="..\src\UniqueValue.h"
-				>
+				RelativePath="..\src\UniqueValue.h">
 			</File>
 			<File
-				RelativePath="..\src\vectormap.h"
-				>
+				RelativePath="..\src\vectormap.h">
 			</File>
 			<File
-				RelativePath="..\src\Zeitpunkt_new.h"
-				>
+				RelativePath="..\src\Zeitpunkt_new.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath=".\libManuProC_Base.rc"
-				>
+				RelativePath=".\libManuProC_Base.rc">
 			</File>
 		</Filter>
 	</Files>
