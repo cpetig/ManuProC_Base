@@ -34,6 +34,9 @@ extern "C" {
 #ifdef __MINGW32__
 int vsnprintf(char *str, size_t size, const char  *format, va_list ap);
 #endif
+#if defined _MSC_VER  && _MSC_VER<1400  // VC7 is different ...
+#define vsnprintf _vsnprintf
+#endif
 
 static inline int snprintf0(char *str,unsigned long n,char const *fmt,...)
 /*	__attribute__((format (printf,  3 ,   4 ))) */
