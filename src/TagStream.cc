@@ -293,7 +293,9 @@ char *TagStream::next_tag(Tag *parent)
                set_pointer(tagend+2);
                static std::string s_xml="?xml";
                if (newtag->Type()==s_xml) 
-               {  setEncoding(newtag->getAttr("encoding"));
+			   {  
+				   std::string defvalue="UTF-8";
+				   setEncoding(newtag->getAttr_def("encoding",defvalue));
                }
                goto continue_outer;
             }
