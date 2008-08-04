@@ -42,7 +42,11 @@ template <class T>
 	Model(const Model<T> &x);
 	const Model &operator=(const Model<T> &x);
 public:
+#if defined _MSC_VER && _MSC_VER<1400
+	Model() { value=T(); }
+#else
 	Model() : value() {}
+#endif
 //	Model(const Model<T> &x) : value(x.value) {}
 	Model(const T &v) : value(v) {}
 	// g++ 2.95 does not use this ...
