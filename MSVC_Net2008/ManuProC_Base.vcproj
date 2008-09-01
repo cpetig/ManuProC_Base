@@ -36,11 +36,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sigc-2.0d.lib"
+				OutputFile="../../gtk-dev/bin/$(ProjectName)d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\libsigc++\MSVC_Net2003\Debug"
 				ModuleDefinitionFile="ManuProC_Base.def"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
+				ImportLibrary="$(ConfigurationName)/$(TargetName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
