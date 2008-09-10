@@ -88,9 +88,59 @@ static void print_exception_t()
    _exit(1);
 }
 
+#ifdef _MSC_VER
+#include "windows.h"
+/* This function will be called when a trap occurs. Thanks to Jacob
+   Navia for his contribution. */
+
+static long CALLBACK 
+_gnu_exception_handler (EXCEPTION_POINTERS * exception_data)
+{
+  long action = EXCEPTION_CONTINUE_SEARCH;
+  int reset_fpu = 0;
+
+  switch (exception_data->ExceptionRecord->ExceptionCode)
+    {
+    case EXCEPTION_ACCESS_VIOLATION:
+      /* test if the user has set SIGSEGV */
+      break;
+
+    case EXCEPTION_ILLEGAL_INSTRUCTION:
+    case EXCEPTION_PRIV_INSTRUCTION:
+      /* test if the user has set SIGILL */
+      break;
+
+    case EXCEPTION_FLT_INVALID_OPERATION:
+    case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+    case EXCEPTION_FLT_DENORMAL_OPERAND:
+    case EXCEPTION_FLT_OVERFLOW:
+    case EXCEPTION_FLT_UNDERFLOW:
+    case EXCEPTION_FLT_INEXACT_RESULT:
+      reset_fpu = 1;
+      /* fall through. */
+
+    case EXCEPTION_INT_DIVIDE_BY_ZERO:
+      /* test if the user has set SIGFPE */
+      break;
+
+    default:
+      break;
+    }
+  return action;
+}
+#endif
+
 void ManuProC::PrintUncaughtExceptions() throw()
 {
-#if __GNUC__ == 2 || ( __GNUC__ == 3 && __GNUC_MINOR__ < 2 )
+#ifdef _MSC_VER
+  /*
+   * Set up the top-level exception handler so that signal handling
+   * works as expected. The mapping between ANSI/POSIX signals and
+   * Win32 SE is not 1-to-1, so caveat emptore.
+   * 
+   */
+  SetUnhandledExceptionFilter ((LPTOP_LEVEL_EXCEPTION_FILTER)_gnu_exception_handler);
+#elif __GNUC__ == 2 || ( __GNUC__ == 3 && __GNUC_MINOR__ < 2 )
    std::set_unexpected(print_exception_u);
    std::set_terminate(print_exception_t);
 #elif defined(__GNUC__)
