@@ -20,6 +20,7 @@
 #ifndef AUX_ITOS_H
 #define AUX_ITOS_H
 #include <string>
+std::string utos(unsigned int i);
 std::string itos(int i);
 std::string itos0p(int i, int c=0,bool show_plus=false);
 std::string itos0pad(int i, int p);

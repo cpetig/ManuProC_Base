@@ -55,6 +55,13 @@ std::string itos(int i)
  return(buffer);
 }
 
+std::string utos(unsigned int i)
+{
+ char buffer[100];
+ snprintf(buffer,sizeof buffer,"%u",i);
+ return(buffer);
+}
+
 #include <locale.h>
 
 std::string dtos(double i)
