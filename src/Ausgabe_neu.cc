@@ -20,8 +20,8 @@
 #include "Ausgabe_neu.h"
 #include <iostream>
 #include <cassert>
-#include <string.h>
-#include <stdlib.h> // abort
+#include <cstring>
+#include <cstdlib>
 
 std::ostream &Formatiere(std::ostream &os,unsigned long Zahl, 
 		unsigned int Nachkommastellen,
@@ -189,7 +189,7 @@ std::string string2TeX(const std::string s, int flags) throw()
 	 case '_': in_line=true;
 	    ret+='\\'; ret+=s[i];
 	    break;
-	 case '§': ret+="\\S"; break;
+	 case 167: ret+="\\S"; break; // '§'
 	 case '*':
 	 case '<':
 	 case '>':
@@ -217,7 +217,13 @@ std::string string2TeX(const std::string s, int flags) throw()
 	    else { ret+= s[i]; in_line=true; }
 	    break;
 	 case ' ':
-	    ret+= s[i];
+	    if (flags&SPACE_TO_TILDE)
+            {  ret+='~'; in_line=true; }  
+            else { ret+= s[i]; in_line=true; }
+//	    ret+= s[i];
+	    break;
+         case 0x20ac: // '€'
+            ret+="\\euro{}";
 	    break;
 	 default:
 	    if (value<0x80 || value==(unsigned char)(s[i]))

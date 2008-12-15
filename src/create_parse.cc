@@ -48,7 +48,10 @@ bool ManuProC::parse<bool>(const std::string &value) throw(std::out_of_range)
 #ifdef DE   
    if (!strcasecmp(value.c_str(),"ja")) return true;
    if (!strcasecmp(value.c_str(),"nein")) return false;
-#endif   
+#endif
+   // postgresql database string representation
+   if (!strcasecmp(value.c_str(),"t")) return true;
+   if (!strcasecmp(value.c_str(),"f")) return false;
    std::cerr << "strange bool value: \"" << value << "\"\n";
    return parse<int>(value);
 }
