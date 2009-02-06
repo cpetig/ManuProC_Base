@@ -295,9 +295,17 @@ Query::Row &operator>>(Query::Row &is, fixedpoint<decimals,Ftype,Itype> &v)
    return is;
 }
 
+#include <Misc/pg_type.h>
+
 template <int decimals,class Ftype,class Itype>
 ArgumentList &operator<<(ArgumentList &q, const fixedpoint<decimals,Ftype,Itype> &v)
-{  q.add_argument(v.String(true),1700);
+{  q.add_argument(v.String(true),NUMERICOID);
+   return q;
+}
+
+template <class Ftype,class Itype>
+ArgumentList &operator<<(ArgumentList &q, const fixedpoint_dyn<Ftype,Itype> &v)
+{  q.add_argument(v.String(true),NUMERICOID);
    return q;
 }
 #endif

@@ -20,8 +20,8 @@
 #include <cstdio>
 #include <Misc/itos.h>
 #include <strstream>
-#include <string.h>
-#include <malloc.h>
+#include <cstring>
+#include <cstdlib>
 
 #ifdef __MINGW32__
 extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
@@ -52,6 +52,13 @@ std::string itos(int i)
 {
  char buffer[100];
  snprintf(buffer,sizeof buffer,"%i",i);
+ return(buffer);
+}
+
+std::string utos(unsigned int i)
+{
+ char buffer[100];
+ snprintf(buffer,sizeof buffer,"%u",i);
  return(buffer);
 }
 

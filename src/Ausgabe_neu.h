@@ -51,6 +51,7 @@ extern inline const std::string FormatiereTeX(unsigned long long Zahl,
 
 static const int NEEDCHAR=1;
 static const int BARISNEWLINE=2;
+static const int SPACE_TO_TILDE=4;
 // set this flag to false  if you have not yet changed TeX output to utf-8 
 namespace Ausgabe_neu {
 extern bool TeX_uses_UTF8;
