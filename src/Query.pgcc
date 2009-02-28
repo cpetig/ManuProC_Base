@@ -109,7 +109,7 @@ Query_Row &Query_Row::operator>>(std::string &str)
 	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator"));
    const char *pval = PQgetvalue(result, zeile, naechstesFeld);
    if (pval) str=pval;
-   else str="";
+   else str=std::string();
    if (Query::debugging.on) 
       std::cerr << "FIS result["<<zeile<<','<<naechstesFeld<<"]="<<str << '\n';
    naechstesFeld++;

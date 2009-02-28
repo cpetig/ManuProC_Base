@@ -78,7 +78,7 @@ const std::string ManuProC::Connection::Pass() const throw(AuthError)
 
   passfile.close();
 */
-  return "";
+  return std::string();
 }
 
 

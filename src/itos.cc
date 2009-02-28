@@ -34,7 +34,7 @@ extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
 
 std::string itos0p(int i, int c,bool show_plus)
 {
-  if(i==c) return "";
+  if(i==c) return std::string();
   if(!show_plus || i<0) return itos(i) ;
   return  "+"+itos(i) ;
 }

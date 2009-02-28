@@ -24,7 +24,7 @@
 #endif
 
 EntryValueBase::operator bool() const
-{  return getIntVal()!=int_NaN || getStrVal()!="";
+{  return getIntVal()!=int_NaN || !getStrVal().empty();
 }
 
 bool EntryValueBase::operator==(const EntryValueBase &v) const

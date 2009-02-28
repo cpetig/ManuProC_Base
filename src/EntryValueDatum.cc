@@ -73,7 +73,7 @@ bool EntryValueMonat::operator<(const EntryValueBase &v) const
 
 const std::string EntryValueMonat::getStrVal() const
 { 
- return datum.valid()?datum.MonatName()+"'"+itos(datum.Jahr()).substr(2):"";
+ return datum.valid()?datum.MonatName()+"'"+itos(datum.Jahr()).substr(2):std::string();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ bool EntryValueKalenderwoche::operator<(const EntryValueBase &v) const
 
 const std::string EntryValueKalenderwoche::getStrVal() const
 {
- if(!datum.valid()) return "";
+ if(!datum.valid()) return std::string();
  std::string lj=itos (datum.Jahr()).substr(2);
  return itos(datum.Woche())+"'"+lj;
 }

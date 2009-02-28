@@ -36,7 +36,7 @@ public:
  virtual bool operator<(const EntryValueBase &v) const;
  const ManuProC::Datum &Datum() const { return datum; }
  virtual int getIntVal() const { return int_NaN;}
- virtual const std::string getStrVal() const { return datum.valid()?datum.c_str():"";}
+ virtual const std::string getStrVal() const { return datum.valid()?datum.c_str():std::string();}
 };
 
 class cH_EntryValueDatum : public cH_EntryValue

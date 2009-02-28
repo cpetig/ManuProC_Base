@@ -214,8 +214,8 @@ std::string Zeitpunkt_new::write() const
 std::string Zeitpunkt_new::Short(const ManuProC::Datum &d) const
 { std::string res;
   if (datum!=d) res+=datum.Short()+" ";
-  res+=itos(hour)+":"+(minute<10?"0":"")+itos(minute);
-  if (second || microsecond) res+=std::string(":")+(second<10?"0":"")+itos(second);
+  res+=itos(hour)+":"+(minute<10?"0":std::string())+itos(minute);
+  if (second || microsecond) res+=std::string(":")+(second<10?"0":std::string())+itos(second);
   if (microsecond) res+=","+Formatiere((unsigned long)microsecond,0,6,"","",'0');
   return res;
 }

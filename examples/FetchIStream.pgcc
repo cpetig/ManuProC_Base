@@ -30,7 +30,7 @@ exec sql whenever sqlerror do X();
 #define X() throw SQLerror(__FILELINE__)
 
 int main()
-{  ManuProC::dbconnect(ManuProC::Connection("","template1"));
+{  ManuProC::dbconnect(ManuProC::Connection(std::string(),"template1"));
 /*   ex ec sql allocate descriptor mydesc; */
 
    std::cout << "simple use " << Query("select 1").FetchOne<int>() << '\n';

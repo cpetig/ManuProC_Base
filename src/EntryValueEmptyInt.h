@@ -32,7 +32,7 @@ private: // never never use this nonsense, use a EV_fixedpoint
  
 public:
  EntryValueEmptyInt(int v) : EntryValueIntString(v)
-     { if (!v) strval=""; }
+     { if (!v) strval=std::string(); }
 };
 
 class cH_EntryValueEmptyInt : public cH_EntryValue

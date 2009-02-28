@@ -99,7 +99,7 @@ public:
 	void setFileName(const std::string &s)
 	{  file_name=s; }
 	void setEncoding(const std::string &s);
-	bool write(const std::string &filename="",const std::string &_encoding="");
+	bool write(const std::string &filename=std::string(),const std::string &_encoding=std::string());
 	void write(std::ostream &o,bool compact=false) const;
 	
 	static void utf82iso(std::string &s);

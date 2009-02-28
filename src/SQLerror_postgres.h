@@ -74,9 +74,9 @@ public:
 
 private:
    static void test(const std::string &context,bool rollback)
-   { test(context,"",0,rollback); }
+   { test(context,std::string(),0,rollback); }
    static void test(const std::string &context,int codeok,bool rollback)
-   { test(context,"",codeok,rollback); }
+   { test(context,std::string(),codeok,rollback); }
    static void test(const std::string &context,const std::string &cursor,
 		int codeok,bool rollback); // throw(SQLerror_postgres);
    static void rollback_and_throw(const std::string &context) 

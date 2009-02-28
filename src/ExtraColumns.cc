@@ -160,7 +160,7 @@ Query::Row::Fake ExtraColumns::fake_contents(const std::string &column)
   ManuProC::Trace _t(trace_channel, __FUNCTION__,column);
   if (which->available_columns.find(column)==which->available_columns.end())
     return Query::Row::Fake();
-  ManuProC::Trace(trace_channel, "","insert");
+  ManuProC::Trace(trace_channel, std::string(),"insert");
   which->requested_columns.insert(column);
   int ind=0;
   value_t &v2=column_values[column];

@@ -121,7 +121,7 @@ bool Ausgabe_neu::TeX_uses_UTF8=true;
 
 std::string string2Pg(const std::string s) throw()
 {  unsigned int i;
-   std::string ret="";
+   std::string ret=std::string();
 
    for (i = 0; i<s.size() ; i++)
    {  int value=(unsigned char)(s[i]);
@@ -165,7 +165,7 @@ std::string string2Pg(const std::string s) throw()
 std::string string2TeX(const std::string s, int flags) throw()
 {  unsigned int i;
    bool in_line=false;
-   std::string ret="";
+   std::string ret=std::string();
 
    for (i = 0; i<s.size() ; i++)
    {  int value=(unsigned char)(s[i]);
@@ -253,7 +253,7 @@ std::string string2TeX(const std::string s, int flags) throw()
 
 const std::string FormatiereEmptyInt(long Zahl)
 {
-  if(Zahl==0) return "";
+  if(Zahl==0) return std::string();
   std::string s;
   if(Zahl>=0) return Formatiere((unsigned long)Zahl);
   else        return "-"+Formatiere((unsigned long)-Zahl);

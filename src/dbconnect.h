@@ -51,8 +51,8 @@ public:
     int port;
     
     public:
-     Connection(const std::string &h="", const std::string &d="", 
-                const std::string &u="",const std::string &n="",
+     Connection(const std::string &h=std::string(), const std::string &d=std::string(), 
+                const std::string &u=std::string(),const std::string &n=std::string(),
                 const int p=POSTGRESQL_PORT);
         	
         	
@@ -76,11 +76,11 @@ public:
    };
 
    void dbconnect_nt(const Connection &c=Connection()) throw();
-   void dbdisconnect_nt(const std::string &name="") throw();  
+   void dbdisconnect_nt(const std::string &name=std::string()) throw();  
    void dbconnect(const Connection &c=Connection()) throw(SQLerror);
-   void dbdisconnect(const std::string &name="") throw(SQLerror);
+   void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
    void setDTstyle(char *style="ISO") throw(SQLerror);
-   void dbdefault(const std::string &name="") throw(SQLerror);
+   void dbdefault(const std::string &name=std::string()) throw(SQLerror);
    std::string get_dbname();
 };
 

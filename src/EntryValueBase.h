@@ -57,13 +57,14 @@ public:
 };
 
 class cH_EntryValue : public Handle<const EntryValueBase>
-{protected:
-// cH_EntryValue() {}
- cH_EntryValue(const EntryValueBase *r) : Handle<const EntryValueBase>(r){}
+{
+ cH_EntryValue(int forbidden); // do not use this, use a derived class
 public:
- cH_EntryValue() 
+ cH_EntryValue() // why not a NULL pointer?
  : Handle<const EntryValueBase>(new EntryValueBase())
  {}
+ cH_EntryValue(const EntryValueBase *r) 
+ : Handle<const EntryValueBase>(r){}
  ~cH_EntryValue() {}
 };
 

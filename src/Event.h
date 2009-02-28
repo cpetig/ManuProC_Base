@@ -41,7 +41,7 @@ class Event
 	static void read_notifications();
 	
 public:
-	Event(const std::string &channel,const std::string &key="",const std::string &data="");
+	Event(const std::string &channel,const std::string &key=std::string(),const std::string &data=std::string());
    	static fullsignal_t &signal_event()
    	{  return event_sig; }
    	static filteredsignal_t &signal_event(const std::string &channel)

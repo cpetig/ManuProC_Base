@@ -31,12 +31,12 @@ class Transaction
 	
 	static std::list<std::string> open_connections;
 public:
-	Transaction(const std::string &connection="",bool open_now=true) throw(SQLerror);
+	Transaction(const std::string &connection=std::string(),bool open_now=true) throw(SQLerror);
 //	Transaction(bool open_now) throw(SQLerror); // old ctor
 	// attention: if you specify no connection its last value is used
 	//            e.g. by last open or ctor
 	// I feel this is the most intuitive behaviour
-	void open(const std::string &connection="") throw(SQLerror);
+	void open(const std::string &connection=std::string()) throw(SQLerror);
 	void close() throw(SQLerror);
 	void commit_on_close(bool val=true)
 	{  commit_vs_rollback=val; }

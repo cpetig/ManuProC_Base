@@ -57,7 +57,7 @@ public:
  const fixedpoint<decimals,Ftype,Itype> &Wert() const { return wert; }
  virtual int getIntVal() const { return wert.as_int();}
  virtual const std::string getStrVal() const 
- {  if (!wert) return "";
+ {  if (!wert) return std::string();
     return Formatiere(wert)+einheit; 
  }
 };

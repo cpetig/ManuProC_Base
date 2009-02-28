@@ -45,7 +45,7 @@ bool EntryValueTimeStamp::operator<(const EntryValueBase &v) const
 #include <sstream>
 
 const std::string EntryValueTimeStamp::getStrVal() const
-{  if (!ts.valid()) return "";
+{  if (!ts.valid()) return std::string();
    std::ostringstream os;
    os << ts;
    return os.str();
@@ -54,7 +54,7 @@ const std::string EntryValueTimeStamp::getStrVal() const
 #else
 
 const std::string EntryValueTimeStamp::getStrVal() const
-{  if (!ts.valid()) return "";
+{  if (!ts.valid()) return std::string();
    return "not implemented";
 }
 #endif

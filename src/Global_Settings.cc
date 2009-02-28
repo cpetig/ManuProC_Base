@@ -25,7 +25,7 @@ std::string Global_Settings::get_Wert0(const std::string &separator,int field) c
   std::string::size_type start=0;
   while (field>0)
   {  start=gs.find(separator,start);
-     if (start==std::string::npos) return "";
+     if (start==std::string::npos) return std::string();
      start+=separator.size();
      --field;
   }
@@ -34,7 +34,7 @@ std::string Global_Settings::get_Wert0(const std::string &separator,int field) c
 }
 
 std::string Global_Settings::get_Wert(const std::string &separator,int field) const
-{ if (!field) return "";
+{ if (!field) return std::string();
   return get_Wert0(separator,field-1);
 }
 

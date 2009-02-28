@@ -83,7 +83,7 @@ template <int decimals,class Ftype,class Itype>
 }
 template <int decimals,class Ftype,class Itype>
  const std::string FormatiereEmpty_short(const fixedpoint<decimals,Ftype,Itype> &Zahl)
-{  if (!Zahl) return "";
+{  if (!Zahl) return std::string();
    return Zahl.String(true, 0, ".", ",");
 }
 

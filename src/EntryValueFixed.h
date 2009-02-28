@@ -33,7 +33,7 @@ template <int decimals=2,class Ftype=double,class Itype=long,bool shorten=true>
 
 public:
  EntryValueFixed(const fixedpoint<decimals,Ftype,Itype> &v,
- 		const std::string _pfx="") 
+ 		const std::string _pfx=std::string()) 
  : wert(v),prefix(_pfx) {}
    
  virtual bool operator==(const EntryValueBase &v) const
@@ -68,7 +68,7 @@ template <int decimals=2,class Ftype=double,class Itype=long,bool shorten=true>
 {
 public:
  cH_EntryValueFixed(const fixedpoint<decimals,Ftype,Itype> &v,
- 		const std::string _pfx="") 
+ 		const std::string _pfx=std::string()) 
  : cH_EntryValue(new EntryValueFixed<decimals,Ftype,Itype,shorten>(v,_pfx)) {}
 };
   

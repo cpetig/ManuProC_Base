@@ -283,7 +283,7 @@ Query &Query::add_argument(const std::string &s, Oid type)
 
 ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 { if (complete())
-      Query_Row::mythrow(SQLerror("",ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
+      Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
 #ifdef USE_PARAMETERS
   params.push_back(std::string());
 #else
@@ -299,7 +299,7 @@ ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 
 ArgumentList &ArgumentList::add_argument(const std::string &x, Oid type)
 {  if (complete())
-      Query_Row::mythrow(SQLerror("",ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
+      Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
    params.push_back(x);
    types.push_back(type);
    null.push_back(false);
@@ -323,7 +323,7 @@ static bool transparent_char(unsigned char x)
 ArgumentList &ArgumentList::operator<<(const std::string &str)
 { // do we need to escape it?
   // do we need bytea?
-#if defined(MPC_SQLITE) && defined(USE_PARAMETERS)
+#if (defined(MPC_SQLITE) && defined(USE_PARAMETERS)) || (!defined(MPC_SQLITE) && defined(USE_PARAMETERS))
   return add_argument(str,TEXTOID);
 #else
   std::string p;

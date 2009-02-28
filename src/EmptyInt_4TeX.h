@@ -31,7 +31,7 @@ std::string EmptyInt_4TeX(int i,int breite=0)
     }
 /*
 std::string EmptyInt_4TeX(double i)
-    {if (i==0.0) return ""; 
+    {if (i==0.0) return std::string(); 
      else return dtos(i);
     }
 */

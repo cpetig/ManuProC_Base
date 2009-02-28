@@ -306,10 +306,10 @@ std::string TagStream::unbase64(const std::string &in)
 #define TESTREV(X) assert(X==TagStream::base64(TagStream::unbase64(X),50));
 
 int main()
-{ std::cout << TagStream::base64("") << ' ' << TagStream::base64("A") 
+{ std::cout << TagStream::base64(std::string()) << ' ' << TagStream::base64("A") 
       << ' ' << TagStream::base64("AB") << ' ' << TagStream::base64("ABC")
       << ' ' << TagStream::base64("ABCD") << '\n';
-  TEST("");
+  TEST(std::string());
   TEST("\1");
   TEST("\2\3");
   TEST("\4\5\6");
