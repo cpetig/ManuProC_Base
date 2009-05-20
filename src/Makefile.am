@@ -13,6 +13,9 @@ endif
 libManuProC_Base_sqlite3.def: libManuProC_Base.def libManuProC_Base_sqlite.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^
+libManuProC_Base_pg.def: libManuProC_Base.def libManuProC_Base_pg.defadd \
+		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
+	cat >$@ $^
 libManuProC_Base_res.lo: libManuProC_Base.rc
 	WINDRES=i586-mingw32msvc-windres $(top_srcdir)/build/win32/lt-compile-resource $< $@
 
