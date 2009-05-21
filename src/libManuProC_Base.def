@@ -200,7 +200,6 @@ EXPORTS
 	_ZNK3Tag5debugEii 
 	_ZNK3Tag6hasTagERKSs 
 	_ZNK3Tag7attfindERKSs 
-	_ZNK3Tag7getAttrISsEET_RKSs 
 	_ZNK3Tag7hasAttrERKSs 
 	_ZNK7IOerror4whatEv 
 	_ZNK7IOerror8toStringEv 
@@ -292,3 +291,4 @@ EXPORTS
 	_ZlsRSoRKN8ManuProC5DatumE 
 	snprintf0 
 	strncpy0 
+	_Z4utosj
