@@ -32,7 +32,7 @@ public:
  EntryValueBool() : val(false) {}
  EntryValueBool(bool v):val(v) {}
    
- virtual int getIntVal() const { return int_NaN;}
+ virtual int getIntVal() const { return val; }
  virtual const std::string getStrVal() const 
    { if(val) return "Ja"; else return "Nein";}
 };
