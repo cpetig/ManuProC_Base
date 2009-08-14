@@ -47,7 +47,7 @@ public:
 
  __deprecated virtual double getDoubleVal() const { return double_NaN; }
  __deprecated virtual bool getBoolVal() const { return false; }
- __deprecated virtual operator double() const { return getDoubleVal(); }
+ __deprecated virtual operator double() const;
  __deprecated virtual operator bool() const;
 
 // CP: I'm not happy with these either 
