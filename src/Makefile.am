@@ -51,7 +51,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 		germanstring.cc TagStream.cc Tag.cc EntryValueTimeStamp.cc \
 		Global_Settings.cc EntryValueSort.cc create_parse.cc \
 		TS_base64.cc $(DLL_DEF) Interval.cc fixedpoint.cc \
-		ManuProcEntity.cc
+		ManuProcEntity.cc EntryValue_easy.cc EntryValueDouble.cc
 
 EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
 	Query.pgcc
