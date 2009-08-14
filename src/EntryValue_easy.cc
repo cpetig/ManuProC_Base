@@ -21,6 +21,7 @@
 #include <Misc/EntryValueIntString.h>
 #include <Misc/EntryValueDouble.h>
 #include <Misc/EntryValueBool.h>
+#include <Misc/create_parse.h>
 
 cH_EntryValue EntryValue_easy::create(int const& a)
 { return cH_EntryValueIntString(a);
@@ -40,4 +41,8 @@ cH_EntryValue EntryValue_easy::create(std::string const& a)
 
 cH_EntryValue EntryValue_easy::create(nil const&) 
 { return cH_EntryValue(); 
+}
+
+template <> EntryValue_easy::nil ManuProC::parse<EntryValue_easy::nil>(const std::string &value) throw(std::out_of_range)
+{ return EntryValue_easy::nil();
 }

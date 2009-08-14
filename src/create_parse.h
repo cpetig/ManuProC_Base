@@ -32,6 +32,8 @@ namespace ManuProC
     	 std::string create(const T &val);
 }
 
+namespace EntryValue_easy { struct nil; }
+
 // you can skip these declarations while reading this file
 namespace ManuProC {
 template <> std::string create<int>(const int &val);
@@ -43,6 +45,7 @@ template <> long parse<long>(const std::string &value) throw(std::out_of_range);
 template <> double parse<double>(const std::string &value) throw(std::out_of_range);
 template <> float parse<float>(const std::string &value) throw(std::out_of_range);
 template <> std::string parse<std::string>(const std::string &value) throw(std::out_of_range);
+template <> EntryValue_easy::nil parse<EntryValue_easy::nil>(const std::string &value) throw(std::out_of_range);
 }
 
 // g++ 2.95 does not like these inlined
