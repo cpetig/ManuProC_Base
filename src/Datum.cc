@@ -22,6 +22,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <Misc/string0.h>
+#include <iostream>
 #include <iomanip>
 #include <stdlib.h>
 #include <Misc/itos.h>
