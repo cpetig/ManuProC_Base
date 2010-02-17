@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <Misc/itos.h>
 #include <ManuProCConfig.h>
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/Query.h>
 #endif
 
@@ -397,7 +397,7 @@ ManuProC::Datumsfehler::Datumsfehler(int _falsch) throw()
 	:  falsch(_falsch)
 {}
 
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/pg_type.h>
 
 template<>

@@ -2,7 +2,7 @@
 
 #include <ManuProCConfig.h>
 #include <Misc/Interval.h>
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/Query.h>
 #endif
 #include <Misc/itos.h>
@@ -142,7 +142,7 @@ ManuProC::Interval ManuProC::Interval::operator+(const Interval &b) const
 { return ManuProC::Interval(days+b.days,seconds+b.seconds,microseconds+b.microseconds);
 }
 
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/pg_type.h>
 
 Query::Row &operator>>(Query::Row &is, ManuProC::Interval &v)

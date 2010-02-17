@@ -63,7 +63,7 @@ double fixedpoint_dyn<double,long>::as_float() const
 #endif
 }
 
-#ifdef DEFAULT_DB
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 // template <class Ftype,class Itype>
 template <>
 Query::Row &operator>>(Query::Row &is, fixedpoint_dyn<double,long> &v)

@@ -25,7 +25,7 @@
 #include <ManuProCConfig.h>
 #include <Misc/itos.h>
 #include <Misc/Ausgabe_neu.h>
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/Query.h>
 #endif
 #include <iostream>
@@ -220,7 +220,7 @@ std::string Zeitpunkt_new::Short(const ManuProC::Datum &d) const
   return res;
 }
 
-#ifdef DEFAULT_DB // actually we should test for database support
+#if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/pg_type.h>
 
 Query::Row &operator>>(Query::Row &is, Zeitpunkt_new &v)
