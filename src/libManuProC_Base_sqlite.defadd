@@ -1,5 +1,4 @@
 	_ZN12ArgumentList11next_insertEPKc 
-	_ZN12ArgumentList12add_argumentERKSs 
 	_ZN12ArgumentListlsERKS_ 
 	_ZN12ArgumentListlsERKSs 
 	_ZN12ArgumentListlsEb 
@@ -8,19 +7,6 @@
 	_ZN12ArgumentListlsEl 
 	_ZN12ArgumentListlsEm 
 	_ZN12ArgumentListlsEy 
-	_ZN12FetchIStream15ThrowIfNotEmptyEPKc 
-	_ZN12FetchIStream7mythrowERK15SQLerror_sqlite 
-	_ZN12FetchIStreamC1EPKPKcji 
-	_ZN12FetchIStreamC2EPKPKcji 
-	_ZN12FetchIStreamrsERSs 
-	_ZN12FetchIStreamrsERb 
-	_ZN12FetchIStreamrsERc 
-	_ZN12FetchIStreamrsERd 
-	_ZN12FetchIStreamrsERf 
-	_ZN12FetchIStreamrsERi 
-	_ZN12FetchIStreamrsERj 
-	_ZN12FetchIStreamrsERl 
-	_ZN12FetchIStreamrsERm 
 	_ZN15Global_Settings13database_loadEiRKSsS1_ 
 	_ZN15Global_Settings13database_saveEiRKSsS1_S1_ 
 	_ZN15Global_Settings18database_connectedEb 
@@ -32,12 +18,10 @@
 	_ZN15SQLerror_sqliteC2ERKSsiS1_ 
 	_ZN15SQLerror_sqliteD0Ev 
 	_ZN15SQLerror_sqliteD1Ev 
-	_ZN5Query12add_argumentERKSs 
 	_ZN5Query17debug_environmentC1Ev 
 	_ZN5Query17debug_environmentC2Ev 
 	_ZN5Query19Execute_if_completeEv 
 	_ZN5Query4CodeEv 
-	_ZN5Query5FetchER12FetchIStream 
 	_ZN5Query5FetchEv 
 	_ZN5Query7ExecuteEv 
 	_ZN5Query8FetchOneEv 
@@ -46,7 +30,6 @@
 	_ZN5QueryC2ERKSs 
 	_ZN5QueryD1Ev 
 	_ZN5QueryD2Ev 
-	_ZN5QueryrsER12FetchIStream 
 	_ZN8ManuProC12dbconnect_ntERKNS_10ConnectionE 
 	_ZN8ManuProC12dbdisconnectERKSs 
 	_ZN8ManuProC13db_connectionE  DATA
@@ -63,7 +46,6 @@
 	_ZN8ManuProC5EventC1ERKSsS2_S2_ 
 	_ZN8ManuProC5EventC2ERKSsS2_S2_ 
 	_ZN8ManuProC9dbconnectERKNS_10ConnectionE 
-	_ZNK12FetchIStream12getIndicatorEv 
 	_ZNK13Zeitpunkt_new5writeEv 
 	_ZNK15SQLerror_sqlite4whatEv 
 	_ZNK5Query10ThrowOnBadEPKc 
@@ -77,7 +59,4 @@
 	_ZlsR12ArgumentListRK13Zeitpunkt_new 
 	_ZlsR12ArgumentListRKN8ManuProC5DatumE 
 	_ZlsRSoRK15SQLerror_sqlite 
-	_ZrsR12FetchIStreamR13Zeitpunkt_new 
-	_ZrsR12FetchIStreamRN8ManuProC5DatumE 
 	_ZN8ManuProC10ConnectionC1ERKSsS2_S2_S2_i
-	_ZNK12FetchIStream4goodEv
