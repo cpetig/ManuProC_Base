@@ -30,6 +30,9 @@
 	_ZN5QueryC2ERKSs 
 	_ZN5QueryD1Ev 
 	_ZN5QueryD2Ev 
+	_ZN5QueryrsER9Query_Row
+	_ZN5QueryrsER9Query_Row
+	_ZN8ManuProC10ConnectionC1ERKSsS2_S2_S2_i
 	_ZN8ManuProC12dbconnect_ntERKNS_10ConnectionE 
 	_ZN8ManuProC12dbdisconnectERKSs 
 	_ZN8ManuProC13db_connectionE  DATA
@@ -46,7 +49,14 @@
 	_ZN8ManuProC5EventC1ERKSsS2_S2_ 
 	_ZN8ManuProC5EventC2ERKSsS2_S2_ 
 	_ZN8ManuProC9dbconnectERKNS_10ConnectionE 
+	_ZN9Query_RowC1EPKPKcji
+	_ZN9Query_RowC1EPKPKcji
+	_ZN9Query_RowrsERSs
+	_ZN9Query_RowrsERSs
+	_ZN9Query_RowrsERi
+	_ZN9Query_RowrsERi
 	_ZNK13Zeitpunkt_new5writeEv 
+	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
 	_ZNK15SQLerror_sqlite4whatEv 
 	_ZNK5Query10ThrowOnBadEPKc 
 	_ZNK8ManuProC5Datum10write_euroEv 
@@ -59,4 +69,3 @@
 	_ZlsR12ArgumentListRK13Zeitpunkt_new 
 	_ZlsR12ArgumentListRKN8ManuProC5DatumE 
 	_ZlsRSoRK15SQLerror_sqlite 
-	_ZN8ManuProC10ConnectionC1ERKSsS2_S2_S2_i
