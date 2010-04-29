@@ -25,6 +25,7 @@
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
+#include <stdlib.h>
 #include <typeinfo>
 //#include <stddef.h>
 

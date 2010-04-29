@@ -4,7 +4,6 @@ EXPORTS
 	_Z10FormatieremjjPKcS0_c 
 	_Z10FormatiereyjjPKcS0_c 
 	_Z10string2TeXSsi 
-	_Z13FormatiereTeXILi2EdlEKSsRK10fixedpointIXT_ET0_T1_E 
 	_Z18FormatiereEmptyIntl 
 	_Z19FormatiereTeX_PreisILi2EdlEKSsRK10fixedpointIXT_ET0_T1_E 
 	_Z19FormatiereTeX_PreisILi3EdlEKSsRK10fixedpointIXT_ET0_T1_E 
