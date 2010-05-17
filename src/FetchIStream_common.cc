@@ -205,15 +205,15 @@ bool needs_quotes(Oid type)
     case INTERVALOID:
     case TIMESTAMPTZOID:
     case TEXTOID: return true;
-    
+
     case INT8OID:
     case INT4OID:
     case NUMERICOID:
     case FLOAT4OID:
     case FLOAT8OID:
     case BOOLOID: return false;
-    
-    default: std::cerr << "Oid " << type << " is unknown\n"; 
+
+    default: std::cerr << "Oid " << type << " is unknown\n";
       return true;
   }
 }
@@ -224,7 +224,7 @@ std::string Query::standardize_parameters(std::string const& in)
   const char *p=in.c_str();
   const char *last=p;
   unsigned idx=1;
-      
+
   do
   {  p=ArgumentList::next_insert(p);
      if (!p) expanded+=last;
@@ -240,13 +240,13 @@ std::string Query::standardize_parameters(std::string const& in)
 
 void Query::Execute_if_complete()
 {  if (params.complete() && !already_run())
-   {  
-#ifndef USE_PARAMETERS   
+   {
+#ifndef USE_PARAMETERS
       std::string expanded;
       const char *p=query.c_str();
       const char *last=p;
       ArgumentList::const_iterator piter=params.begin();
-      
+
       do
       {  p=ArgumentList::next_insert(p);
          if (!p) expanded+=last;
@@ -254,7 +254,7 @@ void Query::Execute_if_complete()
          {  expanded+=std::string(last,p-last);
             assert(piter!=params.end());
             Oid type=params.type_of(piter);
-            if(params.is_null(piter)) 
+            if(params.is_null(piter))
 	    {expanded+="null";
 	    }
             else
@@ -311,7 +311,7 @@ ArgumentList &ArgumentList::add_argument(const std::string &x, Oid type)
 static bool transparent_char(unsigned char x)
 { return (true
 #ifndef MPC_SQLITE // escape these
-          && ((' '<=x&&x<=126) || (128<=x)) 
+          && ((' '<=x&&x<=126) || (128<=x))
           && x!='\\'
 #endif
 #ifndef USE_PARAMETERS
@@ -329,7 +329,7 @@ ArgumentList &ArgumentList::operator<<(const std::string &str)
   std::string p;
   for (std::string::const_iterator i=str.begin();i!=str.end();++i)
   {  if (transparent_char(*i)) p+=*i;
-     else 
+     else
      { p+='\\';
        p+='0'+((*i>>6)&0x3);
        p+='0'+((*i>>3)&0x7);
@@ -381,20 +381,20 @@ ArgumentList &ArgumentList::operator<<(char i)
    else
 #ifdef MPC_SQLITE // there's no escaping here, hopefully we use parameters
      return add_argument(std::string(1,i),TEXTOID);
-#else   
+#else
    { x[0]='\\';
      x[1]='0'+((i>>6)&0x3);
      x[2]='0'+((i>>3)&0x7);
      x[3]='0'+(i&0x7);
      x[4]=0;
    }
-#endif   
+#endif
    return add_argument(x,CHAROID);
 }
 template<> const Oid Query::NullIf_s<char>::postgres_type=CHAROID;
 
 ArgumentList &ArgumentList::operator<<(const ArgumentList &list)
-{  for (const_iterator i=list.begin();i!=list.end();++i) 
+{  for (const_iterator i=list.begin();i!=list.end();++i)
    { if (list.is_null(i)) *this << Query_types::null_s(list.type_of(i));
      else add_argument(*i,list.type_of(i));
    }
@@ -422,9 +422,9 @@ Query_Row &Query::FetchOne()
 }
 
 void Query::ThrowOnBad(const char *where) const
-{  if (!good()) 
-   {  SQLerror::test(__FUNCTION__); 
-      Query_Row::mythrow(SQLerror(__FUNCTION__,-1,"unspecific bad result")); 
+{  if (!good())
+   {  SQLerror::test(__FUNCTION__);
+      Query_Row::mythrow(SQLerror(__FUNCTION__,-1,"unspecific bad result"));
    }
 }
 
@@ -432,7 +432,7 @@ void Query::ThrowOnBad(const char *where) const
 
 #ifdef MPC_SQLITE
 Query_Row::Query_Row(const char *const *res, unsigned _nfields, int line)
-	: naechstesFeld(), zeile(line), is_fake(), fake_null(), 
+	: naechstesFeld(), zeile(line), is_fake(), fake_null(),
 	  result(res), nfields(_nfields)
 {}
 
@@ -443,19 +443,19 @@ Query_Row &Query_Row::operator>>(std::string &str)
      if (fake_null)
 	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator on fake"));
      str=fake_result;
-     if (Query::debugging.on) 
+     if (Query::debugging.on)
         std::cerr << "FIS fake result="<<str << '\n';
      naechstesFeld++;
      return *this;
    }
    if (!result)
 	mythrow(SQLerror(__FUNCTION__,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from (left?)"));
-   if (naechstesFeld>=nfields) 
+   if (naechstesFeld>=nfields)
 	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
    if (!result[naechstesFeld])
 	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator"));
    str=result[naechstesFeld];
-   if (Query::debugging.on) 
+   if (Query::debugging.on)
       std::cerr << "FIS result["<<zeile<<','<<naechstesFeld<<"]="<<str << '\n';
    naechstesFeld++;
    return *this;
@@ -469,8 +469,8 @@ void Query_Row::ThrowIfNotEmpty(const char *where)
 }
 
 int Query_Row::getIndicator() const
-{  
-   if (naechstesFeld>=nfields) 
+{
+   if (naechstesFeld>=nfields)
 	mythrow(SQLerror("Query_Row::getIndicator",ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
    return -(result[naechstesFeld]==0);
 }
@@ -483,10 +483,10 @@ void Query::Execute() throw(SQLerror)
    char *msgbuf=0;
    int rows,cols;
    if (Query::debugging.on) std::cerr << "QUERY: " << query << '\n';
-   error=sqlite3_get_table(ManuProC::db_connection, query.c_str(), 
+   error=sqlite3_get_table(ManuProC::db_connection, query.c_str(),
    		&local_result, &rows, &cols, &msgbuf);
    SQLerror::last_code=error;
-   if (Query::debugging.on) 
+   if (Query::debugging.on)
       std::cerr << "RESULT: " << error << ':' << (msgbuf?msgbuf:"")
       		<< ", " << rows << 'x' << cols << '\n';
    if(error!=SQLITE_OK)
@@ -497,7 +497,8 @@ void Query::Execute() throw(SQLerror)
    lines=rows;
    nfields=cols;
    if (msgbuf) sqlite3_free(msgbuf);
-   if (!lines) lines=sqlite3_changes(ManuProC::db_connection);
+   if (!lines && strncasecmp(query.c_str(),"select",6))
+     lines=sqlite3_changes(ManuProC::db_connection);
    if (!lines) SQLerror::last_code=error=100;
    result=local_result;
    eof=!lines;
@@ -508,7 +509,7 @@ void Query::Fetch(Query_Row &is)
       Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
 
    if (!eof)
-   {  if (line<lines) 
+   {  if (line<lines)
       {  is=Query_Row(result+((line+1)*nfields),nfields,line);
          ++line;
          return;
@@ -519,7 +520,7 @@ void Query::Fetch(Query_Row &is)
 }
 
 Query::Query(const std::string &command)
-: eof(true), line(), result(), query(command), num_params(), 
+: eof(true), line(), result(), query(command), num_params(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines()
 {  const char *p=query.c_str();
    while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
@@ -528,7 +529,7 @@ Query::Query(const std::string &command)
 }
 
 Query::Query(std::string const& portal, std::string const& command)
-: eof(true), line(), result(), query(command), num_params(), 
+: eof(true), line(), result(), query(command), num_params(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines()
 {  const char *p=query.c_str();
    while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
@@ -537,7 +538,7 @@ Query::Query(std::string const& portal, std::string const& command)
 }
 
 Query::Query(PreparedQuery &pq)
-: eof(true), line(), result(), query(pq.Command()), num_params(), 
+: eof(true), line(), result(), query(pq.Command()), num_params(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines()
 {  const char *p=query.c_str();
    while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
@@ -547,8 +548,8 @@ Query::Query(PreparedQuery &pq)
 
 Query::~Query()
 {  if (!params.complete())
-   {  std::cerr << "The query " << query << " still needed " 
-   	<< params.HowManyNeededParams() 
+   {  std::cerr << "The query " << query << " still needed "
+   	<< params.HowManyNeededParams()
    	<< " parameters on destruction and got never executed!\n";
       SQLerror::last_code=ECPG_TOO_FEW_ARGUMENTS;
    }
@@ -558,8 +559,8 @@ Query::~Query()
    }
 }
 
-int Query::Code() 
-{  return SQLerror::last_code; 
+int Query::Code()
+{  return SQLerror::last_code;
 }
 
 void Query::Execute(std::string const& command2) throw(SQLerror)
@@ -574,8 +575,8 @@ bool Query_Row::good() const
 
 #endif
 
-Query_Row::Query_Row(Fake const& val) 
-  : naechstesFeld(), zeile(), is_fake(true), fake_result(val.what), 
+Query_Row::Query_Row(Fake const& val)
+  : naechstesFeld(), zeile(), is_fake(true), fake_result(val.what),
     fake_null(val.is_null), result()
 {
 }
