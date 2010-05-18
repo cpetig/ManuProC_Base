@@ -64,15 +64,15 @@ int main()
    Query query3("select 2;");
    std::cout << query3.FetchOne<int>() << '\n';
 }   
-  {int a,b,c,d; std::string x,y,z;
+  {int a,b,c,d; std::string x,y,z; bool e,f;
    std::string in="\"'\\";
-   Query ("select ?,?,?,'?',?, ?,?")
+   Query ("select ?,?,?,'?',?, ?,?, ?,?")
    	<< 1 << Query::null<int>() << "test" << in 
-   		<< Query::NullIf(1,2) << Query::NullIf(2,2)
+   		<< Query::NullIf(1,2) << Query::NullIf(2,2) << true << false
    	>> a >> Query::Row::MapNull(b,-1) >> x >> y >> z 
-   		>> c >> Query::Row::MapNull(d,-1);
+   		>> c >> Query::Row::MapNull(d,-1) >> e >> f;
    std::cout << a << ' ' << b << ' ' << x << ' ' << y << ' ' << z 
-   		<< ' ' << c << ' ' << d << '\n';
+   		<< ' ' << c << ' ' << d << ' ' << e << ' ' << f << '\n';
   }
    Query ("analyze pg_class");
    // should never select any lines

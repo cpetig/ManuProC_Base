@@ -369,7 +369,12 @@ template<> const Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
 template<> const Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
 
 ArgumentList &ArgumentList::operator<<(bool i)
-{  return add_argument(btos(i),BOOLOID);
+{
+#ifdef MPC_SQLITE
+  return add_argument(itos(i),INT4OID); // sqlite uses 0,1 for booleans
+#else
+  return add_argument(btos(i),BOOLOID);
+#endif
 }
 template<> const Oid Query::NullIf_s<bool>::postgres_type=BOOLOID;
 
