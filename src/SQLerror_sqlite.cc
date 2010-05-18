@@ -43,7 +43,7 @@ void SQLerror_sqlite::test(const std::string &context,int codeok) // throw(SQLer
 
 void SQLerror_sqlite::test(const std::string &context,const std::string &cursor,
 		int codeok) // throw(SQLerror_sqlite)
-{  if (last_code && last_code!=codeok) 
+{  if (last_code && last_code!=codeok)
    {  assert(cursor.empty());
       throw SQLerror_sqlite(context,last_code,"?");
    }
@@ -57,13 +57,18 @@ void SQLerror_sqlite::print(const std::string &context,int codeok)
 #if 0
 void SQLerror_sqlite::test(const std::string &context,const std::string &cursor,
 		int codeok,bool rollback) // throw(SQLerror_sqlite)
-{  if (last_code && last_code!=codeok) 
+{  if (last_code && last_code!=codeok)
    {  assert(cursor.empty());
       assert(!rollback);
       else throw SQLerror_sqlite(context);
    }
 }
 #endif
+
+void SQLerror_sqlite::test(const std::string &context,const char *cursor,
+		int codeok=0) // throw(SQLerror_sqlite)
+{  test(context,std::string(cursor),codeok);
+}
 
 //int SQLerror_sqlite::SQLCode()
 //{  return last_code; }

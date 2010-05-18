@@ -36,17 +36,17 @@ class SQLerror_sqlite : public std::exception
    int code;
    std::string name;
 //   char separator;
-   
+
 public:
    static int last_code;
-   
+
    ~SQLerror_sqlite() throw() {}
 //   SQLerror_sqlite(const std::string &context) throw();
    SQLerror_sqlite(const std::string &context,int code,const std::string &name) throw();
-   
+
    virtual const char* what() const throw() { return "SQLerror"; }
    friend std::ostream &operator<<(std::ostream&,const SQLerror_sqlite &) throw();
-   
+
 //   const SQLerror_sqlite &Separator(char sep) { separator=sep; return *this; }
    // member access functions
    const std::string Context() const { return context; }
@@ -54,16 +54,14 @@ public:
    const std::string Message() const { return name; }
 
    static void print(const std::string &context,int codeok=0);
-   
+
    static __deprecated void test(const std::string &context,int codeok=0);
 //   		throw(SQLerror_sqlite);
    static __deprecated void test(const std::string &context,const std::string &cursor,
 		int codeok=0); // throw(SQLerror_sqlite);
    static __deprecated void test(const std::string &context,const char *cursor,
-		int codeok=0) // throw(SQLerror_sqlite)
-   {  test(context,std::string(cursor),codeok);
-   }
-   
+		int codeok=0); // throw(SQLerror_sqlite)
+
 //   static __deprecated int SQLCode();
 };
 

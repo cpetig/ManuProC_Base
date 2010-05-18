@@ -505,6 +505,11 @@ void Query::Execute() throw(SQLerror)
    eof=!lines;
 }
 
+int Query::last_insert_rowid() const
+{
+  return sqlite3_last_insert_rowid(ManuProC::db_connection);
+}
+
 void Query::Fetch(Query_Row &is)
 {  if (!params.complete())
       Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));

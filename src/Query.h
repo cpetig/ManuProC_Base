@@ -1,6 +1,6 @@
 // $Id: Query.h,v 1.27 2006/08/10 15:07:06 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
- *  Copyright (C) 2001-2005 Adolf Petig GmbH & Co. KG, 
+ *  Copyright (C) 2001-2005 Adolf Petig GmbH & Co. KG,
  *  		written by Christof Petig
  *  Copyright (C) 2006 Christof Petig
  *
@@ -63,11 +63,11 @@ class Query_Row
 private:
 	int naechstesFeld;
 	/* const */ int zeile;
-	
+
 	bool is_fake;
 	std::string fake_result;
 	bool fake_null;
-	
+
 #ifdef MPC_SQLITE
 	const char * const * result;
 	unsigned nfields;
@@ -75,18 +75,18 @@ private:
 protected:
         const PGresult * /* const */ result;
 private:
-#endif	
+#endif
 
 	friend class Query;
 	friend class ArgumentList;
-	// print if debugging on and then throw it	
+	// print if debugging on and then throw it
 	static void mythrow(const SQLerror &e);
 
 	template <class T>
 	 class MapNull_s
 	{	T &var;
 		T nullval;
-		
+
 		friend class Query_Row;
 	 public:
 	 	template <class U> MapNull_s(T &v,const U &nv)
@@ -96,7 +96,7 @@ private:
 	 class WithIndicator_s
 	{	T &var;
 		int &ind;
-		
+
 		friend class Query_Row;
 	 public:
 	 	WithIndicator_s(T &v,int &i)
@@ -112,18 +112,18 @@ public:
 	Query_Row(const char *const *res=0, unsigned nfields=0, int line=0);
 #endif
         Query_Row(Fake const& f);
-	
+
 	int getIndicator() const;
 #ifdef MPC_POSTGRESQL
         std::string getFieldName() const;
 #endif
 	bool good() const; // noch Spalten verfügbar
-	
+
 	Query_Row &operator>>(std::string &str);
 	Query_Row &operator>>(int &i);
 	Query_Row &operator>>(unsigned &i);
 	Query_Row &operator>>(long &i);
-	Query_Row &operator>>(long long &i);	
+	Query_Row &operator>>(long long &i);
 	Query_Row &operator>>(unsigned long &i);
 	Query_Row &operator>>(float &f);
 	Query_Row &operator>>(double &f);
@@ -131,7 +131,7 @@ public:
 	Query_Row &operator>>(char &c);
 	void operator>>(const check_eol &eol)
 	{ ThrowIfNotEmpty("check_eol"); }
-	
+
 	template <class T> static WithIndicator_s<T> WithIndicator(T &v,int &i)
 	{ return WithIndicator_s<T>(v,i); }
 	template <class T>
@@ -147,7 +147,7 @@ public:
 	{ return MapNull_s<T>(v,T()); }
 	template <class T>
 	 Query_Row &operator>>(const MapNull_s<T> &mn)
-	{  if (getIndicator()) 
+	{  if (getIndicator())
 	   {  ++naechstesFeld;
 	      mn.var=mn.nullval;
 	   }
@@ -167,7 +167,7 @@ public:
 	   *this >> MapNull(res,nv);
 	   return res;
 	}
-	
+
 	void ThrowIfNotEmpty(const char *where);
 };
 
@@ -177,10 +177,10 @@ struct Query_types
 	{	T data;
 		bool null;
 		static const Oid postgres_type;
-		
+
 		template <class U> NullIf_s(const T &a,const U &b) : data(a), null(a==b) {}
 	};
-	struct null_s 
+	struct null_s
 	{ Oid type;
 	  null_s(Oid t) : type(t) {}
 	};
@@ -233,7 +233,7 @@ public:
 	ArgumentList &operator<<(const char *s)
 	{  return operator<<(std::string(s)); }
 	ArgumentList &operator<<(Query_types::null_s n);
-	
+
 	template <class T>
 	 ArgumentList &operator<<(const Query_types::NullIf_s<T> &n)
 	{  if (n.null) return operator<<(Query_types::null_s(n.postgres_type));
@@ -254,12 +254,12 @@ class Query : public Query_types
 #ifdef MPC_SQLITE
 	const char * const *result;
 	unsigned nfields;
-#else	
+#else
 #ifndef USE_PARAMETERS
-	const 
-#endif	
+	const
+#endif
 	      PGresult *result;
-#endif	
+#endif
 	std::string query;
 	ArgumentList params;
 	unsigned num_params;
@@ -269,11 +269,11 @@ class Query : public Query_types
 	PreparedQuery* prepare;
 	std::string portal_name;
 	// if you add members do not forget to mention them in swap!
-	
+
 	// not possible yet (because result can not refcount)
 	const Query &operator=(const Query &);
 	Query(const Query &);
-	
+
 	// perform it
 	void Execute() throw(SQLerror);
 	void Execute_if_complete();
@@ -292,29 +292,32 @@ public:
 
 	// you can exchange this via std::swap
 	Query() : eof(true), line(), result(), num_params(), error(), lines(),
-	    prepare() 
+	    prepare()
         { params.setNeededParams(0); }
         void swap(Query &b);
-        
+
 	Query(const std::string &command);
 	Query(std::string const& portal_name, const std::string &command);
 	Query(PreparedQuery& prep);
 	~Query();
 
-	bool good() const 
+	bool good() const
 	{ return !eof; }
 	void ThrowOnBad(const char *where) const;
 
 	static void Execute(const std::string &command) throw(SQLerror);
 	int Result() const { return error; }
 	unsigned LinesAffected() const { return lines; }
-	
+
 	void Check100() const throw(SQLerror);
-	
+
 	// please migrate to the functions above
 	static __deprecated int Code(); // SQLCA.sqlcode
 #ifndef MPC_SQLITE
 	static __deprecated unsigned Lines(); // SQLCA.sqlcode
+#endif
+#ifdef MPC_SQLITE
+	int last_insert_rowid() const;
 #endif
 
 	//-------------------- parameters ------------------
@@ -323,7 +326,7 @@ public:
 	// this is normal style
 	Query &add_argument(const std::string &s, Oid type);
 
-	// for user defined << operators and temporary queries 
+	// for user defined << operators and temporary queries
 	// 	you need to insert this one
 	// e.g. Query("...").lvalue() << your_type ...;
 	// is this any longer true?
@@ -339,7 +342,7 @@ public:
 	{  return NullIf_s<T>(a,b); }
 	template <class T> static NullIf_s<T> NullIf(const T &a)
 	{  return NullIf_s<T>(a,T()); }
-	
+
 	//--------------- result --------------------
 	Query_Row &Fetch();
 	Query_Row &FetchOne();
@@ -369,7 +372,7 @@ public:
 	{  bool on;
 	   bool time_queries;
 	   bool count_queries;
-	   
+
 	   std::map<std::string,unsigned> counts;
 	   debug_environment();
 	   ~debug_environment();
@@ -389,17 +392,17 @@ class PreparedQuery
         std::string name;
         std::vector<Oid> types;
         const PGconn *connection;
-        
+
         friend class Query;
 #endif
 public:
-        PreparedQuery() 
+        PreparedQuery()
 #ifdef MPC_POSTGRESQL
           : connection()
 #endif
         {}
-        PreparedQuery(std::string const& cmd) 
-          : command(cmd) 
+        PreparedQuery(std::string const& cmd)
+          : command(cmd)
 #ifdef MPC_POSTGRESQL
             ,connection()
 #endif
@@ -412,32 +415,32 @@ public:
 #endif
 };
 
-// we use the embedded Query_Row but that's ok, 
+// we use the embedded Query_Row but that's ok,
 // 	since it makes no sense to mix us with Fetch[One]
-template <class T> 
+template <class T>
 void Query::FetchArray(std::vector<T> &res)
 {  ThrowOnBad(__FUNCTION__);
-   while (((*this)>>embedded_iterator).good()) 
+   while (((*this)>>embedded_iterator).good())
    { T x;
      embedded_iterator >> x >> Query::check_eol();
      res.push_back(x);
    }
 }
 
-template <class T> 
+template <class T>
 void Query::FetchArrayMap(std::vector<T> &res, const T &nv)
 {  ThrowOnBad(__FUNCTION__);
-   while (((*this)>>embedded_iterator).good()) 
+   while (((*this)>>embedded_iterator).good())
    { T x;
      embedded_iterator >> Row::MapNull(x,nv) >> Query::check_eol();
      res.push_back(x);
    }
 }
 
-template <class T1, class T2> 
+template <class T1, class T2>
 void Query::FetchArray(std::map<T1,T2> &res)
 {  ThrowOnBad(__FUNCTION__);
-   while (((*this)>>embedded_iterator).good()) 
+   while (((*this)>>embedded_iterator).good())
    { T1 x;
      T2 y;
      embedded_iterator >> x >> y >> Query::check_eol();
@@ -445,10 +448,10 @@ void Query::FetchArray(std::map<T1,T2> &res)
    }
 }
 
-template <class T> 
+template <class T>
 void Query::FetchArray(std::list<T> &res)
 {  ThrowOnBad(__FUNCTION__);
-   while (((*this)>>embedded_iterator).good()) 
+   while (((*this)>>embedded_iterator).good())
    { T x;
      embedded_iterator >> x >> Query::check_eol();
      res.push_back(x);
