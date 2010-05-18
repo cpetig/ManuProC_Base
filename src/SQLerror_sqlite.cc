@@ -66,7 +66,7 @@ void SQLerror_sqlite::test(const std::string &context,const std::string &cursor,
 #endif
 
 void SQLerror_sqlite::test(const std::string &context,const char *cursor,
-		int codeok=0) // throw(SQLerror_sqlite)
+		int codeok) // throw(SQLerror_sqlite)
 {  test(context,std::string(cursor),codeok);
 }
 
