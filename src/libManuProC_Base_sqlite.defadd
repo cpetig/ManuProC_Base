@@ -72,3 +72,11 @@
 	_ZTI15SQLerror_sqlite  DATA
 	_ZTS15SQLerror_sqlite  DATA
 	_ZTV15SQLerror_sqlite  DATA
+	_ZrsR9Query_RowR13Zeitpunkt_new
+	_ZN11Query_types8NullIf_sISsE13postgres_typeE
+	_ZN12ArgumentListlsEN11Query_types6null_sE
+	_ZN9Query_RowrsERm
+	_ZNK5Query17last_insert_rowidEv
+	_ZNK9Query_Row12getIndicatorEv
+	_ZlsR12ArgumentListRKN8ManuProC8IntervalE
+	_ZrsR9Query_RowRN8ManuProC5DatumE
