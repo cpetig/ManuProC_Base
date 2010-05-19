@@ -1,6 +1,10 @@
 	_ZlsR12ArgumentListRK13Zeitpunkt_new 
 	_ZlsR12ArgumentListRKN8ManuProC5DatumE 
 	_ZlsRSoRK15SQLerror_sqlite 
+	_ZN11Transaction4openERKSs
+	_ZN11Transaction5closeEv
+	_ZN11TransactionC1ERKSsb
+	_ZN11TransactionD1Ev
 	_ZN12ArgumentList11next_insertEPKc 
 	_ZN12ArgumentListlsEb 
 	_ZN12ArgumentListlsEc 
@@ -55,6 +59,7 @@
 	_ZN9Query_RowrsERb
 	_ZN9Query_RowrsERf
 	_ZN9Query_RowrsERi
+	_ZN9Query_RowrsERl
 	_ZN9Query_RowrsERSs
 	_ZNK13Zeitpunkt_new5writeEv 
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
