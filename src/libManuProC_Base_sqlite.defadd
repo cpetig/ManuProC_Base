@@ -1,6 +1,8 @@
 	_ZlsR12ArgumentListRK13Zeitpunkt_new 
 	_ZlsR12ArgumentListRKN8ManuProC5DatumE 
+	_ZlsR12ArgumentListRKN8ManuProC8IntervalE
 	_ZlsRSoRK15SQLerror_sqlite 
+	_ZN11Query_types8NullIf_sISsE13postgres_typeE
 	_ZN11Transaction4openERKSs
 	_ZN11Transaction5closeEv
 	_ZN11TransactionC1ERKSsb
@@ -11,6 +13,7 @@
 	_ZN12ArgumentListlsEd 
 	_ZN12ArgumentListlsEl 
 	_ZN12ArgumentListlsEm 
+	_ZN12ArgumentListlsEN11Query_types6null_sE
 	_ZN12ArgumentListlsERKS_ 
 	_ZN12ArgumentListlsERKSs 
 	_ZN12ArgumentListlsEy 
@@ -59,24 +62,24 @@
 	_ZN9Query_RowrsERb
 	_ZN9Query_RowrsERf
 	_ZN9Query_RowrsERi
+	_ZN9Query_RowrsERj
 	_ZN9Query_RowrsERl
+	_ZN9Query_RowrsERm
 	_ZN9Query_RowrsERSs
 	_ZNK13Zeitpunkt_new5writeEv 
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
 	_ZNK15SQLerror_sqlite4whatEv 
 	_ZNK5Query10ThrowOnBadEPKc 
+	_ZNK5Query17last_insert_rowidEv
 	_ZNK8ManuProC5Datum10write_euroEv 
+	_ZNK8ManuProC8Interval3strEv
+	_ZNK9Query_Row12getIndicatorEv
+	_ZrsR9Query_RowR13Zeitpunkt_new
+	_ZrsR9Query_RowRN8ManuProC5DatumE
+	_ZrsR9Query_RowRN8ManuProC8IntervalE
 	_ZSt20_Rb_tree_rotate_leftPSt18_Rb_tree_node_baseRS0_ 
 	_ZSt21_Rb_tree_rotate_rightPSt18_Rb_tree_node_baseRS0_ 
 	_ZStplIcSt11char_traitsIcESaIcEESbIT_T0_T1_ES3_RKS6_ 
 	_ZTI15SQLerror_sqlite  DATA
 	_ZTS15SQLerror_sqlite  DATA
 	_ZTV15SQLerror_sqlite  DATA
-	_ZrsR9Query_RowR13Zeitpunkt_new
-	_ZN11Query_types8NullIf_sISsE13postgres_typeE
-	_ZN12ArgumentListlsEN11Query_types6null_sE
-	_ZN9Query_RowrsERm
-	_ZNK5Query17last_insert_rowidEv
-	_ZNK9Query_Row12getIndicatorEv
-	_ZlsR12ArgumentListRKN8ManuProC8IntervalE
-	_ZrsR9Query_RowRN8ManuProC5DatumE
