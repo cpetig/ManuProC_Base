@@ -10,6 +10,7 @@ EXPORTS
 	_Z4btosb 
 	_Z4dtosd 
 	_Z4itosi 
+	_Z4utosj
 	_Z6itos0piib 
 	_Z6ulltosy 
 	_Z8itos0padii 
@@ -30,6 +31,9 @@ EXPORTS
 	_ZN15EntryValueDatumD1Ev 
 	_ZN15EntryValueMonatD0Ev 
 	_ZN15EntryValueMonatD1Ev 
+	_ZN15EntryValue_easy6createERKNS_3nilE
+	_ZN15EntryValue_easy6createERKSs
+	_ZN15EntryValue_easy6createERKi
 	_ZN15Global_Settings12default_loadEiRKSsS1_ 
 	_ZN15Global_Settings12default_saveEiRKSsS1_S1_ 
 	_ZN15Global_Settings6createEiRKSsS1_S1_ 
@@ -101,6 +105,7 @@ EXPORTS
 	_ZN8ManuProC5DatummmEv 
 	_ZN8ManuProC5DatumppEi 
 	_ZN8ManuProC5DatumppEv 
+	_ZN8ManuProC5parseIN15EntryValue_easy3nilEEET_RKSs
 	_ZN8ManuProC5parseISsEET_RKSs 
 	_ZN8ManuProC5parseIbEET_RKSs 
 	_ZN8ManuProC5parseIdEET_RKSs 
@@ -290,4 +295,3 @@ EXPORTS
 	_ZlsRSoRKN8ManuProC5DatumE 
 	snprintf0 
 	strncpy0 
-	_Z4utosj
