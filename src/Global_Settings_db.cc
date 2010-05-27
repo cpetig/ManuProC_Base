@@ -25,7 +25,12 @@ std::string Global_Settings::database_load(int userid,const std::string& program
 {std::string wert;
  try
  {Query("select wert from global_settings "
- 	"where (userid,program,name)=(?,?,?)")
+#ifdef MPC_SQLITE
+ 	"where userid=? and program=? and name=?"
+#else
+ 	"where (userid,program,name)=(?,?,?)"
+#endif
+ 	)
    << userid << program << name
    >> wert;
  } catch (SQLerror &e)
@@ -40,7 +45,12 @@ void Global_Settings::database_save(int userid,const std::string& program,
 {  // saves one query in comparison to Global_Settings().set_Wert
    //  ... the select ...
    Query q("update global_settings set wert=? "
-	"where (userid,program,name)=(?,?,?)");
+#ifdef MPC_SQLITE
+ 	"where userid=? and program=? and name=?"
+#else
+	"where (userid,program,name)=(?,?,?)"
+#endif
+	);
   q << wert << userid << program << name;
   if (q.Result()==100)
   {  Query("insert into global_settings "
