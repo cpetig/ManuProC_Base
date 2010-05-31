@@ -11,14 +11,14 @@ struct Interval
 { int days;
   int seconds;
   int microseconds;
-  
+
   struct NoDays { NoDays() {}};
-  
+
   Interval(const std::string &i);
   Interval() : days(), seconds(), microseconds() {}
   Interval(int d, int s, int m);
   Interval(const TimeStamp &a, const TimeStamp &b); // a<b (normally)
-  
+
   std::string str() const;
   std::string str(const NoDays &dummy) const;
   bool operator==(const Interval &b) const;
@@ -30,6 +30,7 @@ struct Interval
   void normalize();
   Interval operator-() const;
   long Sekunden() const;
+  int Days() const { return days; }
 };
 }
 
