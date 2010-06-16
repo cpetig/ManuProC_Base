@@ -54,14 +54,14 @@ unsigned long ManuProC::Datum::getnum(const unsigned char *s,int len) throw()
    return num;
 }
 
-ManuProC::Datum ManuProC::Datum::today() throw()  
+ManuProC::Datum ManuProC::Datum::today() throw()
 {  return ManuProC::Datum(time(0));
 }
 
 ManuProC::Datum::Datum(time_t t) throw() :
 woche(),woche_jahrdiff(),quart()
 {  struct tm *tm=localtime(&t);
-   
+
    tag=tm->tm_mday;
    monat=tm->tm_mon+1;
    jahr=tm->tm_year+1900;
@@ -103,11 +103,11 @@ std::string ManuProC::Datum::to_iso() const throw(Datumsfehler)
 {
  teste();
  return itos(Jahr())+"-"+itos(Monat())+"-"+itos(Tag());
-} 
+}
 
 std::string ManuProC::Datum::postgres_null_if_invalid() const
 {
-  try{ 
+  try{
    teste();
    return " '"+itos(Jahr())+"-"+itos(Monat())+"-"+itos(Tag())+"' ";
    } catch(Datumsfehler)
@@ -123,12 +123,12 @@ void ManuProC::Datum::teste() const throw (ManuProC::Datumsfehler)
    if (tag<1 || tag>31) falsch|=Datumsfehler::tagfalsch;
    if (monat<1 || monat>12) falsch|=Datumsfehler::monatfalsch;
    if (jahr<1800 || jahr>2999) falsch|=Datumsfehler::jahrfalsch;
-   if (falsch) 
+   if (falsch)
    {  throw(Datumsfehler(falsch));
    }
 }
 
-ManuProC::Datum ManuProC::Datum::Infinity() throw()  
+ManuProC::Datum ManuProC::Datum::Infinity() throw()
 {  return ManuProC::Datum(31,12,2999,false);
 }
 
@@ -271,8 +271,8 @@ std::ostream &operator<<(std::ostream&o,const ManuProC::Datum&d) throw()
 #else
 std::ostream &ManuProC::operator<<(std::ostream&o,const ManuProC::Datum&d) throw()
 #endif
-{  int w=o.width(); 
-   char f=o.fill(); 
+{  int w=o.width();
+   char f=o.fill();
    o << d.tag << "." << std::setfill(f) << std::setw(w) << d.monat << "." << d.jahr;
    return o;
 }
@@ -292,7 +292,7 @@ const static int seconds_per_day=60*60*24;
 const static int seconds_per_week=7*seconds_per_day;
 
 ManuProC::Datum::Datum(const Kalenderwoche &kw) throw(Datumsfehler)
-: woche(),woche_jahrdiff(),quart() 
+: woche(),woche_jahrdiff(),quart()
 {  struct tm tm;
    memset(&tm,0,sizeof tm);
    tm.tm_mday=1;
@@ -349,7 +349,7 @@ previous_year:
       monday=monday+(8-tm.tm_wday)*seconds_per_day;
    DEBUG("monday " << monday << '\n');
    if (current<monday)
-   {  if (!try_again) 
+   {  if (!try_again)
       {  DEBUG("current<monday !try_again " << tm.tm_year << '\n');
          return Kalenderwoche(53,1900+tm.tm_year-1);
       }
@@ -385,8 +385,8 @@ int ManuProC::Datum::Wochentag(void) const throw(Datumsfehler)
 
 
 ManuProC::Datum::Datum(int t, int m, int j,bool expandyear) throw(Datumsfehler)
-  : woche(),woche_jahrdiff(),quart(),tag(t),monat(m),jahr(j) 
-{  if (expandyear && jahr<100) 
+  : woche(),woche_jahrdiff(),quart(),tag(t),monat(m),jahr(j)
+{  if (expandyear && jahr<100)
    {  if (jahr<70) jahr+=100;
       jahr+=1900;
    }
@@ -421,3 +421,11 @@ ArgumentList &operator<<(ArgumentList &q, const ManuProC::Datum &v)
 }
 
 #endif
+
+ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,Formatfehler)
+{
+  if (!*f) return Datum();
+  if (strlen(f)<10) throw Formatfehler();
+  if (f[2]!='.' || f[5]!='.') throw Formatfehler();
+  return Datum(getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f+6,4));
+}

@@ -58,43 +58,43 @@ class ManuProC::Datum
 {	mutable unsigned int woche:6;	/* KW */
 	mutable int woche_jahrdiff:2;   /* Diff. des Jahres in KW zum Jahr im Datum */
 	mutable unsigned int quart:3;	/* Quartal */
-	unsigned int tag:5;  	/* tt */ 
+	unsigned int tag:5;  	/* tt */
 	unsigned int monat:4;	/* mm */
 	unsigned int jahr:12;     /* jjjj */
 
 
  static const char* const monate[];
- 	
+
 public:
-	class Formatfehler : public std::exception 
+	class Formatfehler : public std::exception
 	{public:
 		virtual const char* what() const throw() { return "ManuProC::Datum::Formatfehler"; }
 	};
-	
+
 	/// aus Tag, Monat, Jahr erzeugen (expandyear lässt 2stelliges Jahr zu)
 	Datum(int t, int m, int j,bool expandyear=true) throw(Datumsfehler);
-	
+
 	Datum() throw() : woche(),woche_jahrdiff(),quart(),
 	tag(),monat(),jahr()
 	{} /* initialize as invalid */
-	 
+
 	/** Datum aus const char * erzeugen, Format erraten */
 	Datum(const char *datum) throw(Datumsfehler,Formatfehler) :
 		woche(),woche_jahrdiff(),quart()
 	{  this->from_auto(datum);  }
 	/// Datum aus time_t (time(3)) erzeugen
 	explicit Datum(time_t t) throw();
-	
+
 	Datum(const Kalenderwoche &kw) throw(Datumsfehler);
-	
+
 	/// heutiges Datum
 	static Datum today() throw();
 	static Datum Infinity() throw();
-	
+
 	/// in Menschenlesbare Form bringen (NOT THREAD SAFE!)
 	const char *c_str() const throw(Datumsfehler);
 	const char *c_str_filled() const throw(Datumsfehler);
-	
+
         const std::string Short() const throw(Datumsfehler);
 	/// in Postgres Repräsentation wandeln
 	void write_postgres(char *b,unsigned int sz) const throw(Datumsfehler);
@@ -113,10 +113,11 @@ public:
 	/// Datum aus Postgres DATE oder TIMESTAMP erzeugen
         void from_postgres(const char *postgres_timestamp) throw(Datumsfehler,Formatfehler)
         {  from_auto(postgres_timestamp); }
+        static Datum from_access(char const* f) throw(Datumsfehler,Formatfehler);
         /// Datum aus Menschenlesbarer Form erzeugen
         void from_c_str(const char *s) throw(Datumsfehler,Formatfehler)
         {  from_auto(s); }
-        
+
         /// zwei Daten sind gleich?
         bool operator==(const Datum &b) const throw()
         {  return b.tag==tag && b.monat==monat && b.jahr==jahr; }
@@ -142,7 +143,7 @@ public:
             noch nicht implementiert */
         Datum &operator--();
         Datum operator--(int);
-        
+
         /// Differenz in Tagen
         int operator-(const Datum &b) const throw(Datumsfehler);
 
@@ -164,18 +165,18 @@ public:
 	    gültig 1901-2099 */
 	static int Tage_im_Jahr(int jahr) throw()
 	{  return Schaltjahr(jahr)?366:365; }
-	
+
 	/// Der [1..366]. Tag im Jahr
 	int Julian() const throw(Datumsfehler);
-	/** Tage seit 1.1.1900 
-            <br>(1.1.1 waere möglich gewesen, 
+	/** Tage seit 1.1.1900
+            <br>(1.1.1 waere möglich gewesen,
 	    aber: Kalenderreformationen sind ein Kreuz) */
 	int Internal() const throw(Datumsfehler);
 	/// Kalenderwoche
 	Kalenderwoche KW() const throw(Datumsfehler);
 	/// Wochentag: 0=Montag 6=Sonntag
 	int Wochentag() const throw(Datumsfehler);
-	
+
 	/**member access */
 	int Tag() const { return tag; }
 	int Monat() const { return monat; }
@@ -187,12 +188,12 @@ public:
 			      return quart;
 			 }
 	std::string MonatName() const { return monate[monat-1];}
-	static std::string MonatName(int m) { return monate[m-1];}	
-	
+	static std::string MonatName(int m) { return monate[m-1];}
+
 	friend std::ostream &NOTGCC295(::)operator<<(std::ostream&,const Datum&) throw();
-	
+
 	bool valid() const throw();
-	
+
 };
 
 class Query_Row;
