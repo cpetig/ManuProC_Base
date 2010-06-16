@@ -425,7 +425,14 @@ ArgumentList &operator<<(ArgumentList &q, const ManuProC::Datum &v)
 ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,Formatfehler)
 {
   if (!*f) return Datum();
+#if 0
   if (strlen(f)<10) throw Formatfehler();
   if (f[2]!='.' || f[5]!='.') throw Formatfehler();
   return Datum(getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f+6,4));
+#else
+  if (!strncmp(f,"01/01/00",8)) return Datum();
+  if (strlen(f)<8) throw Formatfehler();
+  if (f[2]!='/' || f[5]!='/') throw Formatfehler();
+  return Datum(getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+6,2));
+#endif
 }
