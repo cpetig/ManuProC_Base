@@ -142,7 +142,7 @@ EXPORTS
 	_ZN9TagStream5writeERKSsS1_ 
 	_ZN9TagStream6de_xmlERSs 
 	_ZN9TagStream8next_tagEP3Tag 
-	_ZN9TagStream8utf82isoERSs 
+	_ZN9TagStream8utf82isoERSs
 	_ZN9TagStreamC1EPKc 
 	_ZN9TagStreamC1ERKSs 
 	_ZN9TagStreamC1ERSi 
