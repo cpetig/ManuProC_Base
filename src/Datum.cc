@@ -107,7 +107,7 @@ void ManuProC::Datum::write_euro(char *buf,unsigned int size) const throw(ManuPr
 
 void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)
 {	teste();
-	snprintf0(buf,size,"%d %s %04d",tag,gettext(month_abbrev[monat-1]),jahr);
+	snprintf0(buf,size,"%d %s %04d",tag,dgettext(GETTEXT_PACKAGE, month_abbrev[monat-1]),jahr);
 }
 
 const std::string ManuProC::Datum::Short() const throw(Datumsfehler)
@@ -453,3 +453,13 @@ ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,F
   return Datum(getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+6,2));
 #endif
 }
+
+#if defined(ENABLE_NLS)
+namespace { struct gettext_init { gettext_init(); }; }
+static gettext_init init;
+gettext_init::gettext_init()
+{
+   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+}
+#endif
