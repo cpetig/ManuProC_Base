@@ -111,7 +111,7 @@ template<>
 
 template<>
  std::string ManuProC::create<bool>(const bool &val)
-{  return val?"true":"false"; 
+{  return val?N_("true"):N_("false"); 
 }
 #else
 #include <Misc/itos.h>

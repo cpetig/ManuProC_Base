@@ -31,21 +31,33 @@
 #if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/Query.h>
 #endif
+#include <i18n.h>
 
-const char* const ManuProC::Datum::monate[]={"Januar",
- 		    "Februar",
- 		    "Maerz",
- 		    "April",
- 		    "Mai",
- 		    "Juni",
- 		    "Juli",
- 		    "August",
- 		    "September",
- 		    "Oktober",
- 		    "November",
- 		    "Dezember"};
+const char* const ManuProC::Datum::monate[]={N_("January"),
+ 		    N_("February"),
+ 		    N_("March"),
+ 		    N_("April"),
+ 		    N_("May"),
+ 		    N_("June"),
+ 		    N_("July"),
+ 		    N_("August"),
+ 		    N_("September"),
+ 		    N_("October"),
+ 		    N_("November"),
+ 		    N_("December")};
 
-
+const char* const ManuProC::Datum::month_abbrev[]={N_("Jan"),
+ 		    N_("Feb"),
+ 		    N_("Mar"),
+ 		    N_("Apr"),
+ 		    N_("May"),
+ 		    N_("Jun"),
+ 		    N_("Jul"),
+ 		    N_("Aug"),
+ 		    N_("Sep"),
+ 		    N_("Oct"),
+ 		    N_("Nov"),
+ 		    N_("Dec")};
 
 unsigned long ManuProC::Datum::getnum(const unsigned char *s,int len) throw()
 {  unsigned long num=0;
@@ -69,8 +81,8 @@ woche(),woche_jahrdiff(),quart()
 
 // not thread safe (at least)
 const char *ManuProC::Datum::c_str() const throw(ManuProC::Datumsfehler)
-{	static char ret[11];
-	write_euro(ret,sizeof ret);
+{	static char ret[16];
+	write_i18n(ret,sizeof ret);
 	return ret;
 }
 
@@ -80,6 +92,7 @@ std::string ManuProC::Datum::write_euro() const throw(ManuProC::Datumsfehler)
 	return ret;
 }
 
+// TODO: This is not internationalized!
 const char *ManuProC::Datum::c_str_filled() const throw(ManuProC::Datumsfehler)
 {	static char ret[11];
 	teste();
@@ -92,6 +105,10 @@ void ManuProC::Datum::write_euro(char *buf,unsigned int size) const throw(ManuPr
 	snprintf0(buf,size,"%d.%d.%04d",tag,monat,jahr);
 }
 
+void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)
+{	teste();
+	snprintf0(buf,size,"%d %s %04d",tag,gettext(month_abbrev[monat-1]),jahr);
+}
 
 const std::string ManuProC::Datum::Short() const throw(Datumsfehler)
 {

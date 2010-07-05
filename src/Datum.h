@@ -64,6 +64,7 @@ class ManuProC::Datum
 
 
  static const char* const monate[];
+ static const char* const month_abbrev[];
 
 public:
 	class Formatfehler : public std::exception
@@ -102,6 +103,7 @@ public:
    std::string postgres_null_if_invalid() const;
 	/// in Europäisches Format wandeln
 	void write_euro(char *b,unsigned int sz) const throw(Datumsfehler);
+	void write_i18n(char *b,unsigned int sz) const throw(Datumsfehler);
 	std::string write_euro() const throw(Datumsfehler);
 	// for later i18n
 	std::string to_locale() const throw(Datumsfehler)
