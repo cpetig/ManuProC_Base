@@ -453,13 +453,3 @@ ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,F
   return Datum(getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+6,2));
 #endif
 }
-
-#if defined(ENABLE_NLS)
-namespace { struct gettext_init { gettext_init(); }; }
-static gettext_init init;
-gettext_init::gettext_init()
-{
-   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-   bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-}
-#endif

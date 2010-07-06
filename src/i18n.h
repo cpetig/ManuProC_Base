@@ -19,3 +19,7 @@
 #  define _(String) (String)
 #  define N_(String) (String)
 #endif
+
+#ifdef __cplusplus
+namespace ManuProC_Base { void init_i18n(char const* package_locale_dir=0); }
+#endif
