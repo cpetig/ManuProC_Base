@@ -53,6 +53,27 @@ void Transaction::open(const std::string &_connection) throw(SQLerror)
    commit_vs_rollback=false;
 }
 
+void Transaction::open_exclusive(const std::string &_connection) throw(SQLerror)
+{  assert(!owner); // crash and burn on recursion!
+   if (!_connection.empty()) connection=_connection;
+
+#ifdef USE_SPEED_HACK
+   if (std::find(open_connections.begin(),open_connections.end(),connection)!=
+   		open_connections.end())
+   {  std::cerr << "open exclusive transaction within transaction\n";
+      owner=commit_vs_rollback=false;
+      return;
+   }
+#endif
+
+   assert(connection.empty());
+   Query::Execute("BEGIN EXCLUSIVE TRANSACTION");
+   open_connections.push_back(connection);
+   
+   owner=true;
+   commit_vs_rollback=false;
+}
+
 void Transaction::close() throw(SQLerror)
 {  if (owner)
    {  assert(connection.empty());

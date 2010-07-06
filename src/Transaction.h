@@ -29,7 +29,7 @@ class Transaction
 {	bool owner:1;
 	bool commit_vs_rollback:1;
 	std::string connection;
-	
+
 	static std::list<std::string> open_connections;
 public:
 	Transaction(const std::string &connection=std::string(),bool open_now=true) throw(SQLerror);
@@ -38,6 +38,7 @@ public:
 	//            e.g. by last open or ctor
 	// I feel this is the most intuitive behaviour
 	void open(const std::string &connection=std::string()) throw(SQLerror);
+	void open_exclusive(const std::string &connection=std::string()) throw(SQLerror);
 	void close() throw(SQLerror);
 	void commit_on_close(bool val=true)
 	{  commit_vs_rollback=val; }
