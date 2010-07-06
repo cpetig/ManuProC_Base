@@ -18,6 +18,12 @@ AC_PREFIX_DEFAULT(/usr/local)
 AC_PROG_CXX
 AM_PROG_LIBTOOL
 
+if echo __MINGW32__ | $CPP - - | fgrep -q __MINGW32__
+then mingw=false
+else mingw=true 
+fi
+AM_CONDITIONAL(WINDOWS, test x$mingw = xtrue)
+
 dnl *************************************************
 dnl gettext support
 dnl *************************************************
@@ -29,9 +35,12 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
 
 dnl Add the languages which your application supports here.
 ALL_LINGUAS=""
-AM_GLIB_GNU_GETTEXT([])
-dnl AM_GNU_GETTEXT_VERSION([0.17])
-dnl AM_GNU_GETTEXT([external])
+if test x$mingw = xtrue ; then
+  AM_GLIB_GNU_GETTEXT([])
+else
+  AM_GNU_GETTEXT_VERSION([0.17])
+  AM_GNU_GETTEXT([external])
+fi
 
 dnl Set PACKAGE_LOCALE_DIR in config.h.
 if test -z "${DATADIRNAME}"
@@ -173,11 +182,5 @@ then
 fi
 AM_CONDITIONAL(DATABASE, test \! -z "$ECPG_LIBS" )
 AC_SUBST(DATABASE_TYPE)
-
-if echo __MINGW32__ | $CPP - - | fgrep -q __MINGW32__
-then mingw=false
-else mingw=true 
-fi
-AM_CONDITIONAL(WINDOWS, test x$mingw = xtrue)
 
 AC_OUTPUT(Makefile src/Makefile examples/Makefile src/libManuProC_Base.rc po/Makefile.in)
