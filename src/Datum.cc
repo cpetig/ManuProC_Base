@@ -79,13 +79,6 @@ woche(),woche_jahrdiff(),quart()
    jahr=tm->tm_year+1900;
 }
 
-// not thread safe (at least)
-const char *ManuProC::Datum::c_str() const throw(ManuProC::Datumsfehler)
-{	static char ret[16];
-	write_i18n(ret,sizeof ret);
-	return ret;
-}
-
 std::string ManuProC::Datum::write_euro() const throw(ManuProC::Datumsfehler)
 {	static char ret[16];
 	write_euro(ret,sizeof ret);

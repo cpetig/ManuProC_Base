@@ -27,3 +27,10 @@ void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const throw(ManuPr
 {	teste();
 	snprintf0(buf,size,"%d %s %04d",tag,dgettext(GETTEXT_PACKAGE, month_abbrev[monat-1]),jahr);
 }
+
+// not thread safe (at least)
+const char *ManuProC::Datum::c_str() const throw(ManuProC::Datumsfehler)
+{	static char ret[16];
+	write_i18n(ret,sizeof ret);
+	return ret;
+}
