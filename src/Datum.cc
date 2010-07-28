@@ -105,11 +105,6 @@ void ManuProC::Datum::write_euro(char *buf,unsigned int size) const throw(ManuPr
 	snprintf0(buf,size,"%d.%d.%04d",tag,monat,jahr);
 }
 
-void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)
-{	teste();
-	snprintf0(buf,size,"%d %s %04d",tag,dgettext(GETTEXT_PACKAGE, month_abbrev[monat-1]),jahr);
-}
-
 const std::string ManuProC::Datum::Short() const throw(Datumsfehler)
 {
   teste();
