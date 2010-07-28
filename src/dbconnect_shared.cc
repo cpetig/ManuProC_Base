@@ -111,4 +111,9 @@ void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
    db_connection=0;
 }
 
+void ManuProC::dbdefault(std::string const& name) throw(SQLerror)
+{
+  assert(!"dbdefault");
+}
+
 #endif
