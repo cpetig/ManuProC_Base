@@ -27,6 +27,7 @@ namespace EntryValue_easy
   cH_EntryValue create(double const& a);
   cH_EntryValue create(std::string const& a);
   cH_EntryValue create(bool const& a);
+  cH_EntryValue create(cH_EntryValue const& a) { return a; }
   // dummy structure, used by RowDataBase_easy as default template argument
   struct nil {};
   cH_EntryValue create(nil const&);

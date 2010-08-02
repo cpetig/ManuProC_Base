@@ -171,6 +171,11 @@ int ManuProC::Datum::Internal() const throw(Datumsfehler)
    // zum 1.3.1900 wird falsch gerechnet ...
 }
 
+int ManuProC::Datum::IntRepresentation() const throw(Datumsfehler)
+{  teste();
+   return jahr*10000+monat*100+tag;
+}
+
 int ManuProC::Datum::operator-(const Datum &b) const throw(Datumsfehler)
 {  return Internal()-b.Internal();
 }

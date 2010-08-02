@@ -174,6 +174,8 @@ public:
             <br>(1.1.1 waere möglich gewesen,
 	    aber: Kalenderreformationen sind ein Kreuz) */
 	int Internal() const throw(Datumsfehler);
+	/** Integer representation YYYYMMDD */
+	int IntRepresentation() const throw(Datumsfehler);
 	/// Kalenderwoche
 	Kalenderwoche KW() const throw(Datumsfehler);
 	/// Wochentag: 0=Montag 6=Sonntag
