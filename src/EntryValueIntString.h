@@ -36,13 +36,14 @@ public:
    {}
  EntryValueIntString(int v);
  EntryValueIntString(const std::string &s);
- EntryValueIntString(int v, const std::string &s) 
+ EntryValueIntString(int v, const std::string &s)
  	: intval(v), strval(s) {}
-   
+
  virtual int getIntVal() const { return intval;}
  virtual const std::string getStrVal() const { return strval;}
- // CP: völliger Unsinn, sollte besser ein EntryValueBool (zu schreiben) sein 
- virtual __deprecated bool getBoolVal() const { return strval=="t";}
+ // CP: vÃ¶lliger Unsinn, sollte besser ein EntryValueBool (zu schreiben) sein
+ __deprecated virtual bool getBoolVal() const { return strval=="t";}
+ __deprecated virtual double getDoubleVal() const { return intval; }
 };
 
 class cH_EntryValueIntString : public cH_EntryValue
@@ -53,5 +54,5 @@ public:
  cH_EntryValueIntString(const std::string &s) : cH_EntryValue(new EntryValueIntString(s)) {}
  cH_EntryValueIntString(int v,const std::string &s) : cH_EntryValue(new EntryValueIntString(v,s)) {}
 };
-  
+
 #endif // ENTRYVALH
