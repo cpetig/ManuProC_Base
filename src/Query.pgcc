@@ -32,6 +32,7 @@
 #endif
 #include <cassert>
 #include <cstdlib>
+#include <time.h>
 
 //#ifdef HAVE_LIBECPG6_UP
 //#define ECPGget_connection ecpg_get_connection

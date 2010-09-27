@@ -18,6 +18,8 @@ libManuProC_Base_pg.def: libManuProC_Base.def libManuProC_Base_pg.defadd \
 	cat >$@ $^
 libManuProC_Base_res.lo: libManuProC_Base.rc
 	WINDRES=i586-mingw32msvc-windres $(top_srcdir)/build/win32/lt-compile-resource $< $@
+#libManuProC_Base_res.o: libManuProC_Base.rc
+#	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
 AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION 
 
