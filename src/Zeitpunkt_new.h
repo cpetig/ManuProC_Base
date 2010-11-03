@@ -33,19 +33,19 @@
 // Dann würde allerdings manches komplizierter werden !!!
 class Zeitpunkt_new
 {public:
-   class Days 
+   class Days
    {	int payload;
     public:
    	Days(int m) : payload(m) {}
    	operator int() const { return payload; }
    };
-   class Hours 
+   class Hours
    {	int payload;
     public:
    	Hours(int m) : payload(m) {}
    	operator int() const { return payload; }
    };
-   class Minutes 
+   class Minutes
    {	int payload;
     public:
    	Minutes(int m) : payload(m) {}
@@ -67,24 +67,24 @@ private:
    int hour,minute,second,microsecond;
    mutable int minutes_from_gmt; // time zone, CE[TD]ST=120
    precision prec;
-   
+
    void calculate_TZ(int isdst=-1) const throw();
    void normalize_TZ() const throw();
    void normalize();
 public:
    Zeitpunkt_new() throw() : hour(0), minute(0), second(0), microsecond(0), minutes_from_gmt(0), prec(days) {}
-   Zeitpunkt_new(ManuProC::Datum d) throw() 
-   	: datum(d), hour(0), minute(0), second(0), microsecond(0), 
-   	  minutes_from_gmt(0), prec(days) 
+   Zeitpunkt_new(ManuProC::Datum d) throw()
+   	: datum(d), hour(0), minute(0), second(0), microsecond(0),
+   	  minutes_from_gmt(0), prec(days)
    {  calculate_TZ(); }
-   Zeitpunkt_new(ManuProC::Datum d, int h) throw() 
-   	: datum(d), hour(h), minute(0), second(0), microsecond(0), minutes_from_gmt(0), prec(hours) 
+   Zeitpunkt_new(ManuProC::Datum d, int h) throw()
+   	: datum(d), hour(h), minute(0), second(0), microsecond(0), minutes_from_gmt(0), prec(hours)
    {  calculate_TZ(); }
-   Zeitpunkt_new(ManuProC::Datum d, int h, int m) throw() 
-   	: datum(d), hour(h), minute(m), second(0), microsecond(0), minutes_from_gmt(0), prec(minutes) 
+   Zeitpunkt_new(ManuProC::Datum d, int h, int m) throw()
+   	: datum(d), hour(h), minute(m), second(0), microsecond(0), minutes_from_gmt(0), prec(minutes)
    {  calculate_TZ(); }
-   Zeitpunkt_new(ManuProC::Datum d, int h, int m, int s) throw() 
-   	: datum(d), hour(h), minute(m), second(s), microsecond(0), minutes_from_gmt(0), prec(seconds) 
+   Zeitpunkt_new(ManuProC::Datum d, int h, int m, int s) throw()
+   	: datum(d), hour(h), minute(m), second(s), microsecond(0), minutes_from_gmt(0), prec(seconds)
    {  calculate_TZ(); }
    // correct wrapper
    Zeitpunkt_new(const PostgresTimestamp &a)
@@ -92,13 +92,14 @@ public:
    }
    explicit Zeitpunkt_new(const char *a);
    explicit Zeitpunkt_new(time_t t) throw();
-   
+
    /// write into char[]
    void write(PostgresTimestamp a) const;
    // convert to string
    std::string write() const;
    std::string Short(const ManuProC::Datum &d=ManuProC::Datum()) const;
-   
+   std::string c_str() const;
+
    long diff(const Zeitpunkt_new &b, precision prec) const throw();
    /// Differenz in min(Precision)
    int operator-(const Zeitpunkt_new &b) const throw();
@@ -120,14 +121,14 @@ public:
    precision Precision() const
    {  return prec; }
    void Round(precision p);
-   
+
    operator ManuProC::Datum() const throw()
    {  return Datum(); }
    const ManuProC::Datum &Datum() const throw();
    operator time_t() throw();
-   
+
    friend std::ostream &operator<<(std::ostream&,const Zeitpunkt_new&);
-   
+
    unsigned int Jahr() const { return datum.Jahr(); }
    unsigned int Monat() const { return datum.Monat(); }
    unsigned int Tag() const { return datum.Tag(); }
@@ -137,7 +138,7 @@ public:
    unsigned int Mikrosekunde() const { return microsecond; }
    // falscher Name
    __deprecated unsigned int Minuten() const { return minute; }
-   
+
     bool valid() const throw() { return datum.valid(); }
     bool operator!() const throw() { return !valid(); }
 };
