@@ -32,8 +32,7 @@ msgstr "Marts"
 msgid "April"
 msgstr "April"
 
-#: src/Datum.cc:40
-#: src/Datum.cc:53
+#: src/Datum.cc:40 src/Datum.cc:53
 msgid "May"
 msgstr "Maj"
 
@@ -111,9 +110,8 @@ msgstr "Dec"
 
 #: src/create_parse.cc:114
 msgid "true"
-msgstr "sand"
+msgstr "ægte"
 
 #: src/create_parse.cc:114
 msgid "false"
 msgstr "falsk"
-
