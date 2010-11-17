@@ -30,7 +30,9 @@ struct Global_Settings
 		const std::string& name);
 
     int userid;
-    std::string program,name,wert;       
+    std::string program,name,wert;
+    static const int global_id=-1; // this id is for setting and requesting the default value for all users
+    // (0 is also sensible - will map to NULL in database)
 
 private:    
     static save_cb save_impl;
