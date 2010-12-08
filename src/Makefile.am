@@ -59,7 +59,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
 	Query.pgcc
 
-BUILT_SOURCES=Misc ostream $(DB_SRCES) $(DLL_DEF)
+BUILT_SOURCES=Misc ostream ${EXTRA_DIST:.pgcc=.cc} $(DLL_DEF)
 
 include_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 	IOerror.h Kalenderwoche.h Pointer.h Postgres.h Rundungsmacros.h \
