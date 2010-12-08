@@ -20,7 +20,7 @@
 
 
 #include <Misc/Datum.h>
-#include <cassert>
+//#include <cassert>
 #include <Misc/string0.h>
 
 void ManuProC::Datum::write_postgres(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)

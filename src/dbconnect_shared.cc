@@ -21,7 +21,7 @@
 #include <ManuProCConfig.h>
 #include <Misc/dbconnect.h>
 #include <cassert>
-#include <cstring>
+//#include <cstring>
 //#include <unistd.h>
 #include <cstdlib>
 
@@ -61,8 +61,8 @@ void ManuProC::dbdisconnect_nt(const std::string &name) throw()
 
 
 
-#include <iostream>
-#include <fstream>
+//#include <iostream>
+//#include <fstream>
 
 const std::string ManuProC::Connection::Pass() const throw(AuthError)
 {
