@@ -6,7 +6,7 @@
 #include <Misc/Query.h>
 #endif
 #include <Misc/itos.h>
-#include <cassert>
+//#include <cassert>
 #include <Misc/Ausgabe_neu.h>
 #include <cstdlib>
 

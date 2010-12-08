@@ -21,7 +21,7 @@
 /* $Id: IOerror.cc,v 1.8 2003/01/08 10:18:51 christof Exp $ */
 #include <Misc/IOerror.h>
 #include <errno.h>
-#include <Misc/Ausgabe_neu.h>
+//#include <Misc/Ausgabe_neu.h>
 #include <cstring>
 
 IOerror::IOerror() throw() : IOerrno(errno)
