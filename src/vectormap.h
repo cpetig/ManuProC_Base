@@ -52,15 +52,15 @@ protected:
 	};
 public:
 	iterator find(const key_type& x)
-	{ return std::find_if(begin(),end(),equal(x)); }
+	{ return std::find_if(this->begin(),this->end(),equal(x)); }
 	const_iterator find(const key_type& x) const
-	{ return std::find_if(begin(),end(),equal(x)); }
+	{ return std::find_if(this->begin(),this->end(),equal(x)); }
 	
 	mapped_type &operator[](const key_type& k)
 	{  iterator i=find(k);
-	   if (i==end()) 
+	   if (i==this->end()) 
 	   {  _Rep_type::push_back(value_type(k,mapped_type()));
-	      return back().second;
+	      return this->back().second;
 	   }
 	   return i->second;
 	}
@@ -86,24 +86,24 @@ private:
 
 public:
 	iterator lower_bound(const key_type& x)
-	{ return std::lower_bound(begin(),end(),x,less()); }
+	{ return std::lower_bound(this->begin(),this->end(),x,less()); }
 	const_iterator lower_bound(const key_type& x) const
-	{ return std::lower_bound(begin(),end(),x,less()); }
+	{ return std::lower_bound(this->begin(),this->end(),x,less()); }
 	iterator find(const key_type& x)
 	{ iterator res=lower_bound(x);
 	  if (res->first==x) return res;
-	  return end();
+	  return this->end();
 	}
 	const_iterator find(const key_type& x) const
 	{ const_iterator res=lower_bound(x);
 	  if (res->first==x) return res;
-	  return end();
+	  return this->end();
 	}
 	mapped_type &operator[](const key_type& k)
 	{  iterator i=lower_bound(k);
-	   if (i==end()) 
+	   if (i==this->end()) 
 	   {  _Rep_type::push_back(value_type(k,mapped_type()));
-	      return back().second;
+	      return this->back().second;
 	   }
 	   if (i->first==k)
 	   {  return i->second;

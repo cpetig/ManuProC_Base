@@ -25,11 +25,13 @@
 #ifdef __cplusplus
 #include <cstdio>
 #include <cstring>
+#include <cstdarg>
 
 extern "C" {
 #else
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #endif
 
 #ifdef __MINGW32__

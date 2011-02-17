@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <Misc/TagStream.h>
+#include <cassert>
 
 class recodebuf : public std::streambuf
 {public:

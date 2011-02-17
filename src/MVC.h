@@ -24,6 +24,7 @@
 
 #warning Using MVC.h is deprecated, please use Model.h
 
+#include <ManuProCConfig.h>
 #if MPC_SIGC_VERSION<0x120
 #include <sigc++/basic_signal.h>
 #else
@@ -36,8 +37,8 @@
 
 class MVC_Base
 {public:
-	SigC::Signal1<void,void*> changed;
-	SigC::Signal1<void,void*> &signal_changed()
+	sigc::signal1<void,void*> changed;
+	sigc::signal1<void,void*> &signal_changed()
 	{ return changed; }
 };
 
@@ -88,16 +89,16 @@ public:
 template <class T>
  class Model_ref
 {	T *value;
-	SigC::Signal1<void,void*> *changed;
+	sigc::signal1<void,void*> *changed;
 public:
 	Model_ref(MVC<T> &model)
 	: value(&model.Value()), changed(&model.changed) {}
-	Model_ref(T &v, SigC::Signal1<void,void*> &sig)
+	Model_ref(T &v, sigc::signal1<void,void*> &sig)
 	: value(&v), changed(&sig) {}
 	Model_ref() : value(0), changed(0) {}
 
 	bool valid() const { return value && changed; }
-	SigC::Signal1<void,void*> &signal_changed() const
+	sigc::signal1<void,void*> &signal_changed() const
 	{  return *changed; }
 	// g++ 2.95 does not use this ...
 	operator T() const

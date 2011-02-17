@@ -34,15 +34,15 @@ template <class Index,class Payload>
 {	typedef safemap<Index,Payload *> map_t;
 	map_t _mp;
 public:
-	CachePointer() throw() {}
+	Cache_Pointer() throw() {}
 	Payload *Register(const Index &i,Payload *p) throw()
 	{  return _mp[i]=p; }
 	void deregister(const Index &ix,const Payload *p) throw()
-	{  map_t::iterator i(_mp.find(ix));
+	{  typename map_t::iterator i(_mp.find(ix));
 	   if (i!=_mp.end() && i->second==p) _mp.erase(i);
 	}
 	Payload *lookup(const Index &ix) throw()
-	{  map_t::iterator i(_mp.find(ix));
+	{  typename map_t::iterator i(_mp.find(ix));
 	   if (i!=_mp.end()) return i->second;
 	   return 0;
 	}
