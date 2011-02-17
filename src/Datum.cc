@@ -32,6 +32,7 @@
 #include <Misc/Query.h>
 #endif
 #include <i18n.h>
+#include <cstring>
 
 const char* const ManuProC::Datum::monate[]={N_("January"),
  		    N_("February"),

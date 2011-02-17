@@ -25,6 +25,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <cstring>
+#include <cctype>
 
 #if defined(__GNUC__) && __GNUC__ >=4
 # define TEMPLATEltgt template<>

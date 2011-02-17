@@ -23,6 +23,7 @@
 #include <locale.h>
 #include <iostream>
 #include <cstring>
+#include <cstdio>
 
 #ifdef __MINGW32__
 extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
