@@ -8,54 +8,54 @@ msgstr ""
 "Project-Id-Version: manuproc_base 0.8.0\n"
 "Report-Msgid-Bugs-To: manuproc-developer-de@berlios.de\n"
 "POT-Creation-Date: 2011-03-04 16:01+0100\n"
-"PO-Revision-Date: 2011-03-07 10:15+0100\n"
+"PO-Revision-Date: 2011-03-07 10:14+0100\n"
 "Last-Translator: Christof Petig <petig@stahlwille.de>\n"
-"Language-Team: French <fr@li.org>\n"
-"Language: fr\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/Datum.cc:37
 msgid "January"
-msgstr "Janvier"
+msgstr "Gennaio"
 
 #: src/Datum.cc:38
 msgid "February"
-msgstr "Février"
+msgstr "Febbraio"
 
 #: src/Datum.cc:39
 msgid "March"
-msgstr "Mars"
+msgstr "Marzo"
 
 #: src/Datum.cc:40
 msgid "April"
-msgstr "Avril"
+msgstr "Aprile"
 
 #: src/Datum.cc:41
 #: src/Datum.cc:54
 msgid "May"
-msgstr "Mai"
+msgstr "Mag"
 
 #: src/Datum.cc:42
 msgid "June"
-msgstr "Juin"
+msgstr "Giugno"
 
 #: src/Datum.cc:43
 msgid "July"
-msgstr "Juillet"
+msgstr "Iuglio"
 
 #: src/Datum.cc:44
 msgid "August"
-msgstr "Août"
+msgstr "Agosto"
 
 #: src/Datum.cc:45
 msgid "September"
-msgstr "Septembre"
+msgstr "Settembre"
 
 #: src/Datum.cc:46
 msgid "October"
-msgstr "Octobre"
+msgstr "Ottobre"
 
 #: src/Datum.cc:47
 msgid "November"
@@ -63,43 +63,43 @@ msgstr "Novembre"
 
 #: src/Datum.cc:48
 msgid "December"
-msgstr "Décembre"
+msgstr "Dicembre"
 
 #: src/Datum.cc:50
 msgid "Jan"
-msgstr "Janv"
+msgstr "Gen"
 
 #: src/Datum.cc:51
 msgid "Feb"
-msgstr "Févr"
+msgstr "Feb"
 
 #: src/Datum.cc:52
 msgid "Mar"
-msgstr "Mars"
+msgstr "Mar"
 
 #: src/Datum.cc:53
 msgid "Apr"
-msgstr "Avr"
+msgstr "Apr"
 
 #: src/Datum.cc:55
 msgid "Jun"
-msgstr "Juin"
+msgstr "Giu"
 
 #: src/Datum.cc:56
 msgid "Jul"
-msgstr "Juil"
+msgstr "Iug"
 
 #: src/Datum.cc:57
 msgid "Aug"
-msgstr "Août"
+msgstr "Ag."
 
 #: src/Datum.cc:58
 msgid "Sep"
-msgstr "Sept"
+msgstr "Set"
 
 #: src/Datum.cc:59
 msgid "Oct"
-msgstr "Oct"
+msgstr "Ott"
 
 #: src/Datum.cc:60
 msgid "Nov"
@@ -107,13 +107,13 @@ msgstr "Nov"
 
 #: src/Datum.cc:61
 msgid "Dec"
-msgstr "Dec"
+msgstr "Dic"
 
 #: src/create_parse.cc:114
 msgid "true"
-msgstr "vrai"
+msgstr ""
 
 #: src/create_parse.cc:114
 msgid "false"
-msgstr "faux"
+msgstr ""
 
