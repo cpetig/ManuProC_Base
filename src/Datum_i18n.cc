@@ -30,7 +30,7 @@ void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const throw(ManuPr
 
 // not thread safe (at least)
 const char *ManuProC::Datum::c_str() const throw(ManuProC::Datumsfehler)
-{	static char ret[16];
+{	static char ret[32]; // russian will use a large amount of bytes ;-)
 	write_i18n(ret,sizeof ret);
 	return ret;
 }
