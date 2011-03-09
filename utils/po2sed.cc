@@ -44,6 +44,7 @@ std::string escape(std::string const& s)
        case '.': res+="\\."; break;
        case '[': res+="\\["; break;
        case ']': res+="\\]"; break;
+       case '\\': res+="\\\\"; break;
 //       case '(': res+="\\("; break;
 //       case ')': res+="\\)"; break;
 //       case '{': res+="\\{"; break;
@@ -76,6 +77,16 @@ std::string sescape(std::string const& s, int style)
   }
   else if (0 && style==ST_C)
   {
+    res+="_(\"";
+    for (std::string::const_iterator i=s.begin();i!=s.end();++i)
+     switch(*i)
+     {
+       case '\n': res+="\\n"; break;
+       case '\t': res+="\\t"; break;
+       case '\\': res+="\\\\"; break;
+       default: res+=*i; break;
+     }
+    res+="\")";
   }
   else res=s;
   return res;
