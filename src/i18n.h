@@ -1,5 +1,6 @@
 /* this file contains the necessary defines to use gettext in your program */
 
+#pragma once
 #include "config.h"
 #ifdef ENABLE_NLS
 #  include <libintl.h>
