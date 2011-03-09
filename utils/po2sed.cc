@@ -71,6 +71,7 @@ std::string sescape(std::string const& s, int style)
      {
        case '<': res+="&lt;"; break;
        case '>': res+="&gt;"; break;
+       case '&': res+="&amp;"; break;
        default: res+=*i; break;
      }
     res+="</property>";
