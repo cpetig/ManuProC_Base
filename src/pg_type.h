@@ -4,6 +4,8 @@
 #ifndef CAF46BC4_ADDD_4FF3_B6F2_EC75E2369338
 #define CAF46BC4_ADDD_4FF3_B6F2_EC75E2369338
 
+#include <string>
+
 #define BOOLOID			16
 #define BYTEAOID		17
 #define CHAROID			18
@@ -69,5 +71,7 @@
 #define INTERNALOID		2281
 #define OPAQUEOID		2282
 #define ANYELEMENTOID	2283
+
+std::string readable_SQLtype(int typ, int typmod);
 
 #endif

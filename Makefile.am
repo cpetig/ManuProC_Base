@@ -2,7 +2,7 @@
 
 SUBDIRS=src examples po
 	
-EXTRA_DIST = ./config.rpath  ./config.rpath m4/ChangeLog  AUTHORS TODO README configure
+EXTRA_DIST = ./config.rpath  ./config.rpath  ./config.rpath m4/ChangeLog  AUTHORS TODO README configure
 
 CLEANFILES = *~
 

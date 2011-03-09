@@ -175,6 +175,16 @@ dnl dann brauchst du aber das !!! CP
    AC_MSG_RESULT($DEFAULT_DB)
 fi
 
+AC_MSG_CHECKING(for handle debug code)
+AC_ARG_ENABLE(handledebug,[  --enable-handledebug	enable Handle Content debugging code (slower, recompile everything if you switch this!)],
+	handledebug_exts="$enableval", handledebug_exts=no)
+if test "$handledebug_exts" != "no" ; then
+	AC_MSG_RESULT([enabled])
+	AC_DEFINE(DEBUG_HANDLE_CONTENT,1,[whether handle content tracing is enabled])
+else
+	AC_MSG_RESULT([disabled])
+fi
+
 # perhaps deprecated
 if test ! -z "$ECPG_LIBS"
 then
