@@ -61,5 +61,13 @@ public:
 	bool operator!() const
 	{ return !_data;
 	}
+
+	// casting operators
+	template <typename X>
+	 Pointer<X> cast_static() const { return static_cast<X*>(_data); }
+	template <typename X>
+	 Pointer<X> cast_dynamic() const { return dynamic_cast<X*>(_data); }
+	template <typename X>
+	 Pointer<X> cast_const() const { return const_cast<X*>(_data); }
 };
 #endif
