@@ -51,18 +51,46 @@ std::string escape(std::string const& s)
        case '*': res+="\\*"; break;
        case '$': res+="\\$"; break;
        case '^': res+="\\^"; break;
+       case '&': res+="\\&"; break;
        default: res+=*i; break;
      }
   return res;
 }
 
+enum { ST_NONE, ST_GLADE, ST_C };
+
+std::string sescape(std::string const& s, int style)
+{
+  std::string res;
+  if (style==ST_GLADE)
+  {
+    res+=" translatable=\"yes\">";
+    for (std::string::const_iterator i=s.begin();i!=s.end();++i)
+     switch(*i)
+     {
+       case '<': res+="&lt;"; break;
+       case '>': res+="&gt;"; break;
+       default: res+=*i; break;
+     }
+    res+="</property>";
+  }
+  else if (0 && style==ST_C)
+  {
+  }
+  else res=s;
+  return res;
+}
+
 int main(int argc, char **argv)
 {
+  unsigned style=ST_NONE;
   if (argc<2)
   {
-    fprintf(stderr, "USAGE: %s <po file>\n", argv[0]);
+    fprintf(stderr, "USAGE: %s <po file> [style]\n", argv[0]);
     return 1;
   }
+  if (argc>2) style=atoi(argv[2]);
+  
   assert(setlocale(LC_CTYPE, ""));
  std::map<len_sorted,std::string> translations;
 
@@ -99,7 +127,7 @@ int main(int argc, char **argv)
 
             if (msgid.empty()) continue;
             if (msgid==msgstr) continue;
-            translations[escape(msgid)]=escape(msgstr);
+            translations[escape(sescape(msgid,style))]=escape(sescape(msgstr,style));
           }
         }
       }
