@@ -75,7 +75,7 @@ std::string sescape(std::string const& s, int style)
      }
     res+="</property>";
   }
-  else if (0 && style==ST_C)
+  else if (style==ST_C)
   {
     res+="_(\"";
     for (std::string::const_iterator i=s.begin();i!=s.end();++i)
