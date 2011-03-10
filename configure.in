@@ -33,12 +33,9 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
 		[the gettext domain])
 
-dnl Add the languages which your application supports here.
-ALL_LINGUAS=""
 if test x$mingw = xtrue ; then
   AM_GLIB_GNU_GETTEXT([])
 else
-  AM_GNU_GETTEXT_VERSION([0.17])
   AM_GNU_GETTEXT([external])
 fi
 
@@ -193,4 +190,4 @@ fi
 AM_CONDITIONAL(DATABASE, test \! -z "$ECPG_LIBS" )
 AC_SUBST(DATABASE_TYPE)
 
-AC_OUTPUT(Makefile src/Makefile examples/Makefile src/libManuProC_Base.rc po/Makefile.in)
+AC_OUTPUT(Makefile src/Makefile examples/Makefile src/libManuProC_Base.rc po/Makefile.in )
