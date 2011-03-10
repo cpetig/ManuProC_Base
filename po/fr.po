@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: manuproc_base 0.8.0\n"
 "Report-Msgid-Bugs-To: manuproc-developer-de@berlios.de\n"
-"POT-Creation-Date: 2011-03-04 16:01+0100\n"
+"POT-Creation-Date: 2011-03-10 11:22+0100\n"
 "PO-Revision-Date: 2011-03-07 10:15+0100\n"
 "Last-Translator: Christof Petig <petig@stahlwille.de>\n"
 "Language-Team: French <fr@li.org>\n"
@@ -32,8 +32,7 @@ msgstr "Mars"
 msgid "April"
 msgstr "Avril"
 
-#: src/Datum.cc:41
-#: src/Datum.cc:54
+#: src/Datum.cc:41 src/Datum.cc:54
 msgid "May"
 msgstr "Mai"
 
@@ -116,4 +115,3 @@ msgstr "vrai"
 #: src/create_parse.cc:114
 msgid "false"
 msgstr "faux"
-
