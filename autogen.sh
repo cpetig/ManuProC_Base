@@ -23,7 +23,9 @@ else
 fi
 echo `autoconf$AC_POSTFIX --version | head -1` found
 
-if which automake-1.10 >/dev/null
+if which automake-1.11 >/dev/null
+then AM_POSTFIX=-1.11
+elif which automake-1.10 >/dev/null
 then AM_POSTFIX=-1.10
 elif which automake-1.9 >/dev/null
 then AM_POSTFIX=-1.9
