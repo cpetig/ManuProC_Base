@@ -1,146 +1,6 @@
 dnl $Id: petig.m4,v 1.79 2005/08/30 10:15:41 christof Exp $
 
 dnl Configure paths for some libraries
-dnl derived from kde's acinclude.m4
-
-dnl why not /usr/local/lib/mico-setup.sh
-
-AC_DEFUN([EXKDE_CHECK_LIBDL],
-[
-AC_CHECK_LIB(dl, dlopen, [
-LIBDL="-ldl"
-ac_cv_have_dlfcn=yes
-])
-
-AC_CHECK_LIB(dld, shl_unload, [
-LIBDL="-ldld"
-ac_cv_have_shload=yes
-])
-
-AC_SUBST(LIBDL)
-])
-
-AC_DEFUN([EXKDE_CHECK_MICO],
-[
-AC_REQUIRE([EXKDE_CHECK_LIBDL])
-AC_MSG_CHECKING(for MICO)
-AC_ARG_WITH(micodir,
-  [  --with-micodir=micodir  where mico is installed ],
-  kde_micodir=$withval,
-  kde_micodir=/usr/local
-)
-if test ! -r  $kde_micodir/include/CORBA.h; then
-  kde_micodir=/usr
-  if test ! -r  $kde_micodir/include/CORBA.h; then
-    AC_MSG_ERROR([No CORBA.h found, specify another micodir])
-  fi
-fi
-AC_MSG_RESULT($kde_micodir)
-
-MICO_INCLUDES=-I$kde_micodir/include
-AC_SUBST(MICO_INCLUDES)
-MICO_CFLAGS=$MICO_INCLUDES
-AC_SUBST(MICO_CFLAGS)
-MICO_LDFLAGS=-L$kde_micodir/lib
-AC_SUBST(MICO_LDFLAGS)
-
-AC_MSG_CHECKING([for MICO version])
-AC_CACHE_VAL(kde_cv_mico_version,
-[
-AC_LANG_C
-cat >conftest.$ac_ext <<EOF
-#include <stdio.h>
-#include <mico/version.h>
-int main() { 
-    
-   printf("MICO_VERSION=%s\n",MICO_VERSION); 
-   return (0); 
-}
-EOF
-ac_compile='${CC-gcc} $CFLAGS $MICO_INCLUDES conftest.$ac_ext -o conftest'
-if AC_TRY_EVAL(ac_compile); then
-  if eval `./conftest 2>&5`; then
-    kde_cv_mico_version=$MICO_VERSION
-  else
-    AC_MSG_ERROR([your system is not able to execute a small application to
-    find MICO version! Check $kde_micodir/include/mico/version.h])
-  fi 
-else
-  AC_MSG_ERROR([your system is not able to compile a small application to
-  find MICO version! Check $kde_micodir/include/mico/version.h])
-fi
-])
-
-dnl installed MICO version
-mico_v_maj=`echo $kde_cv_mico_version | sed -e 's/^\(.*\)\..*\..*$/\1/'`
-mico_v_mid=`echo $kde_cv_mico_version | sed -e 's/^.*\.\(.*\)\..*$/\1/'`
-mico_v_min=`echo $kde_cv_mico_version | sed -e 's/^.*\..*\.\(.*\)$/\1/'`
-
-dnl required MICO version
-req_v_maj=`echo $1 | sed -e 's/^\(.*\)\..*\..*$/\1/'`
-req_v_mid=`echo $1 | sed -e 's/^.*\.\(.*\)\..*$/\1/'`
-req_v_min=`echo $1 | sed -e 's/^.*\..*\.\(.*\)$/\1/'` 
-
-if test "$mico_v_maj" -lt "$req_v_maj" || \
-   ( test "$mico_v_maj" -eq "$req_v_maj" && \
-        test "$mico_v_mid" -lt "$req_v_mid" ) || \
-   ( test "$mico_v_mid" -eq "$req_v_mid" && \
-        test "$mico_v_min" -lt "$req_v_min" )
-
-then
-  AC_MSG_ERROR([found MICO version $kde_cv_mico_version but version $1 \
-at least is required. You should upgrade MICO.])
-else
-  AC_MSG_RESULT([$kde_cv_mico_version (minimum version $1, ok)])
-fi
-
-LIBMICO="-lmico$kde_cv_mico_version $LIBDL"
-AC_SUBST(LIBMICO)
-IDL=$kde_micodir/bin/idl
-AC_SUBST(IDL)
-])
-
-AC_DEFUN([EXKDE_CHECK_MINI_STL],
-[
-AC_REQUIRE([EXKDE_CHECK_MICO])
-
-AC_MSG_CHECKING(if we use mico's mini-STL)
-AC_CACHE_VAL(kde_cv_have_mini_stl,
-[
-AC_LANG_CPLUSPLUS
-kde_save_cxxflags="$CXXFLAGS"
-CXXFLAGS="$CXXFLAGS $MICO_INCLUDES"
-AC_TRY_COMPILE(
-[
-#include <mico/config.h>
-],
-[
-#ifdef HAVE_MINI_STL
-#error "nothing"
-#endif
-],
-kde_cv_have_mini_stl=no,
-kde_cv_have_mini_stl=yes)
-CXXFLAGS="$kde_save_cxxflags"
-])
-
-AC_MSG_RESULT($kde_cv_have_mini_stl)
-if test "$kde_cv_have_mini_stl" = "yes"; then
-  AC_DEFINE_UNQUOTED(HAVE_MINI_STL)
-fi
-])
-
-AC_DEFUN([PETIG_CHECK_MICO],
-[
-EXKDE_CHECK_MICO([2.3.3])
-AC_REQUIRE([EXKDE_CHECK_MINI_STL])
-MICO_IDLFLAGS="-I$kde_micodir/include/mico -I$kde_micodir/include"
-AC_SUBST(MICO_IDLFLAGS)
-MICO_LIBS="-lmicocoss$kde_cv_mico_version $LIBMICO"
-AC_SUBST(MICO_LIBS)
-MICO_GTKLIBS="-lmicogtk$kde_cv_mico_version"
-AC_SUBST(MICO_GTKLIBS)
-])
 
 AC_DEFUN([PETIG_CHECK_ECPG],
 [
@@ -249,28 +109,41 @@ then
     $3_INCLUDES="-I$TEMP"
     $3_LDFLAGS=""
     $3_LIBS="$TEMP/lib$1.a"
-    AC_MSG_RESULT($$3_INCLUDES)
+    $3_DIR="$TEMP"
+    AC_MSG_RESULT($$3_DIR)
   elif test -r "$_mpc_dir/$2/src/lib$1.a"
   then 
     TEMP=`cd $_mpc_dir/$2/src ; pwd` 
     $3_INCLUDES="-I$TEMP"
     $3_LDFLAGS=""
     $3_LIBS="$TEMP/lib$1.a"
-    AC_MSG_RESULT($$3_INCLUDES)
-  elif test -r "$_mpc_dir/$4/lib$4.a" -o -r "$_mpc_dir/$4/lib$4.la"
+    $3_DIR="$TEMP"
+    AC_MSG_RESULT($$3_DIR)
+  dnl libtool library
+  elif test -r "$_mpc_dir/$2/src/lib$1.la"
+  then 
+    TEMP=`cd $_mpc_dir/$2/src ; pwd` 
+    $3_INCLUDES="-I$TEMP"
+    $3_LDFLAGS="-L$TEMP"
+    $3_LIBS="-l$1"
+    $3_DIR="$TEMP"
+    AC_MSG_RESULT($$3_DIR)
+  elif test -n "$4" -a -r "$_mpc_dir/$4/lib$4.a" -o -r "$_mpc_dir/$4/lib$4.la"
   then 
     TEMP=`cd $_mpc_dir/$4 ; pwd` 
     $3_INCLUDES="-I$TEMP"
     $3_LDFLAGS="-L$TEMP"
     $3_LIBS="-l$4"
-    AC_MSG_RESULT($$3_INCLUDES)
-  elif test -r "$_mpc_dir/$4/src/lib$4.a" -o -r "$_mpc_dir/$4/src/lib$4.la"
+    $3_DIR="$TEMP"
+    AC_MSG_RESULT($$3_DIR)
+  elif test -n "$4" -a -r "$_mpc_dir/$4/src/lib$4.a" -o -r "$_mpc_dir/$4/src/lib$4.la"
   then 
     TEMP=`cd $_mpc_dir/$4/src ; pwd` 
     $3_INCLUDES="-I$TEMP"
     $3_LDFLAGS="-L$TEMP"
     $3_LIBS="-l$4"
-    AC_MSG_RESULT($$3_INCLUDES)
+    $3_DIR="$TEMP"
+    AC_MSG_RESULT($$3_DIR)
   else
     if test "x$prefix" = "xNONE" 
     then mytmp="$ac_default_prefix"
@@ -280,9 +153,10 @@ then
       if test -d "$mytmp/include/$4" -a -r "$mytmp/lib/lib$4.a"
       then
         $3_INCLUDES="-I$mytmp/include/$4"
-        AC_MSG_RESULT($$3_INCLUDES)
-        $3_LIBS="-L$mytmp/lib -l$4"
-        $3_LDFLAGS=""
+        $3_LDFLAGS="-L$mytmp/lib"
+        $3_LIBS="-l$4"
+	$3_DIR="$mytmp"
+        AC_MSG_RESULT($$3_DIR)
       else 
         AC_MSG_ERROR([not found])
       fi
@@ -313,23 +187,10 @@ then
 fi
 ])
 
-AC_DEFUN([PETIG_CHECK_GTKMM],
-[
-if test -z "$GTKMM_CFLAGS"
-then
-  m4_ifdef([AM_PATH_GTKMM],[AM_PATH_GTKMM(1.2.0,,AC_MSG_ERROR(Cannot find Gtk-- Version 1.2.x))],[])
-fi
-GTKMM_INCLUDES="$GTKMM_CFLAGS"
-AC_SUBST(GTKMM_INCLUDES)
-GTKMM_NODB_LIBS="$GTKMM_LIBS"
-AC_SUBST(GTKMM_NODB_LIBS)
-GTKMM_SIGC_VERSION=0x100
-])
-
 AC_DEFUN([PETIG_CHECK_GTKMM2],
 [
 PKG_CHECK_MODULES(GTKMM2,[gtkmm-2.4 >= 2.4.0],
-	[PKG_CHECK_MODULES(SIGC,[sigc++-2.0 >= 2.2.0],GTKMM_SIGC_VERSION=0x220,[GTKMM_SIGC_VERSION=0x200])],
+	[PKG_CHECK_MODULES(SIGCDUMMY,[sigc++-2.0 >= 2.2.0],GTKMM_SIGC_VERSION=0x220,GTKMM_SIGC_VERSION=0x200)],
 	[PKG_CHECK_MODULES(GTKMM2,[gtkmm-2.0 >= 1.3.20],GTKMM_SIGC_VERSION=0x120)])
 GTKMM2_CFLAGS="$GTKMM2_CFLAGS"
 AC_SUBST(GTKMM2_CFLAGS)
@@ -339,11 +200,11 @@ GTKMM2_NODB_LIBS="$GTKMM2_LIBS"
 AC_SUBST(GTKMM2_NODB_LIBS)
 ])
 
-AC_DEFUN([MPC_CHECK_COMMONXX_SIGC],
+AC_DEFUN([MPC_CHECK_BASE_SIGC],
 [ if test -z "$MPC_SIGC_VERSION"
   then
    old_cxxflags="$CXXFLAGS"
-   CXXFLAGS="$COMMONXX_INCLUDES $CXXFLAGS"
+   CXXFLAGS="$MPC_BASE_INCLUDES $CXXFLAGS"
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 #include <ManuProCConfig.h>
 #if MPC_SIGC_VERSION != $1
@@ -356,21 +217,21 @@ AC_DEFUN([MPC_CHECK_COMMONXX_SIGC],
 
 AC_DEFUN([PETIG_CHECK_COMMONXX],
 [
-MPC_CHECK_LIB(common++,c++,COMMONXX,ManuProC_Base,,,[$1])
+ MPC_CHECK_LIB(common++,c++,COMMONXX,,MPC_BASE,,[$1])
+ dnl commonxx needs to override dependencies (for ManuProCConfig.h)
+ COMMONXX_INCLUDES="-I$COMMONXX_DIR $COMMONXX_INCLUDES"
+])
+
+AC_DEFUN([MPC_CHECK_BASE],
+[
+MPC_CHECK_LIB(ManuProC_Base,ManuProC_Base,MPC_BASE,,,,[$1])
 # check which sigc was used to configure ManuProC_Base
 AC_MSG_CHECKING(which sigc++ was used to configure ManuProC_Base)
-MPC_CHECK_COMMONXX_SIGC(0x220)
-MPC_CHECK_COMMONXX_SIGC(0x200)
-MPC_CHECK_COMMONXX_SIGC(0x120)
-MPC_CHECK_COMMONXX_SIGC(0x100)
+MPC_CHECK_BASE_SIGC(0x220)
+MPC_CHECK_BASE_SIGC(0x200)
+MPC_CHECK_BASE_SIGC(0x120)
 AC_MSG_RESULT($MPC_SIGC_VERSION)
   
-if test "$MPC_SIGC_VERSION" = 0x100
-then
-   ifdef([AM_PATH_SIGC],
-   	[AM_PATH_SIGC(1.0.0,,AC_MSG_ERROR("SigC++ 1.0.x not found or broken - see config.log for details."))],
-   	[AC_MSG_ERROR("sigc-config (from SigC++ 1.0.x development package) missing")])
-fi
 if test "$MPC_SIGC_VERSION" = 0x120
 then
    PKG_CHECK_MODULES(SIGC,[sigc++-1.2 >= 1.2.0])
@@ -379,13 +240,17 @@ if test "$MPC_SIGC_VERSION" = 0x200
 then
    PKG_CHECK_MODULES(SIGC,[sigc++-2.0 >= 1.9.15])
 fi
-COMMONXX_INCLUDES="$COMMONXX_INCLUDES $SIGC_CFLAGS"
-COMMONXX_LIBS="$COMMONXX_LIBS $SIGC_LIBS"
+if test "$MPC_SIGC_VERSION" = 0x220
+then
+   PKG_CHECK_MODULES(SIGC,[sigc++-2.0 >= 2.2.0])
+fi
+MPC_BASE_INCLUDES="$MPC_BASE_INCLUDES $SIGC_CFLAGS"
+MPC_BASE_LIBS="$MPC_BASE_LIBS $SIGC_LIBS"
 
 AC_MSG_CHECKING(for which database to use)
 # check wether SQLite or PostgreSQL
 old_cxxflags="$CXXFLAGS"
-CXXFLAGS="$COMMONXX_INCLUDES $CXXFLAGS"
+CXXFLAGS="$MPC_BASE_INCLUDES $CXXFLAGS"
 AC_COMPILE_IFELSE(
 	[AC_LANG_PROGRAM([
 #include <ManuProCConfig.h>
@@ -399,15 +264,18 @@ if test -z "$MPC_SQLITE"
 then
 	AC_MSG_RESULT("PostgreSQL") 
 	PETIG_CHECK_ECPG
-	COMMONXX_LDFLAGS="$COMMONXX_LDFLAGS $ECPG_LDFLAGS"
-	COMMONXX_INCLUDES="$COMMONXX_INCLUDES $ECPG_INCLUDES"
-	COMMONXX_LIBS="$COMMONXX_LIBS $ECPG_LIBS"
+	MPC_BASE_LDFLAGS="$MPC_BASE_LDFLAGS $ECPG_LDFLAGS"
+	MPC_BASE_INCLUDES="$MPC_BASE_INCLUDES $ECPG_INCLUDES"
+	MPC_BASE_LIBS="$MPC_BASE_LIBS $ECPG_LIBS"
 else
 	AC_MSG_RESULT("SQLite") 
-	COMMONXX_LDFLAGS="$COMMONXX_LDFLAGS -lsqlite3"
+	MPC_BASE_LDFLAGS="$MPC_BASE_LDFLAGS -lsqlite3"
 fi
 
 ])
+
+AC_DEFUN([PETIG_CHECK_BASE],[ MPC_CHECK_BASE([$1])])
+AC_DEFUN([PETIG_CHECK_MPC_BASE],[ MPC_CHECK_BASE([$1])])
 
 AC_DEFUN([MPC_CHECK_SIGC_MATCH],
 [
@@ -416,35 +284,25 @@ then AC_MSG_ERROR([ManuProC_Base was configured with different sigc++ ($MPC_SIGC
 fi
 ])
 
-AC_DEFUN([PETIG_CHECK_KOMPONENTEN],
+AC_DEFUN([PETIG_CHECK_COMMONGTK2],
 [
-MPC_CHECK_LIB(Komponenten,Komponenten,KOMPONENTEN,ManuProC_Widgets,COMMONXX,COMMONGTK,[$1])
+MPC_CHECK_LIB(GtkmmAddons,GtkmmAddons,COMMONGTK2,gtk2,GTKMM2,,[$1])
+])
+
+AC_DEFUN([MPC_CHECK_WIDGETS],
+[
+MPC_CHECK_LIB(ManuProC_Widgets,ManuProC_Widgets,MPC_WIDGETS,,MPC_BASE,COMMONGTK2,[$1])
 MPC_CHECK_SIGC_MATCH
 ])
 
-AC_DEFUN([PETIG_CHECK_COMMONGTK],
-[
-MPC_CHECK_LIB(GtkmmAddons,gtk,COMMONGTK,GtkmmAddons,GTKMM,,[$1])
-])
-
-AC_DEFUN([PETIG_CHECK_COMMONGTK2],
-[
-MPC_CHECK_LIB(GtkmmAddons,gtk2,COMMONGTK2,GtkmmAddons,GTKMM2,,[$1])
-])
+AC_DEFUN([PETIG_CHECK_WIDGETS],[ MPC_CHECK_WIDGETS([$1])])
+AC_DEFUN([PETIG_CHECK_MPC_WIDGETS],[ MPC_CHECK_WIDGETS([$1])])
 
 AC_DEFUN([MPC_CHECK_KOMPONENTEN2],
 [
-MPC_CHECK_LIB(Komponenten,Komponenten2,KOMPONENTEN2,ManuProC_Widgets,COMMONXX,COMMONGTK2,[$1])
-MPC_CHECK_SIGC_MATCH
+MPC_CHECK_LIB(Komponenten,Komponenten2,KOMPONENTEN2,Komponenten,MPC_WIDGETS,COMMONXX,[$1])
+dnl MPC_CHECK_SIGC_MATCH
 ])
 
-AC_DEFUN([PETIG_CHECK_KOMPONENTEN2],
-[ MPC_CHECK_KOMPONENTEN2([$1])
-])
-
-AC_DEFUN([PETIG_CHECK_BARCOLIB],
-[
-MPC_CHECK_LIB(barco,barcolib,BARCOLIB,,,,[$1]) 
-])
-
+AC_DEFUN([PETIG_CHECK_KOMPONENTEN2],[ MPC_CHECK_KOMPONENTEN2([$1])])
 AC_DEFUN([MPC_CHECK_COMMONXX], [PETIG_CHECK_COMMONXX([$1])])
