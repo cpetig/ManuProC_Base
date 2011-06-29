@@ -18,7 +18,7 @@ endif
 
 EXTRA_PROGRAMS=FetchIStream test_pgsql_conv testHandles testKW fixedpoint \
 	Zeitpunkt mvc trace rexml tagstream tag_speed algorithm extra_cols \
-	interval Query
+	interval Query datetest
 
 test_pgsql_conv_SOURCES=test_pgsql_conv.cc
 testHandles_SOURCES=testHandles.cc
@@ -35,6 +35,7 @@ algorithm_SOURCES=algorithm.cc
 extra_cols_SOURCES=extra_cols.cc
 interval_SOURCES=interval.cc
 Query_SOURCES=Query.cc
+datetest_SOURCES=datetest.cc
 
 tagstream.res: tagstream$(EXEEXT)
 	./tagstream | sed -e 's/P0x[0-9a-fA-F]*/P*/' \
