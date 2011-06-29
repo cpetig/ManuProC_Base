@@ -24,7 +24,11 @@
 std::string Global_Settings::database_load(int userid,const std::string& program,const std::string& name)
 {std::string wert;
  try
- {Query("select wert from global_settings "
+ {
+   // not efficient but more efficient than doing the query
+   if (userid==Global_Settings::global_id)
+     throw SQLerror(std::string(),100,std::string());
+   Query("select wert from global_settings "
 #ifdef MPC_SQLITE
  	"where userid=? and program=? and name=?"
 #else
