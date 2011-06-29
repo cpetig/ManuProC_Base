@@ -433,6 +433,7 @@ ArgumentList &operator<<(ArgumentList &q, const ManuProC::Datum &v)
 
 #endif
 
+// there seems to be no real rule on how this is to be stored
 ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,Formatfehler)
 {
   if (!*f) return Datum();
@@ -443,6 +444,10 @@ ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,F
 #else
   if (!strncmp(f,"01/01/00",8)) return Datum();
   if (strlen(f)<8) throw Formatfehler();
+  if (f[2]=='.' && f[5]=='.' && isdigit(f[6])&& isdigit(f[8])) // german style?
+  {
+    return Datum(getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f+6,4));
+  }
   if (f[2]!='/' || f[5]!='/') throw Formatfehler();
   return Datum(getnum((const unsigned char*)f+3,2),getnum((const unsigned char*)f,2),getnum((const unsigned char*)f+6,2));
 #endif
