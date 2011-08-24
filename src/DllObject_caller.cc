@@ -19,6 +19,7 @@
 #include "DllObject.h"
 
 #ifdef WIN32
+# include <assert.h>
 # include "windows.h"
 
 std::wstring ManuProC::make_wstring(std::string const& x)
@@ -55,7 +56,7 @@ DllObjectBase *CreateDllObject(std::string const& library, std::string const& cr
 #ifdef WIN32
   HMODULE lib=LoadLibraryW(ManuProC::make_wstring(library).c_str());
   if (!lib) return 0;
-  fun= (creationfunptr)GetProcAddressW(lib, ManuProC::make_wstring(creation_func).c_str());
+  fun= (creationfunptr)GetProcAddress(lib, creation_func.c_str());
   if (!fun)
   {
     FreeLibrary(lib);
@@ -98,7 +99,7 @@ void UnloadDllObject(DllObjectBase* o)
   void *systemhandle= o->systemhandle;
   o->destroy();
 #ifdef WIN32
-  FreeLibrary((MODULE)systemhandle);
+  FreeLibrary((HMODULE)systemhandle);
 #else
   dlclose(systemhandle);
 #endif
