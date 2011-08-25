@@ -36,7 +36,7 @@ protected:
   virtual ~DllObjectBase() {}
   DllObjectBase() : systemhandle() {}
 public:
-  void destroy(); // { delete this; }
+  virtual void destroy(); // { delete this; }
 };
 
 #ifdef WIN32
