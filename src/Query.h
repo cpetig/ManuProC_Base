@@ -29,9 +29,9 @@
 #include <Misc/SQLerror.h>
 #include <Misc/compiler_ports.h>
 
-#ifndef MPC_SQLITE
-#  define MPC_POSTGRESQL
-#endif
+//#ifndef MPC_SQLITE
+//#  define MPC_POSTGRESQL
+//#endif
 
 #ifdef MPC_SQLITE
 #include <algorithm>

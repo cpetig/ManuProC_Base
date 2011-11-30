@@ -20,52 +20,41 @@
 
 #ifndef SQLERROR_POSTGRES_H
 #define SQLERROR_POSTGRES_H
-#ifdef __cplusplus
-#include <iostream>
-#include <string>
-#include <exception>
-#include <Misc/compiler_ports.h>
-#endif
 
-#define _sql_STRING2__(a) #a
-#define _sql_STRING__(a) _sql_STRING2__(a)
-#define __FILELINE__ __FILE__":"_sql_STRING__(__LINE__)
+#include <Misc/SQLerror_base.h>
 
 #ifdef __cplusplus
-class SQLerror_sqlite : public std::exception
-{  std::string context;
-   int code;
-   std::string name;
+class SQLerror_sqlite : public SQLerror_base
+{
 //   char separator;
 
 public:
    static int last_code;
 
-   ~SQLerror_sqlite() throw() {}
 //   SQLerror_sqlite(const std::string &context) throw();
    SQLerror_sqlite(const std::string &context,int code,const std::string &name) throw();
 
-   virtual const char* what() const throw() { return "SQLerror"; }
-   friend std::ostream &operator<<(std::ostream&,const SQLerror_sqlite &) throw();
+//   virtual const char* what() const throw() { return "SQLerror_sqlite"; }
+//   friend std::ostream &operator<<(std::ostream&,const SQLerror_sqlite &) throw();
 
 //   const SQLerror_sqlite &Separator(char sep) { separator=sep; return *this; }
    // member access functions
-   const std::string Context() const { return context; }
-   int Code() const { return code; }
-   const std::string Message() const { return name; }
+//   const std::string Context() const { return context; }
+//   int Code() const { return code; }
+//   const std::string Message() const { return name; }
 
-   static void print(const std::string &context,int codeok=0);
-
-   static __deprecated void test(const std::string &context,int codeok=0);
-//   		throw(SQLerror_sqlite);
-   static __deprecated void test(const std::string &context,const std::string &cursor,
-		int codeok=0); // throw(SQLerror_sqlite);
-   static __deprecated void test(const std::string &context,const char *cursor,
-		int codeok=0); // throw(SQLerror_sqlite)
+//   static void print(const std::string &context,int codeok=0);
+//
+//   static __deprecated void test(const std::string &context,int codeok=0);
+////   		throw(SQLerror_sqlite);
+//   static __deprecated void test(const std::string &context,const std::string &cursor,
+//		int codeok=0); // throw(SQLerror_sqlite);
+//   static __deprecated void test(const std::string &context,const char *cursor,
+//		int codeok=0); // throw(SQLerror_sqlite)
 
 //   static __deprecated int SQLCode();
 };
 
-std::ostream &operator<<(std::ostream&,const SQLerror_sqlite &) throw();
+//std::ostream &operator<<(std::ostream&,const SQLerror_sqlite &) throw();
 #endif
 #endif
