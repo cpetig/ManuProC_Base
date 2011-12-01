@@ -19,6 +19,7 @@
  */
 
 #include <Misc/SQLerror.h>
+#include <Misc/Handle.h>
 #ifdef MPC_SQLITE
 struct sqlite3;
 #endif
@@ -31,32 +32,32 @@ namespace ManuProC
 class AuthError : public std::exception
 {
  std::string msg;
- 
-public: 
- 
+
+public:
+
  ~AuthError() throw() {}
  AuthError(const std::string &m) throw() :msg(m) {}
  const std::string Msg() const { return msg; }
- 
+
 };
 
 #ifdef MPC_SQLITE
 	extern sqlite3 *db_connection;
 #endif
-   class Connection
+   class Connection // connect options
    {
     std::string host;
     std::string dbase;
     std::string user;
     std::string name;
     int port;
-    
+
     public:
-     Connection(const std::string &h=std::string(), const std::string &d=std::string(), 
+     Connection(const std::string &h=std::string(), const std::string &d=std::string(),
                 const std::string &u=std::string(),const std::string &n=std::string(),
                 const int p=POSTGRESQL_PORT);
-        	
-        	
+
+
     const std::string Host() const { return host; }
     const std::string Dbase() const { return dbase; }
     const std::string User() const { return user; }
@@ -76,13 +77,26 @@ public:
     void Port(const int p) { port=p; }
    };
 
-   void dbconnect_nt(const Connection &c=Connection()) throw();
-   void dbdisconnect_nt(const std::string &name=std::string()) throw();  
-   void dbconnect(const Connection &c=Connection()) throw(SQLerror);
+   class Connection_base // actual connection object
+   {
+/*     transaction
+     query execution
+     error testing */
+   };
+
+   std::vector<Handle<Connection_base> > connections;
+
+   Connection_base& dbconnect_nt(const Connection &c=Connection()) throw();
+   void dbdisconnect_nt(const std::string &name=std::string()) throw();
+   Connection_base& dbconnect(const Connection &c=Connection()) throw(SQLerror);
    void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
+   void dbdisconnect_nt(Connection_base&) throw();
+   void dbdisconnect(Connection_base&) throw(SQLerror);
    void setDTstyle(char *style="ISO") throw(SQLerror);
-   void dbdefault(const std::string &name=std::string()) throw(SQLerror);
+   Connection_base& dbdefault(const std::string &name=std::string()) throw(SQLerror);
+   void dbdefault(Connection_base&) throw(SQLerror);
    std::string get_dbname();
+   std::string get_dbname(Connection_base&);
 };
 
 namespace Petig

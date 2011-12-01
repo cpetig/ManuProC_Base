@@ -43,6 +43,10 @@ public:
 		int codeok=0); // throw(SQLerror_base)
 
    static __deprecated int SQLCode();
+
+private: // forbid
+   SQLerror_base(SQLerror_base const&);
+   SQLerror_base const& operator=(SQLerror_base const&);
 };
 
 std::ostream &operator<<(std::ostream&,const SQLerror_base &) throw();
