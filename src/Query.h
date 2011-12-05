@@ -28,54 +28,61 @@
 #include <ManuProCConfig.h>
 #include <Misc/SQLerror.h>
 #include <Misc/compiler_ports.h>
+#include <Misc/dbconnect.h>
 
 //#ifndef MPC_SQLITE
 //#  define MPC_POSTGRESQL
 //#endif
 
-#ifdef MPC_SQLITE
-#include <algorithm>
-#include <sqlite3.h>
-typedef unsigned long Oid;
-// enum ECPG...
-#elif defined (MANUPROC_WITH_DATABASE)
-#include <ecpgerrno.h>
-extern "C" {
-#include <libpq-fe.h>
-}
-#endif
+//#ifdef MPC_SQLITE
+//#include <algorithm>
+//#include <sqlite3.h>
+//typedef unsigned long Oid;
+//// enum ECPG...
+//#elif defined (MANUPROC_WITH_DATABASE)
+//#include <ecpgerrno.h>
+//extern "C" {
+//#include <libpq-fe.h>
+//}
+//#endif
 
-#if !defined(OLD_ECPG) && defined(HAVE_PQPREPARE)
+//#if !defined(OLD_ECPG) && defined(HAVE_PQPREPARE)
 #define USE_PARAMETERS
-#endif
+//#endif
 
+struct Query_Row_impl
+{
+//  std::string getFieldName() const;
+};
 
 // please access this class under the new alias "Query::Row"
 class Query_Row
 {public:
 	struct check_eol { check_eol() {} };
-	struct Fake
-	{ std::string what;
-	  bool is_null;
-	  explicit Fake(std::string const& w) : what(w), is_null() {}
-	  explicit Fake() : is_null(true) {}
-	};
+	// do we need fake any longer?
+//	struct Fake
+//	{ std::string what;
+//	  bool is_null;
+//	  explicit Fake(std::string const& w) : what(w), is_null() {}
+//	  explicit Fake() : is_null(true) {}
+//	};
 private:
 	int naechstesFeld;
 	/* const */ int zeile;
 
-	bool is_fake;
-	std::string fake_result;
-	bool fake_null;
+//	bool is_fake;
+//	std::string fake_result;
+//	bool fake_null;
 
-#ifdef MPC_SQLITE
-	const char * const * result;
-	unsigned nfields;
-#else
-protected:
-        const PGresult * /* const */ result;
-private:
-#endif
+//#ifdef MPC_SQLITE
+//	const char * const * result;
+//	unsigned nfields;
+//#else
+//protected:
+//        const PGresult * /* const */ result;
+//private:
+//#endif
+	Query_Row_impl *impl;
 
 	friend class Query;
 	friend class ArgumentList;
@@ -103,20 +110,21 @@ private:
 	 	  : var(v), ind(i) {}
 	};
 public:
-#ifndef MPC_SQLITE
-	Query_Row(const std::string &descr, int line=0);
-	Query_Row(const PGresult *res=0, int line=0)
-	  : naechstesFeld(), zeile(line), is_fake(), fake_null(), result(res)
-	{}
-#else
-	Query_Row(const char *const *res=0, unsigned nfields=0, int line=0);
-#endif
-        Query_Row(Fake const& f);
+	Query_Row(Query_Row_impl* i);
+//#ifndef MPC_SQLITE
+//	Query_Row(const std::string &descr, int line=0);
+//	Query_Row(const PGresult *res=0, int line=0)
+//	  : naechstesFeld(), zeile(line), is_fake(), fake_null(), result(res)
+//	{}
+//#else
+//	Query_Row(const char *const *res=0, unsigned nfields=0, int line=0);
+//#endif
+//        Query_Row(Fake const& f);
 
 	int getIndicator() const;
-#ifdef MPC_POSTGRESQL
-        std::string getFieldName() const;
-#endif
+//#ifdef MPC_POSTGRESQL
+//        std::string getFieldName() const;
+//#endif
 	bool good() const; // noch Spalten verfügbar
 
 	Query_Row &operator>>(std::string &str);
@@ -244,22 +252,32 @@ public:
 
 class PreparedQuery;
 
+struct Query_impl
+{
+//#ifndef MPC_SQLITE
+//	std::string descriptor;
+//#endif
+//	bool eof;
+//	int line;
+//#ifdef MPC_SQLITE
+//	const char * const *result;
+//	unsigned nfields;
+//#else
+//#ifndef USE_PARAMETERS
+//	const
+//#endif
+//	      PGresult *result;
+//#endif
+//#ifndef MPC_SQLITE
+//	static __deprecated unsigned Lines(); // SQLCA.sqlcode
+//#endif
+//#ifdef MPC_SQLITE
+//	int last_insert_rowid() const;
+//#endif
+};
+
 class Query : public Query_types
 {
-#ifndef MPC_SQLITE
-	std::string descriptor;
-#endif
-	bool eof;
-	int line;
-#ifdef MPC_SQLITE
-	const char * const *result;
-	unsigned nfields;
-#else
-#ifndef USE_PARAMETERS
-	const
-#endif
-	      PGresult *result;
-#endif
 	std::string query;
 	ArgumentList params;
 	unsigned num_params;
@@ -313,12 +331,6 @@ public:
 
 	// please migrate to the functions above
 	static __deprecated int Code(); // SQLCA.sqlcode
-#ifndef MPC_SQLITE
-	static __deprecated unsigned Lines(); // SQLCA.sqlcode
-#endif
-#ifdef MPC_SQLITE
-	int last_insert_rowid() const;
-#endif
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
@@ -382,19 +394,19 @@ public:
 
 //#ifdef MPC_POSTGRESQL
 //# define MPC_ONLY_WITH_POSTGRESQL(x) x
-//#else
+//#elsestd::string getFieldName() const
 //# define MPC_ONLY_WITH_POSTGRESQL(x)
 //#endif
 
 class PreparedQuery
 {	std::string command;
-#ifdef MPC_POSTGRESQL
-        std::string name;
-        std::vector<Oid> types;
-        const PGconn *connection;
-
-        friend class Query;
-#endif
+//#ifdef MPC_POSTGRESQL
+//        std::string name;
+//        std::vector<Oid> types;
+//        const PGconn *connection;
+//
+//        friend class Query;
+//#endif
 public:
         PreparedQuery()
 #ifdef MPC_POSTGRESQL
@@ -408,11 +420,12 @@ public:
 #endif
         {}
         std::string const& Command() const { return command; }
-#ifdef USE_PARAMETERS
-        bool ready() const { return !name.empty(); }
-#else
-        bool ready() const { return false; }
-#endif
+        bool ready() const;
+//#ifdef USE_PARAMETERS
+//        bool ready() const { return !name.empty(); }
+//#else
+//        bool ready() const { return false; }
+//#endif
 };
 
 // we use the embedded Query_Row but that's ok,
