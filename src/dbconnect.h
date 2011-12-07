@@ -19,7 +19,7 @@
  */
 
 #include <Misc/SQLerror.h>
-#include <Misc/Handle.h>
+#include <Misc/Handles.h>
 #ifdef MPC_SQLITE
 struct sqlite3;
 #endif
@@ -77,7 +77,7 @@ public:
     void Port(const int p) { port=p; }
    };
 
-   class Connection_base // actual connection object
+   class Connection_base : public HandleContent // actual connection object
    {
 /*     transaction
      query execution

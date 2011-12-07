@@ -111,6 +111,7 @@ private:
 	};
 public:
 	Query_Row(Query_Row_impl* i);
+	Query_Row();
 //#ifndef MPC_SQLITE
 //	Query_Row(const std::string &descr, int line=0);
 //	Query_Row(const PGresult *res=0, int line=0)
@@ -180,7 +181,8 @@ public:
 };
 
 struct Query_types
-{	template <class T>
+{	typedef unsigned Oid;
+	template <class T>
 	 struct NullIf_s
 	{	T data;
 		bool null;
@@ -200,13 +202,17 @@ struct Query_types
 };
 
 class ArgumentList
-{	unsigned params_needed;
+{
+public:
+	typedef unsigned Oid;
+	typedef std::vector<std::string>::const_iterator const_iterator;
+private:
+	unsigned params_needed;
         std::vector<Oid> types;
 	std::vector<std::string> params;
 	std::vector<bool> binary;
 	std::vector<bool> null;
 public:
-	typedef std::vector<std::string>::const_iterator const_iterator;
 	ArgumentList() : params_needed(unsigned(-1)) {}
 	void setNeededParams(unsigned i)
 	{  params_needed=i; }
@@ -298,7 +304,7 @@ class Query : public Query_types
 	void raise(std::string const& state, int code, std::string const& message, std::string const& detail=std::string());
 	void raise(char const* state, int code, char const* message, char const* detail=0);
 	static std::string standardize_parameters(std::string const& in);
-	bool already_run() const { return result; }
+	bool already_run() const; // { return result; }
 
 	void free(); // called by destructor and failed constructor
 public:
@@ -309,7 +315,7 @@ public:
 	typedef SQLerror Error;
 
 	// you can exchange this via std::swap
-	Query() : eof(true), line(), result(), num_params(), error(), lines(),
+	Query() : /*eof(true), line(), result(),*/ num_params(), error(), lines(),
 	    prepare()
         { params.setNeededParams(0); }
         void swap(Query &b);
@@ -319,8 +325,8 @@ public:
 	Query(PreparedQuery& prep);
 	~Query();
 
-	bool good() const
-	{ return !eof; }
+	bool good() const;
+//	{ return !eof; }
 	void ThrowOnBad(const char *where) const;
 
 	static void Execute(const std::string &command) throw(SQLerror);
@@ -409,15 +415,15 @@ class PreparedQuery
 //#endif
 public:
         PreparedQuery()
-#ifdef MPC_POSTGRESQL
-          : connection()
-#endif
+//#ifdef MPC_POSTGRESQL
+//          : connection()
+//#endif
         {}
         PreparedQuery(std::string const& cmd)
           : command(cmd)
-#ifdef MPC_POSTGRESQL
-            ,connection()
-#endif
+//#ifdef MPC_POSTGRESQL
+//            ,connection()
+//#endif
         {}
         std::string const& Command() const { return command; }
         bool ready() const;
