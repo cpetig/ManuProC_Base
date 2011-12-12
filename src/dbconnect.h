@@ -41,7 +41,7 @@ public:
 
 };
 
-#ifdef MPC_SQLITE
+#if 0 //def MPC_SQLITE
 	extern sqlite3 *db_connection;
 #endif
    class Connection // connect options
@@ -82,6 +82,10 @@ public:
 /*     transaction
      query execution
      error testing */
+     virtual void open_transaction() =0;
+     virtual void commit_transaction() =0;
+     virtual void rollback_transaction() =0;
+     //virtual Query_base
    };
 
    std::vector<Handle<Connection_base> > connections;
