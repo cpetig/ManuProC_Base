@@ -82,13 +82,16 @@ public:
 /*     transaction
      query execution
      error testing */
-     virtual void open_transaction() =0;
-     virtual void commit_transaction() =0;
-     virtual void rollback_transaction() =0;
+     virtual void open_transaction() throw(SQLerror)=0;
+     virtual void commit_transaction() throw(SQLerror)=0;
+     virtual void rollback_transaction() throw(SQLerror)=0;
+     virtual void make_default() throw(SQLerror) {}
+     virtual void setDTstyle(char const* style="ISO") throw(SQLerror);
      //virtual Query_base
    };
 
    std::vector<Handle<Connection_base> > connections;
+   Handle<Connection_base> active_connection;
 
    Connection_base& dbconnect_nt(const Connection &c=Connection()) throw();
    void dbdisconnect_nt(const std::string &name=std::string()) throw();
@@ -96,11 +99,13 @@ public:
    void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
    void dbdisconnect_nt(Connection_base&) throw();
    void dbdisconnect(Connection_base&) throw(SQLerror);
-   void setDTstyle(char *style="ISO") throw(SQLerror);
+   void setDTstyle(char const*style="ISO") throw(SQLerror);
    Connection_base& dbdefault(const std::string &name=std::string()) throw(SQLerror);
    void dbdefault(Connection_base&) throw(SQLerror);
    std::string get_dbname();
    std::string get_dbname(Connection_base&);
+   Connection_base& get_database(std::string const& name);
+   void register_db(Handle<Connection_base> const& c);
 };
 
 namespace Petig
