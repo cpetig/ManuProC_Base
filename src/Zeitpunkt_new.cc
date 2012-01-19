@@ -193,15 +193,23 @@ void Zeitpunkt_new::normalize_TZ() const throw()
 Zeitpunkt_new::Zeitpunkt_new(time_t t) throw()
 	: microsecond(0), prec(seconds)
 {  struct tm *tm(localtime(&t));
-   datum=ManuProC::Datum(tm->tm_mday,tm->tm_mon+1,tm->tm_year+1900);
-   hour=tm->tm_hour;
-   minute=tm->tm_min;
-   second=tm->tm_sec;
+   if (tm)
+   {
+    datum=ManuProC::Datum(tm->tm_mday,tm->tm_mon+1,tm->tm_year+1900);
+    hour=tm->tm_hour;
+    minute=tm->tm_min;
+    second=tm->tm_sec;
 #if defined __MINGW32__ || defined _MSC_VER
-   minutes_from_gmt=tm->tm_isdst?120:60;
+    minutes_from_gmt=tm->tm_isdst?120:60;
 #else
-   minutes_from_gmt=tm->tm_gmtoff/60;
+    minutes_from_gmt=tm->tm_gmtoff/60;
 #endif
+   }
+   else
+   {
+     datum=ManuProC::Datum();
+     hour=minute=second=minutes_from_gmt=0;
+   }
 }
 
 std::string Zeitpunkt_new::write() const
