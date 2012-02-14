@@ -67,6 +67,11 @@ class ManuProC::Datum
  static const char* const month_abbrev[];
 
 public:
+	 struct Months // for adding months
+	 {
+	   unsigned value;
+	   explicit Months(unsigned x) : value(x) {}
+	 };
 	class Formatfehler : public std::exception
 	{public:
 		virtual const char* what() const throw() { return "ManuProC::Datum::Formatfehler"; }
@@ -133,6 +138,7 @@ public:
         Datum &operator++();
         Datum operator++(int);
         Datum operator+(unsigned int) const throw(Datumsfehler);
+        Datum operator+(Months const& m) const throw(Datumsfehler);
         Datum operator-(unsigned int) const throw(Datumsfehler);
         // Schaltet auf das gleiche Datum aber in anderem Jahr
         Datum AddJahr(int) const throw(Datumsfehler);

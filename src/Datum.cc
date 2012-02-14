@@ -240,6 +240,20 @@ ManuProC::Datum ManuProC::Datum::operator+(unsigned int tage) const throw(Datums
    return ret;
 }
 
+ManuProC::Datum ManuProC::Datum::operator+(Months const& m) const throw(Datumsfehler)
+{
+  teste();
+  Datum ret(*this);
+  unsigned int ret_mon=ret.monat+m.value;
+  while (ret_mon>12)
+  {  ret_mon-=12;
+    ret.jahr++;
+  }
+  ret.monat=ret_mon;
+  ret.woche=0;
+  return ret;
+}
+
 ManuProC::Datum ManuProC::Datum::TruncJahr() const throw(Datumsfehler)
 {
  teste();
