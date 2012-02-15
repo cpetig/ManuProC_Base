@@ -17,6 +17,9 @@
  */
 
 #include <string>
+#ifdef WIN32
+# include "win32_utf8.h"
+#endif
 
 struct DllObjectBase;
 
@@ -39,9 +42,3 @@ public:
   virtual void destroy(); // { delete this; }
 };
 
-#ifdef WIN32
-namespace ManuProC {
-std::wstring make_wstring(std::string const& x);
-std::string un_wstring(std::wstring const& x);
-}
-#endif
