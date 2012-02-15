@@ -252,8 +252,14 @@ ManuProC::Datum ManuProC::Datum::operator+(Months const& m) const throw(Datumsfe
   }
   ret.monat=ret_mon;
   if (ret.tag>ret.Tage_in_Monat())
-  {  ++ret.mon;
-     ret.tag=1;
+  {
+    ret.tag=1;
+    ++ret.monat;
+     if (ret.monat>12)
+     {
+       ret_mon=1;
+       ret.jahr++;
+     }
   }
   ret.woche=0;
   return ret;
