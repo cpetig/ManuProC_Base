@@ -126,7 +126,7 @@ std::string ManuProC::Datum::postgres_null_if_invalid() const
 
 void ManuProC::Datum::teste() const throw (ManuProC::Datumsfehler)
 {  int falsch=0;
-   if (tag<1 || tag>31) falsch|=Datumsfehler::tagfalsch;
+   if (tag<1 || tag>Tage_in_Monat()) falsch|=Datumsfehler::tagfalsch;
    if (monat<1 || monat>12) falsch|=Datumsfehler::monatfalsch;
    if (jahr<1800 || jahr>2999) falsch|=Datumsfehler::jahrfalsch;
    if (falsch)
@@ -246,10 +246,15 @@ ManuProC::Datum ManuProC::Datum::operator+(Months const& m) const throw(Datumsfe
   Datum ret(*this);
   unsigned int ret_mon=ret.monat+m.value;
   while (ret_mon>12)
-  {  ret_mon-=12;
+  {
+    ret_mon-=12;
     ret.jahr++;
   }
   ret.monat=ret_mon;
+  if (ret.tag>ret.Tage_in_Monat())
+  {  ++ret.mon;
+     ret.tag=1;
+  }
   ret.woche=0;
   return ret;
 }
