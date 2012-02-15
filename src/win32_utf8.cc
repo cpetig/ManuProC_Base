@@ -32,12 +32,12 @@ std::string ManuProC::un_wstring(std::wstring const& x)
 
 int access_utf8(const char* name, int md)
 {
-  return waccess(make_wstring(name).c_str(), md);
+  return _waccess(ManuProC::make_wstring(name).c_str(), md);
 }
 
 FILE *fopen_utf8(const char* name, const char* md)
 {
-  return _wfopen(make_wstring(name).c_str(), make_wstring(md).c_str());
+  return _wfopen(ManuProC::make_wstring(name).c_str(), ManuProC::make_wstring(md).c_str());
 }
 
 #endif
