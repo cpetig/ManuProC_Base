@@ -34,5 +34,5 @@ namespace EntryValue_easy
   // generic pointer: ignore
   template <class T>
    cH_EntryValue create(T *const& a) { return cH_EntryValue(); }
-};
+}
 #endif
