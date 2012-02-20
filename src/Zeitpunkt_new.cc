@@ -148,6 +148,16 @@ bool Zeitpunkt_new::operator==(const Zeitpunkt_new &b) const throw()
    return microsecond==b.microsecond;
 }
 
+#ifdef WIN32 // complicated but might work
+time_t timegm(struct tm * tm)
+{
+  time_t res = mktime(tm);
+  struct tm * wrong_dir= gmtime(&res);
+  time_t wrong_dir_s = mktime(wrong_dir);
+  return res + (res - wrong_dir_s);
+}
+#endif
+
 Zeitpunkt_new::operator time_t() throw()
 {  struct tm tm;
    tm.tm_sec=prec>=seconds?second:0;
@@ -162,7 +172,7 @@ Zeitpunkt_new::operator time_t() throw()
 //   tm.tm_isdst=-1; // FIXME: we have some information about time zones
 //#endif
    tm.tm_isdst=0;
-#ifdef WIN32
+#if 0 // def WIN32
    return _mkgmtime(&tm)-minutes_from_gmt*60;
 #else
    return timegm(&tm)-minutes_from_gmt*60;
