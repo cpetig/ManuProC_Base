@@ -138,6 +138,7 @@ public:
    unsigned int Mikrosekunde() const { return microsecond; }
    // falscher Name
    __deprecated unsigned int Minuten() const { return minute; }
+   signed int MinutesFromGmt() const { return minutes_from_gmt; }
 
     bool valid() const throw() { return datum.valid(); }
     bool operator!() const throw() { return !valid(); }

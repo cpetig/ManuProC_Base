@@ -77,11 +77,11 @@ long Zeitpunkt_new::diff(const Zeitpunkt_new &b, precision destprec) const throw
    {  case days: return datum-b.datum;
       case hours: return (datum-b.datum)*24+hour-b.hour+(b.minutes_from_gmt-minutes_from_gmt)/60;
       case minutes: return ((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt);
-      case seconds: 
+      case seconds:
          return (((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second;
-      case milliseconds: 
+      case milliseconds:
          return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000+(microsecond-b.microsecond)/1000;
-      case microseconds: 
+      case microseconds:
          return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000000+microsecond-b.microsecond;
       default: assert(0);
    }
@@ -156,12 +156,17 @@ Zeitpunkt_new::operator time_t() throw()
    tm.tm_mday=datum.Tag();
    tm.tm_mon=datum.Monat()-1;
    tm.tm_year=datum.Jahr()-1900;
-#ifdef CENTRAL_EUROPE
-   tm.tm_isdst=minutes_from_gmt>60;
+//#ifdef CENTRAL_EUROPE
+//   tm.tm_isdst=minutes_from_gmt>60;
+//#else
+//   tm.tm_isdst=-1; // FIXME: we have some information about time zones
+//#endif
+   tm.tm_isdst=0;
+#ifdef WIN32
+   return _mkgmtime(&tm)-minutes_from_gmt*60;
 #else
-   tm.tm_isdst=-1; // FIXME: we have some information about time zones
+   return timegm(&tm)-minutes_from_gmt*60;
 #endif
-   return mktime(&tm);
 }
 
 void Zeitpunkt_new::calculate_TZ(int isdst) const throw()
@@ -183,11 +188,15 @@ void Zeitpunkt_new::calculate_TZ(int isdst) const throw()
 
 void Zeitpunkt_new::normalize_TZ() const throw()
 {
-#ifdef CENTRAL_EUROPE  
-   calculate_TZ(minutes_from_gmt>60);
+//#ifdef CENTRAL_EUROPE
+//   calculate_TZ(minutes_from_gmt>60);
+//#else
+#ifdef WIN32
+  calculate_TZ((minutes_from_gmt*60)!=_timezone);
 #else
-   calculate_TZ();
+   calculate_TZ((minutes_from_gmt*60)!=timezone);
 #endif
+//#endif
 }
 
 Zeitpunkt_new::Zeitpunkt_new(time_t t) throw()
