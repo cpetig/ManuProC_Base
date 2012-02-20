@@ -1,7 +1,7 @@
 // $Id: Zeitpunkt_new.cc,v 1.25 2006/06/26 07:53:01 christof Exp $
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 1998-2005 Adolf Petig GmbH & Co. KG, written by Christof Petig
- *  Copyright (C) 2008-2010 Christof Petig
+ *  Copyright (C) 2008-2012 Christof Petig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -166,11 +166,6 @@ Zeitpunkt_new::operator time_t() throw()
    tm.tm_mday=datum.Tag();
    tm.tm_mon=datum.Monat()-1;
    tm.tm_year=datum.Jahr()-1900;
-//#ifdef CENTRAL_EUROPE
-//   tm.tm_isdst=minutes_from_gmt>60;
-//#else
-//   tm.tm_isdst=-1; // FIXME: we have some information about time zones
-//#endif
    tm.tm_isdst=0;
 #if 0 // def WIN32
    return _mkgmtime(&tm)-minutes_from_gmt*60;
@@ -188,25 +183,24 @@ void Zeitpunkt_new::calculate_TZ(int isdst) const throw()
    tm.tm_mon=datum.Monat()-1;
    tm.tm_year=datum.Jahr()-1900;
    tm.tm_isdst=isdst;
-   mktime(&tm);
-#if defined __MINGW32__ || defined (_MSC_VER)
-   minutes_from_gmt=tm.tm_isdst?120:60;
+#if defined (__MINGW32__) || defined (_MSC_VER) || defined(WIN32)
+   time_t t= mktime(&tm);
+   struct tm * wrong_dir= gmtime(&t);
+   time_t wrong_dir_s = mktime(wrong_dir);
+   minutes_from_gmt=(t - wrong_dir_s)/60;
 #else
+   mktime(&tm);
    minutes_from_gmt=tm.tm_gmtoff/60;
 #endif
 }
 
 void Zeitpunkt_new::normalize_TZ() const throw()
 {
-//#ifdef CENTRAL_EUROPE
-//   calculate_TZ(minutes_from_gmt>60);
-//#else
 #ifdef WIN32
-  calculate_TZ((minutes_from_gmt*60)!=_timezone);
+   calculate_TZ((minutes_from_gmt*60)!=_timezone);
 #else
    calculate_TZ((minutes_from_gmt*60)!=timezone);
 #endif
-//#endif
 }
 
 Zeitpunkt_new::Zeitpunkt_new(time_t t) throw()
@@ -219,7 +213,9 @@ Zeitpunkt_new::Zeitpunkt_new(time_t t) throw()
     minute=tm->tm_min;
     second=tm->tm_sec;
 #if defined __MINGW32__ || defined _MSC_VER
-    minutes_from_gmt=tm->tm_isdst?120:60;
+    struct tm * wrong_dir= gmtime(&t);
+    time_t wrong_dir_s = mktime(wrong_dir);
+    minutes_from_gmt=(t - wrong_dir_s)/60;
 #else
     minutes_from_gmt=tm->tm_gmtoff/60;
 #endif
