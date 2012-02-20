@@ -1,6 +1,12 @@
 # $Id: Makefile.am,v 1.26 2005/09/13 08:01:03 christof Exp $
 	
-LDADD=$(top_srcdir)/src/libManuProC_Base.la @ECPG_LIBS@ @SIGC_LIBS@
+if WINDOWS
+WIN_LDADD=-lintl
+else
+WIN_LDADD=
+endif
+
+LDADD=$(top_srcdir)/src/libManuProC_Base.la @ECPG_LIBS@ @SIGC_LIBS@ $(WIN_LDADD)
 
 AM_CXXFLAGS=@CXXFLAGS@ -I$(top_srcdir)/src @ECPG_INCLUDES@ @SIGC_CFLAGS@
 
