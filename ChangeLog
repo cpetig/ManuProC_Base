@@ -1,3 +1,7 @@
+2011-03-31  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (EXTRA_DIST): Add ./config.rpath, m4/ChangeLog.
+
 2011-03-10  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* m4/gettext.m4: New file, from gettext-0.18.1.

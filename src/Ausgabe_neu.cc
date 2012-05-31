@@ -184,12 +184,18 @@ std::string string2TeX(const std::string s, int flags) throw()
 	 case '%':
 	 case '{':
 	 case '}':
-	 case '[':
-	 case ']':
 	 case '#':
 	 case '_': in_line=true;
 	    ret+='\\'; ret+=s[i];
 	    break;
+	 case '[':
+	 case ']':   
+	    in_line=true;
+	    ret+=std::string("{")+s[i]+'}';	    
+	    break;
+         case 0xae:	// ®
+            ret+="\\textsuperscript{\\textregistered}";      
+            break;	    
 	 case 167: ret+="\\S"; break; // '§'
 	 case '*':
 	 case '<':
