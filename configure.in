@@ -190,4 +190,4 @@ fi
 AM_CONDITIONAL(DATABASE, test \! -z "$ECPG_LIBS" )
 AC_SUBST(DATABASE_TYPE)
 
-AC_OUTPUT(Makefile src/Makefile examples/Makefile src/libManuProC_Base.rc po/Makefile.in )
+AC_OUTPUT(Makefile src/Makefile examples/Makefile src/libManuProC_Base.rc po/Makefile.in)
