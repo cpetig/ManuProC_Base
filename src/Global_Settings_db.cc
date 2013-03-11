@@ -21,12 +21,14 @@
 #include "Global_Settings.h"
 #include <Misc/Query.h>
 
+const int Global_Settings::global_id; // this id is for setting and requesting the default value for all users
+
 std::string Global_Settings::database_load(int userid,const std::string& program,const std::string& name)
 {std::string wert;
  try
  {
    // not efficient but more efficient than doing the query
-   if (userid==Global_Settings::global_id)
+   if (userid==global_id)
      throw SQLerror(std::string(),100,std::string());
    Query("select wert from global_settings "
 #ifdef MPC_SQLITE
