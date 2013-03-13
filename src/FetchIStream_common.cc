@@ -125,7 +125,7 @@ Query_Row &Query_Row::operator>>(long &i)
    return *this;
 }
 
-#ifndef __MINGW32__
+#if !defined(__MINGW32__) && !defined(WIN32)
 Query_Row &Query_Row::operator>>(long long &i)
 {  std::string s;
    *this >> s;
