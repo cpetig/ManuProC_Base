@@ -25,6 +25,10 @@
 //#include <unistd.h>
 #include <cstdlib>
 
+#if defined(WIN32) && !defined(__MINGW32__)
+#       pragma warning( disable : 4290 )  // for VS2010
+#endif
+
 ManuProC::Connection::Connection(const std::string &h, const std::string &d, 
 		const std::string &u,const std::string &n, const int p)
         	: host(h), dbase(d), user(u), name(n), port(p)

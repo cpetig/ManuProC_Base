@@ -23,6 +23,10 @@
 struct sqlite3;
 #endif
 
+#if defined(WIN32) && !defined(__MINGW32__)
+#	pragma warning( disable : 4290 )  // for VS2010
+#endif
+
 #define POSTGRESQL_PORT	5432
 
 namespace ManuProC
