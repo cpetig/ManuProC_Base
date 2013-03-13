@@ -31,7 +31,7 @@
 #ifdef MPC_SQLITE
 #include <sqlite3.h>
 #include <Misc/dbconnect.h>
-#include <strings.h>
+#include <string>
 
 #define ECPG_TOO_MANY_ARGUMENTS         -201
 #define ECPG_TOO_FEW_ARGUMENTS          -202
