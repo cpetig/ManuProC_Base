@@ -33,8 +33,10 @@
 #include <Misc/dbconnect.h>
 #if defined(WIN32) && !defined(__MINGW32__)
 #	include <string>
+#	define STRNCASECMP	_strnicmp
 #else
 #	include <strings.h>
+#	define STRNCASECMP	strncasecmp
 #endif
 
 #define ECPG_TOO_MANY_ARGUMENTS         -201
@@ -507,7 +509,7 @@ void Query::Execute() throw(SQLerror)
    lines=rows;
    nfields=cols;
    if (msgbuf) sqlite3_free(msgbuf);
-   if (!lines && strncasecmp(query.c_str(),"select",6))
+   if (!lines && STRNCASECMP(query.c_str(),"select",6))
      lines=sqlite3_changes(ManuProC::db_connection);
    if (!lines) SQLerror::last_code=error=100;
    result=local_result;
