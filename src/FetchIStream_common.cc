@@ -31,7 +31,11 @@
 #ifdef MPC_SQLITE
 #include <sqlite3.h>
 #include <Misc/dbconnect.h>
-#include <string>
+#if defined(WIN32) && !defined(__MINGW32__)
+#	include <string>
+#else
+#	include <strings.h>
+#endif
 
 #define ECPG_TOO_MANY_ARGUMENTS         -201
 #define ECPG_TOO_FEW_ARGUMENTS          -202
