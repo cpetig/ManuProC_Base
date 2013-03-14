@@ -18,14 +18,18 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+
+#if defined(WIN32) && !defined(__MINGW32__)
+#	pragma once
+#	pragma warning( disable : 4290 )  // for VS2010
+#endif
+
+
 #include <Misc/SQLerror.h>
 #ifdef MPC_SQLITE
 struct sqlite3;
 #endif
 
-#if defined(WIN32) && !defined(__MINGW32__)
-#	pragma warning( disable : 4290 )  // for VS2010
-#endif
 
 #define POSTGRESQL_PORT	5432
 
