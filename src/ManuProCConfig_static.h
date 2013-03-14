@@ -25,7 +25,7 @@
    Database and host to use
    */
 
-#define DEFAULT_DB "jacek"
+#define DEFAULT_DB "stw.db"
 #define DEFAULT_DBHOST ""
 
 /* we have support for pgsql/ecpg */
