@@ -21,6 +21,11 @@
 
 #ifndef SQLERROR_H
 #define SQLERROR_H
+
+#if defined(WIN32) && !defined(__MINGW32__)
+#	pragma warning( disable : 4290 )
+#endif
+
 #include <ManuProCConfig.h>
 #ifndef MPC_SQLITE
 # include <Misc/SQLerror_postgres.h>
