@@ -20,7 +20,8 @@
 
 #include <Misc/EntryValueBase.h>
 
-#ifdef _MSC_VER
+#if 0
+//#ifdef _MSC_VER
  const double EntryValueBase::double_NaN=-1;
 #endif
 
