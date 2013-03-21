@@ -1,7 +1,14 @@
 /* this file contains the necessary defines to use gettext in your program */
 
-#pragma once
-#include <ManuProCConfig.h>
+
+#if defined(WIN32) && !defined(__MINGW32__)
+#       pragma warning( disable : 4290 )
+#	pragma once
+#	include <ManuProCConfig.h>
+#else
+#	include "config.h"
+#endif
+
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #  undef _
@@ -22,5 +29,5 @@
 #endif
 
 #ifdef __cplusplus
-namespace ManuProC_Base { void init_i18n(char const* package_locale_dir=0); }
+namespace ManuProC_Base { void init_i18n(char const* package_locale_dir); }
 #endif
