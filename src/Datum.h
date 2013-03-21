@@ -20,6 +20,11 @@
 
 #ifndef DATUM_H
 #define DATUM_H
+
+#if defined(WIN32) && !defined(__MINGW32__)
+#	pragma warning( disable : 4290 )
+#endif
+
 #include <time.h>
 #include <exception>
 #include <string>
