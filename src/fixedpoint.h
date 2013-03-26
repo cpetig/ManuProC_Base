@@ -225,7 +225,7 @@ public:
 	Itype floor() const
 	{  return scaled/zehnhochplusI<decimals>();
 	}
-	static self_t max()
+	static self_t fixed_max()
 	{ if (Itype(-1)>0) return self_t(ScaledValue(Itype(-1)));
 	  if (sizeof(Itype)==8) return self_t(ScaledValue(Itype(0x7fffffffffffffffLL)));
 	  return self_t(ScaledValue(Itype(0x7fffffff)));
