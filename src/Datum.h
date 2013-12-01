@@ -105,6 +105,7 @@ public:
 	/// in Postgres Repräsentation wandeln
 	void write_postgres(char *b,unsigned int sz) const throw(Datumsfehler);
    std::string to_iso() const throw(Datumsfehler);
+   std::string ISO() const throw(Datumsfehler);
    std::string postgres_null_if_invalid() const;
 	/// in Europäisches Format wandeln
 	void write_euro(char *b,unsigned int sz) const throw(Datumsfehler);
