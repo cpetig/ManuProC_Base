@@ -515,13 +515,15 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
    }
 }
 
-void TagStream::write(std::ostream &o,bool compact) const
+void TagStream::write(std::ostream &o,bool compact,bool with_bom, const std::string xml_comment) const
 { static std::string s_UTF8="UTF-8"; 
-  if (encoding==s_UTF8) // BOM
+  if (encoding==s_UTF8 && with_bom) // BOM
       o << "﻿"; // BOM
    o << "<?xml version=\"1.0\" encoding=\"" << encoding << "\"?>";
+   if (!xml_comment.empty())
+      o << "<!-- " << xml_comment << " -->\n";
    if (!compact) o << '\n';
-   write(o, getContent(),0,true,compact);
+   write(o, getContent(),0,false,compact);
    if (!compact) o << '\n';
 }
 

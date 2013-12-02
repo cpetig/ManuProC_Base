@@ -100,7 +100,7 @@ public:
 	{  file_name=s; }
 	void setEncoding(const std::string &s);
 	bool write(const std::string &filename=std::string(),const std::string &_encoding=std::string());
-	void write(std::ostream &o,bool compact=false) const;
+	void write(std::ostream &o,bool compact=false, bool with_bom=false, const std::string xml_comment=std::string()) const;
 	
 	static void utf82iso(std::string &s);
 	static std::string base64(const std::string &s, unsigned linelen=0);

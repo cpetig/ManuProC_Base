@@ -256,8 +256,8 @@ std::string Zeitpunkt_new::ISO() const
 {
  std::string res=datum.ISO();
  res+="T";
- res+=itos0pad(hour,2);
- res+=itos0pad(minute,2); 
+ res+=itos0pad(hour,2)+":";
+ res+=itos0pad(minute,2)+":"; 
  res+=itos0pad(second,2); 
  res+=minutes_from_gmt>0?"+":"-";
  // make abs
