@@ -31,6 +31,7 @@ class TagStream : public Tag
 	static const int GB_BUFFER_SIZE=40960;
 	char buffer[GB_BUFFER_SIZE];
 	bool read_again;
+	bool own_toxml;
 	int pointer,end_pointer;
 
 	std::istream *is;
@@ -105,6 +106,7 @@ public:
 	static void utf82iso(std::string &s);
 	static std::string base64(const std::string &s, unsigned linelen=0);
 	static std::string unbase64(const std::string &s);
+	void Own_2XML(const bool own) { own_toxml=own; }
 private:
 	void write(std::ostream &o, const Tag &t, int indent=0, bool indent_first=true,bool compact=false) const;
 };
