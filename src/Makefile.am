@@ -1,8 +1,9 @@
-# $Id: Makefile.am,v 1.63 2006/08/03 11:18:28 christof Exp $
+
 
 if WINDOWS
 WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def 
-DLL_LDADD=libManuProC_Base_res.lo @SIGC_LIBS@ @ECPG_LIBS@ 
+DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ 
+#libManuProC_Base_res.o
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
 else
 WIN_LDFLAGS=
@@ -16,8 +17,10 @@ libManuProC_Base_sqlite3.def: libManuProC_Base.def libManuProC_Base_sqlite.defad
 libManuProC_Base_pg.def: libManuProC_Base.def libManuProC_Base_pg.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^
-libManuProC_Base_res.lo: libManuProC_Base.rc
-	WINDRES=i586-mingw32msvc-windres $(top_srcdir)/build/win32/lt-compile-resource $< $@
+	
+libManuProC_Base_res.o: libManuProC_Base.rc
+	i586-mingw32msvc-windres $^ $@
+	
 #libManuProC_Base_res.o: libManuProC_Base.rc
 #	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
@@ -92,3 +95,5 @@ install-data-hook:
 
 # the links cannot be distributed ... and they are not rebuild automatically
 Ausgabe_neu.cc: Misc ostream BaseObjects
+
+
