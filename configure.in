@@ -106,20 +106,20 @@ then
    CXXFLAGS="$CXXFLAGS $ECPG_INCLUDES"
    LIBS="$LIBS $ECPG_LIBS"
    LDFLAGS="$LDFLAGS $ECPG_LDFLAGS"
-   AC_COMPILE_IFELSE([
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <ecpgtype.h>
 #include <ecpglib.h>
 int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
-	],[AC_DEFINE(OLD_ECPG, 1, [Define to 1 if you use ecpg 2.9.])
+	])],[AC_DEFINE(OLD_ECPG, 1, [Define to 1 if you use ecpg 2.9.])
 		AC_MSG_RESULT([old (-2.9.0)])],
 	[AC_MSG_RESULT([new (3.0.0+)])])
     if test ! -e NoQueryParams
     then
       AC_MSG_CHECKING(for PQprepare)
-      AC_COMPILE_IFELSE([
+      AC_COMPILE_IFELSE([AC_LANG_SOURCE([
       #include <libpq-fe.h>
       int main() {  PQprepare((PGconn*)NULL,"name","select true",0,NULL); }
-            ],[AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.])
+            ])],[AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.])
                     AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
     fi
 
@@ -146,7 +146,7 @@ fi
 
 if test -z "$ECPG_INCLUDES"
 then
- AC_COMPILE_IFELSE([#include <sqlite3.h>],[prefer_sqlite=1],[])
+ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <sqlite3.h>])],[prefer_sqlite=1],[])
 fi
 
 if test "$prefer_sqlite" -eq 1 -a "$block_sqlite" -eq 0
