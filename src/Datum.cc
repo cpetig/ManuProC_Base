@@ -73,7 +73,9 @@ ManuProC::Datum ManuProC::Datum::today() throw()
 
 ManuProC::Datum::Datum(time_t t) throw() :
 woche(),woche_jahrdiff(),quart()
-{  struct tm *tm=localtime(&t);
+{  
+   time_t tl=t<0 ? 0 : t;
+   struct tm *tm=localtime(&tl);
 
    tag=tm->tm_mday;
    monat=tm->tm_mon+1;
