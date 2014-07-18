@@ -113,6 +113,13 @@ std::string ManuProC::Datum::to_iso() const throw(Datumsfehler)
  return itos(Jahr())+"-"+itos(Monat())+"-"+itos(Tag());
 }
 
+
+std::string ManuProC::Datum::ISO() const throw(Datumsfehler)
+{
+ teste();
+ return itos0pad(Jahr(),4)+"-"+itos0pad(Monat(),2)+"-"+itos0pad(Tag(),2);
+}
+
 std::string ManuProC::Datum::postgres_null_if_invalid() const
 {
   try{

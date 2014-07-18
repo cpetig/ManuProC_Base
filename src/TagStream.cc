@@ -116,7 +116,7 @@ void TagStream::de_xml(std::string &cont)
 
 TagStream::TagStream(const std::string &path) 
 	: Tag(std::string()), read_again(), pointer(), end_pointer(), is(), 
-	  ifs(), iss(), recode_load_vfunc(), recode_save_vfunc()
+	  ifs(), iss(), recode_load_vfunc(), recode_save_vfunc(), own_toxml(false)
 {  ifs=new std::ifstream(path.c_str());
    is=ifs;
    is->read(buffer,GB_BUFFER_SIZE);
@@ -477,7 +477,7 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
          {  (*recode_save_vfunc)(attname);
             (*recode_save_vfunc)(attval);
          }
-         toXML(attval);
+         if(!own_toxml) toXML(attval);
          o << ' ' << attname << "=\"" << attval << '\"';
       }
       // save content ...
@@ -485,7 +485,7 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
       {  o << ' ';
          std::string tval(t.Value());
          if (recode_save_vfunc) (*recode_save_vfunc)(tval);
-         toXML(tval);
+         if(!own_toxml) toXML(tval);
          o << tval << '>';
       }
       else if (t.begin()!=t.end() || !t.Value().empty())
@@ -493,7 +493,7 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
          o << '>';
          std::string tval(t.Value());
          if (recode_save_vfunc) (*recode_save_vfunc)(tval);
-         toXML(tval);
+         if(!own_toxml) toXML(tval);
          o << tval;
          bool indent_next=t.Value().empty();
          for (Tag::const_iterator i=t.begin();i!=t.end();++i) 
@@ -510,18 +510,20 @@ void TagStream::write(std::ostream &o, const Tag &t, int indent,bool indent_firs
    else 
    {  std::string tval(t.Value());
       if (recode_save_vfunc) (*recode_save_vfunc)(tval);
-      toXML(tval);
+      if(!own_toxml) toXML(tval);
       o << tval;
    }
 }
 
-void TagStream::write(std::ostream &o,bool compact) const
+void TagStream::write(std::ostream &o,bool compact,bool with_bom, const std::string xml_comment) const
 { static std::string s_UTF8="UTF-8"; 
-  if (encoding==s_UTF8) // BOM
+  if (encoding==s_UTF8 && with_bom) // BOM
       o << "﻿"; // BOM
    o << "<?xml version=\"1.0\" encoding=\"" << encoding << "\"?>";
+   if (!compact && !xml_comment.empty())
+      o << '\n' << "<!-- " << xml_comment << " -->";
    if (!compact) o << '\n';
-   write(o, getContent(),0,true,compact);
+   write(o, getContent(),0,false,compact);
    if (!compact) o << '\n';
 }
 

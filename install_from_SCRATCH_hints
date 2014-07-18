@@ -1,0 +1,8 @@
+
+txt2tags
+xsltproc
+libgtk2.0-dev
+libsigc++-2.0-dev
+# makes no sense without this, alternatively choose SQLite
+postgresql-server-dev-9.1 libapq3.2.0-dev libecpg-dev
+
