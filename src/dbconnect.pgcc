@@ -144,7 +144,7 @@ void ManuProC::dbdefault(const std::string &name) throw(SQLerror)
    current_db_name=name;
 }
 
-void ManuProC::setDTstyle(char *style) throw(SQLerror)
+void ManuProC::setDTstyle(const char *style) throw(SQLerror)
 {
  exec sql begin declare section;
  char ST[80];

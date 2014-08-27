@@ -88,7 +88,7 @@ public:
    void dbdisconnect_nt(const std::string &name=std::string()) throw();  
    void dbconnect(const Connection &c=Connection()) throw(SQLerror);
    void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
-   void setDTstyle(char *style="ISO") throw(SQLerror);
+   void setDTstyle(const char *style="ISO") throw(SQLerror);
    void dbdefault(const std::string &name=std::string()) throw(SQLerror);
    std::string get_dbname();
 };
