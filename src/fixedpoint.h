@@ -31,7 +31,7 @@
 // The compiler optimizes this fully away (once -O is used)
 template <int N> 
 inline double zehnhochminus()
-{  typedef typename ctime_assert<(N>0)>::_true failed;
+{  typedef typename ctime_assert<(N>0)>::_true failed __attribute__((unused));
    return 0.1*zehnhochminus<N-1>();
 }
 
@@ -41,7 +41,7 @@ inline double zehnhochminus<0>()
 
 template <int N> 
 inline double zehnhochplus()
-{  typedef typename ctime_assert<(N>0)>::_true failed;
+{  typedef typename ctime_assert<(N>0)>::_true failed __attribute__((unused));
    return 10*zehnhochplus<N-1>();
 }
 
@@ -51,7 +51,7 @@ inline double zehnhochplus<0>()
 
 template <int N> 
 inline int zehnhochplusI()
-{  typedef typename ctime_assert<(N>0)>::_true failed;
+{  typedef typename ctime_assert<(N>0)>::_true failed __attribute__((unused));
    return 10*zehnhochplusI<N-1>();
 }
 
@@ -100,7 +100,7 @@ private:
 	typedef Ftype _Ftype;
 	typedef Itype _Itype;
 	const static int _decimals=decimals;
-	typedef typename ctime_assert<(decimals>=0)>::_true failed;
+	typedef typename ctime_assert<(decimals>=0)>::_true failed __attribute__((unused));
 public:
 	fixedpoint() : scaled() {}
 	fixedpoint(fixedpoint_dyn<Ftype,Itype> const& val) : scaled()
