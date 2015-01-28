@@ -1,0 +1,10 @@
+
+make update-po 
+  aktualisiert alle Dateien
+
+make labor.pot-update
+  erzeugt das Template File neu
+
+msgmerge -U -N --lang=fr fr.po labor.pot
+  aktualisieren ohne fuzzy
+
