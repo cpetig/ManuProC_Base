@@ -28,7 +28,7 @@ extern "C"
 void setuid_ManuProC(int id);
 namespace ManuProC
 {
-  std::string GetUserName();
+  std::string GetUserNameA();
   std::string GetRealName();
   bool IsAdministrator();
 }

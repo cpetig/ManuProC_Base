@@ -19,21 +19,21 @@
 
 #include "./getuid.h"
 #undef getuid
-//#include <WinFileReq.hh>
 
 static int uid_override=-1;
 
 #ifdef WIN32
 # include "md5string.h"
+# include <Misc/win32_utf8.h>
 
 # define WINVER 0x0500
 # define SECURITY_WIN32
 # include <windows.h>
 # include <security.h>
 # include <iphlpapi.h>
-# undef GetUserName
+# undef GetUserNameA
 
-std::string ManuProC::GetUserName()
+std::string ManuProC::GetUserNameA()
 {
   wchar_t buf[10240];
   DWORD sz=sizeof(buf)/sizeof(*buf);
@@ -41,7 +41,7 @@ std::string ManuProC::GetUserName()
   if (!GetUserNameExW(NameSamCompatible,buf,&sz))
   { if (!GetUserNameW(buf,&sz)) return 0;
   }
-  return WinFileReq::un_wstring(std::wstring(buf,buf+sz));
+  return un_wstring(std::wstring(buf,buf+sz));
 }
 
 std::string ManuProC::GetRealName()
@@ -52,7 +52,7 @@ std::string ManuProC::GetRealName()
   if (!GetUserNameExW(NameDisplay,buf,&sz))
     return std::string();
   while (sz>0 && !buf[sz-1]) --sz; // XP counts zeros as part of string ...
-  return WinFileReq::un_wstring(std::wstring(buf,buf+sz));
+  return un_wstring(std::wstring(buf,buf+sz));
 }
 
 bool ManuProC::IsAdministrator()

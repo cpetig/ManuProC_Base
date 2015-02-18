@@ -155,11 +155,13 @@ void Tag::setValue(const std::string &key,const std::string &value) throw()
 
 // this is needed for g++ 3.x 
 // - still gives me strange feelings to declare inside std
-namespace std {
+// not more neede, we have g++ > 4 only
+/*namespace std {
 bool operator==(const std::pair<std::string,std::string> &a,const std::string &b)
 {  return a.first==b;
 }
 }
+*/
 
 Tag::attvec_t::iterator Tag::attfind(const std::string &name)
 {  return attributes.find(name); }
