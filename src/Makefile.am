@@ -2,7 +2,7 @@
 
 if WINDOWS
 WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def 
-DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ 
+DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ -lintl -ladvapi32 -lsecur32
 #libManuProC_Base_res.o
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
 else
