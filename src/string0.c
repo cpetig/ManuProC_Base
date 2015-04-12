@@ -8,7 +8,7 @@
 #include <string.h>
 
 #ifdef __MINGW32__
-int vsnprintf(char *str, size_t size, const char  *format, va_list ap);
+//int vsnprintf(char *str, size_t size, const char  *format, va_list ap);
 #endif
 #if defined _MSC_VER  && _MSC_VER<1400  // VC7 is different ...
 #define vsnprintf _vsnprintf

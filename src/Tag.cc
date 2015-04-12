@@ -26,7 +26,7 @@
 #include <cstdio>
 
 #ifdef __MINGW32__
-extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
+//extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
 #endif
 
 #ifdef _MSC_VER
