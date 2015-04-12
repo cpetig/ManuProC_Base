@@ -59,7 +59,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 		ManuProcEntity.cc EntryValue_easy.cc EntryValueDouble.cc \
 		i18n.cc Datum_i18n.cc fixedpoint_null.cc \
 		DllObject_caller.cc DllObject_dll.cc win32_utf8.cc \
-		getuid.cc
+		getuid.cc md5/md5string.cc md5/md5.c
 
 EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
 	Query.pgcc
