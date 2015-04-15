@@ -40,6 +40,7 @@ EXPORTS
 	_ZN14fixedpoint_dynIdlEC1ERKSsPKcS4_
 	_ZN15EntryValueDatumD0Ev 
 	_ZN15EntryValueDatumD1Ev 
+	_ZN15EntryValue_easy6createERKb
 	_ZN15EntryValue_easy6createERKi
 	_ZN15EntryValue_easy6createERKNS_3nilE
 	_ZN15EntryValue_easy6createERKSs
