@@ -1,4 +1,5 @@
 EXPORTS
+	getuid_ManuProC
 	snprintf0 
 	strncpy0 
 	_Z10FormatieremjjPKcS0_c 
@@ -6,9 +7,11 @@ EXPORTS
 	_Z10FormatiereRSoyjjPKcS1_c 
 	_Z10FormatiereyjjPKcS0_c 
 	_Z10string2TeXSsi 
+	_Z15setuid_ManuProCi
 	_Z18FormatiereEmptyIntl 
 	_Z19FormatiereTeX_PreisILi2EdlEKSsRK10fixedpointIXT_ET0_T1_E 
 	_Z19FormatiereTeX_PreisILi3EdlEKSsRK10fixedpointIXT_ET0_T1_E 
+	_Z3md5RKSs
 	_Z4btosb 
 	_Z4dtosd 
 	_Z4itosi 
@@ -90,10 +93,15 @@ EXPORTS
 	_ZN7IOerrorC2Ev 
 	_ZN7IOerrorD0Ev 
 	_ZN7IOerrorD1Ev 
+	_ZN8ManuProC10un_wstringERKSbIwSt11char_traitsIwESaIwEE
+	_ZN8ManuProC11GetRealNameEv
 	_ZN8ManuProC12DatumsfehlerC1Ei 
 	_ZN8ManuProC12DatumsfehlerC2Ei 
 	_ZN8ManuProC12DatumsfehlerD0Ev 
 	_ZN8ManuProC12DatumsfehlerD1Ev 
+	_ZN8ManuProC12GetUserNameAEv
+	_ZN8ManuProC12make_wstringERKSs
+	_ZN8ManuProC15IsAdministratorEv
 	_ZN8ManuProC16remove_last_fromERSsRKSs 
 	_ZN8ManuProC23PrintUncaughtExceptionsEv 
 	_ZN8ManuProC5Datum12FormatfehlerD0Ev 
