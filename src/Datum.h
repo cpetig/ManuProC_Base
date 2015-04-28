@@ -46,14 +46,17 @@ std::ostream &operator<<(std::ostream&,const ManuProC::Datumsfehler&);
 class ManuProC::Datumsfehler : public std::exception
 {  /// eine Kombination aus tagfalsch, monatfalsch, jahrfalsch
    int falsch;
+   const std::string context;
 public:
    /** Werte für falsch: */
    static const int tagfalsch=1;
    static const int monatfalsch=2;
    static const int jahrfalsch=4;
-   Datumsfehler(int _falsch) throw();
+   Datumsfehler(int _falsch, const std::string c=std::string()) throw();
+   virtual ~Datumsfehler() throw();
    friend std::ostream &NOTGCC295(::)operator<<(std::ostream&,const Datumsfehler &);
-   virtual const char* what() const throw() { return "ManuProC::Datumsfehler"; }
+   virtual const char* what() const throw() { return (std::string("ManuProC::Datumsfehler ")+context).c_str(); }
+   const std::string Context() const { return context; }
 };
 
 std::ostream &operator<<(std::ostream&,const ManuProC::Datum&) throw();
