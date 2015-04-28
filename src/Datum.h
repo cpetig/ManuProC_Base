@@ -53,7 +53,7 @@ public:
    static const int monatfalsch=2;
    static const int jahrfalsch=4;
    Datumsfehler(int _falsch, const std::string c=std::string()) throw();
-   virtual ~Datumsfehler() throw();
+   virtual ~Datumsfehler() throw() {}
    friend std::ostream &NOTGCC295(::)operator<<(std::ostream&,const Datumsfehler &);
    virtual const char* what() const throw() { return (std::string("ManuProC::Datumsfehler ")+context).c_str(); }
    const std::string Context() const { return context; }
