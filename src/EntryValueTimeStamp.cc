@@ -48,7 +48,10 @@ bool EntryValueTimeStamp::operator<(const EntryValueBase &v) const
 const std::string EntryValueTimeStamp::getStrVal() const
 {  if (!ts.valid()) return std::string();
    std::ostringstream os;
-   os << ts;
+   if(localtime)
+     os << ts.ISO_Local();
+   else  
+     os << ts;
    return os.str();
 }
 
