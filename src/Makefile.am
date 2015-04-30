@@ -66,7 +66,7 @@ EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
 
 BUILT_SOURCES=Misc ostream ${EXTRA_DIST:.pgcc=.cc} $(DLL_DEF)
 
-include_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
+noinst_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 	IOerror.h Kalenderwoche.h Pointer.h Postgres.h Rundungsmacros.h \
 	SQLerror.h SQLerror_postgres.h Transaction.h Zeitpunkt_new.h \
 	dbconnect.h exception.h fixedpoint.h itos.h \
