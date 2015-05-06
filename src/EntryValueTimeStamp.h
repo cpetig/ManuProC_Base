@@ -27,10 +27,10 @@
 class EntryValueTimeStamp : public EntryValueBase
 {
  ManuProC::TimeStamp ts;
-
+ bool localtime;
 public:
- EntryValueTimeStamp(const ManuProC::TimeStamp &v) 
- : ts(v) {}
+ EntryValueTimeStamp(const ManuProC::TimeStamp &v, const bool loct=false) 
+ : ts(v),localtime(loct) {}
    
  virtual bool operator==(const EntryValueBase &v) const;
  virtual bool operator<(const EntryValueBase &v) const;
@@ -42,8 +42,8 @@ public:
 class cH_EntryValueTimeStamp : public cH_EntryValue
 {
 public:
- cH_EntryValueTimeStamp(const ManuProC::TimeStamp &v) 
- : cH_EntryValue(new EntryValueTimeStamp(v)) {}
+ cH_EntryValueTimeStamp(const ManuProC::TimeStamp &v, const bool lt=false) 
+ : cH_EntryValue(new EntryValueTimeStamp(v,lt)) {}
 };
 
 #endif 

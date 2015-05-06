@@ -269,6 +269,16 @@ std::string Zeitpunkt_new::ISO() const
  return res;  
 }
 
+std::string Zeitpunkt_new::ISO_Local() const
+{
+ std::string res=datum.ISO();
+ res+=" ";
+ res+=itos0pad(hour,2)+":";
+ res+=itos0pad(minute,2)+":"; 
+ res+=itos0pad(second,2); 
+ return res;  
+}
+
 
 #if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
 #include <Misc/pg_type.h>

@@ -100,6 +100,7 @@ public:
    std::string Short(const ManuProC::Datum &d=ManuProC::Datum()) const;
    std::string c_str() const;
    std::string ISO() const;
+   std::string ISO_Local() const;   
 
    long diff(const Zeitpunkt_new &b, precision prec) const throw();
    /// Differenz in min(Precision)
