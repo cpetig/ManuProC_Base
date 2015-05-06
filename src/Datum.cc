@@ -439,8 +439,8 @@ ManuProC::Datum::Datum(int t, int m, int j,bool expandyear) throw(Datumsfehler)
 }
 
 // damit man endlich mal einen Breakpoint drauf setzen kann ...
-ManuProC::Datumsfehler::Datumsfehler(int _falsch) throw()
-	:  falsch(_falsch)
+ManuProC::Datumsfehler::Datumsfehler(int _falsch,const std::string c) throw()
+	:  falsch(_falsch), context(c)
 {}
 
 #if defined DEFAULT_DB && defined MANUPROC_WITH_DATABASE // actually we should test for database support
