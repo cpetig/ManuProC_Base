@@ -315,9 +315,7 @@ template<> const std::string FormatiereTeX_Preis<3>(const fixedpoint<3> &Zahl)
    std::string result=
 	FormatiereTeX(fixedpoint<2>(fixedpoint<2>::ScaledValue(Zahl.Scaled()/divisor)));
    const Itype rest=Zahl.Scaled()%divisor;
-   if (rest)
-   {  result+=std::string("$^{")+ char('0'+rest) + "}$";
-   }
+   result+=std::string("$^{")+ char('0'+rest) + "}$";
    return result;
 }
 
