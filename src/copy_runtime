@@ -1,6 +1,8 @@
 #! /bin/bash
 
-cp .libs/libManuProC_Base.a ../../runtime_ManuProC_Base/linux
+PLATFORM=$1
+
+cp .libs/libManuProC_Base.a ../../runtime_ManuProC_Base/$PLATFORM
 
 CHG=`mtn ls changed | wc -l`
 if [ $CHG -ne 0 ]

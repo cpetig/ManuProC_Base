@@ -5,10 +5,12 @@ WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ -lintl -ladvapi32 -lsecur32
 #libManuProC_Base_res.o
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
+PLATFORM=w32
 else
 WIN_LDFLAGS=
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=
+PLATFORM=linux
 endif
 
 libManuProC_Base_sqlite3.def: libManuProC_Base.def libManuProC_Base_sqlite.defadd \
@@ -84,7 +86,7 @@ CLEANFILES= *~ $(BUILT_SOURCES)
 
 # copy to runtime branch
 copy_libs:
-	./copy_runtime
+	./copy_runtime $(PLATFORM)
 
 # create compatibility links
 
