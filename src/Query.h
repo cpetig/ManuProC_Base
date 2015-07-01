@@ -130,7 +130,7 @@ public:
 	Query_Row &operator>>(bool &b);
 	Query_Row &operator>>(char &c);
 	void operator>>(const check_eol &eol)
-	{ ThrowIfNotEmpty("check_eol"); }
+	{ ThrowIfNotEmpty("check_eol"); check_eol e(eol); }
 
 	template <class T> static WithIndicator_s<T> WithIndicator(T &v,int &i)
 	{ return WithIndicator_s<T>(v,i); }

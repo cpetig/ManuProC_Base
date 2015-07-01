@@ -70,7 +70,7 @@ public:
     const std::string User() const { return user; }
     const std::string Name() const { return name; }
     const std::string Pass() const throw(AuthError);
-    const int Port() const { return port; }
+    int Port() const { return port; }
     void setHost(const std::string &h) { if(!h.empty()) host=h; }
     void setDbase(const std::string &d) { if(!d.empty()) dbase=d; }
     void setUser(const std::string &u) { user=u; }
