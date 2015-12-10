@@ -29,7 +29,7 @@
 
 #define _sql_STRING2__(a) #a
 #define _sql_STRING__(a) _sql_STRING2__(a)
-#define __FILELINE__ __FILE__":"_sql_STRING__(__LINE__)
+#define __FILELINE__ __FILE__ ":" _sql_STRING__(__LINE__)
 
 #ifdef __cplusplus
 class SQLerror_sqlite : public std::exception

@@ -53,5 +53,9 @@ EntryValueBase::operator double() const
 
 #if defined(__GNUC__) && __GNUC__>=3
 // needed for g++ 4.0
-const double EntryValueBase::double_NaN;
+ #if __cplusplus < 201103L
+ const double EntryValueBase::double_NaN;
+ #else
+ constexpr double EntryValueBase::double_NaN; 
+ #endif
 #endif
