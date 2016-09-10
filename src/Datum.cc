@@ -413,7 +413,7 @@ ManuProC::Datumsfehler::Datumsfehler(int _falsch) throw()
 #include <Misc/pg_type.h>
 
 template<>
-const Oid Query::NullIf_s<ManuProC::Datum>::postgres_type=DATEOID;
+const Query_types::Oid Query::NullIf_s<ManuProC::Datum>::postgres_type=DATEOID;
 
 Query::Row &operator>>(Query::Row &is, ManuProC::Datum &v)
 {  std::string s;
