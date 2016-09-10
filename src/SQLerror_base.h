@@ -11,6 +11,8 @@
 #define __FILELINE__ __FILE__ ":" _sql_STRING__(__LINE__)
 
 #ifdef __cplusplus
+class Query_Row;
+
 class SQLerror_base : public std::exception
 {  std::string context;
    int code;
@@ -52,8 +54,13 @@ public:
 	   std::swap(name,b.name);
    }
 #endif
-private: // forbid
+protected:
+   friend class Query_Row;
+   // restrict
    SQLerror_base(SQLerror_base const&);
+
+private:
+   // forbid
    SQLerror_base const& operator=(SQLerror_base const&);
 };
 

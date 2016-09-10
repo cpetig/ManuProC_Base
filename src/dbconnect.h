@@ -103,8 +103,8 @@ public:
      virtual std::string const& Name() throw()=0;
    };
 
-   std::vector<Handle<Connection_base> > connections;
-   Handle<Connection_base> active_connection;
+   extern std::vector<Handle<Connection_base> > connections;
+   extern Handle<Connection_base> active_connection;
 
    Handle<Connection_base> dbconnect_nt(const Connection &c=Connection()) throw();
    void dbdisconnect_nt(const std::string &name=std::string()) throw();

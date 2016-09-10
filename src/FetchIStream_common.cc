@@ -62,14 +62,15 @@ Query::debug_environment::~debug_environment()
 void Query::swap(Query &b)
 {
 #ifdef MPC_POSTGRESQL
-  std::swap(descriptor,b.descriptor);
+//  std::swap(descriptor,b.descriptor);
 #endif
-  std::swap(eof,b.eof);
-  std::swap(line,b.line);
-  std::swap(result,b.result);
+//  std::swap(eof,b.eof);
+//  std::swap(line,b.line);
+//  std::swap(result,b.result);
 #ifdef MPC_SQLITE
-  std::swap(nfields,b.nfields);
+//  std::swap(nfields,b.nfields);
 #endif
+  std::swap(implementation_specific,b.implementation_specific);
   std::swap(query,b.query);
   std::swap(params,b.params);
   std::swap(num_params,b.num_params);
@@ -187,7 +188,7 @@ const char *ArgumentList::next_insert(const char *text)
     return (*ptr == '\0') ? 0 : ptr;
 }
 
-Oid ArgumentList::type_of(const_iterator const& which) const
+Query_types::Oid ArgumentList::type_of(const_iterator const& which) const
 { return types[which-begin()];
 }
 
@@ -199,7 +200,7 @@ bool ArgumentList::is_null(const_iterator const& which) const
 { return null[which-begin()];
 }
 
-bool needs_quotes(Oid type)
+static bool needs_quotes(Query_types::Oid type)
 { switch (type)
   { case CHAROID:
     case DATEOID:
@@ -341,32 +342,32 @@ ArgumentList &ArgumentList::operator<<(const std::string &str)
 #endif
 }
 template<>
-const Oid Query::NullIf_s<std::string>::postgres_type=TEXTOID;
+const Query_types::Oid Query::NullIf_s<std::string>::postgres_type=TEXTOID;
 template<>
-const Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
+const Query_types::Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
 
 ArgumentList &ArgumentList::operator<<(long i)
 { return add_argument(itos(i),INT4OID);
 }
-template<> const Oid Query::NullIf_s<long>::postgres_type=INT4OID;
-template<> const Oid Query::NullIf_s<int>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<long>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<int>::postgres_type=INT4OID;
 
 ArgumentList &ArgumentList::operator<<(unsigned long i)
 {  return add_argument(ulltos(i),INT4OID);
 }
-template<> const Oid Query::NullIf_s<unsigned long>::postgres_type=INT4OID;
-template<> const Oid Query::NullIf_s<unsigned int>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<unsigned long>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<unsigned int>::postgres_type=INT4OID;
 
 ArgumentList &ArgumentList::operator<<(unsigned long long i)
 {  return add_argument(ulltos(i),INT8OID);
 }
-template<> const Oid Query::NullIf_s<unsigned long long>::postgres_type=INT8OID;
+template<> const Query_types::Oid Query::NullIf_s<unsigned long long>::postgres_type=INT8OID;
 
 ArgumentList &ArgumentList::operator<<(double i)
 {  return add_argument(dtos(i),FLOAT4OID);
 }
-template<> const Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
-template<> const Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
+template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
+template<> const Query_types::Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
 
 ArgumentList &ArgumentList::operator<<(bool i)
 {
@@ -376,7 +377,7 @@ ArgumentList &ArgumentList::operator<<(bool i)
   return add_argument(btos(i),BOOLOID);
 #endif
 }
-template<> const Oid Query::NullIf_s<bool>::postgres_type=BOOLOID;
+template<> const Query_types::Oid Query::NullIf_s<bool>::postgres_type=BOOLOID;
 
 ArgumentList &ArgumentList::operator<<(char i)
 {  char x[8];
@@ -397,7 +398,7 @@ ArgumentList &ArgumentList::operator<<(char i)
 #endif
    return add_argument(x,CHAROID);
 }
-template<> const Oid Query::NullIf_s<char>::postgres_type=CHAROID;
+template<> const Query_types::Oid Query::NullIf_s<char>::postgres_type=CHAROID;
 
 ArgumentList &ArgumentList::operator<<(const ArgumentList &list)
 {  for (const_iterator i=list.begin();i!=list.end();++i)
@@ -436,7 +437,7 @@ void Query::ThrowOnBad(const char *where) const
 
 // ====================== SQLite =================================
 
-#ifdef MPC_SQLITE
+#if 0 //def MPC_SQLITE
 Query_Row::Query_Row(const char *const *res, unsigned _nfields, int line)
 	: naechstesFeld(), zeile(line), is_fake(), fake_null(),
 	  result(res), nfields(_nfields)
@@ -586,8 +587,10 @@ bool Query_Row::good() const
 
 #endif
 
+#if 0
 Query_Row::Query_Row(Fake const& val)
   : naechstesFeld(), zeile(), is_fake(true), fake_result(val.what),
     fake_null(val.is_null), result()
 {
 }
+#endif

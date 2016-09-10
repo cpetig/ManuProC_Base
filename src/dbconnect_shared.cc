@@ -114,17 +114,29 @@ Handle<ManuProC::Connection_base> ManuProC::dbdefault(std::string const& name) t
 	return active_connection;
 }
 
+std::vector<Handle<ManuProC::Connection_base> > ManuProC::connections;
+Handle<ManuProC::Connection_base> ManuProC::active_connection;
+
 void ManuProC::register_db(Handle<Connection_base> const& c)
 {
-
+	connections.push_back(c);
 }
 
 void ManuProC::unregister_db(Handle<Connection_base> const& c)
 {
-
+	for (std::vector<Handle<ManuProC::Connection_base> >::iterator i=connections.begin();i!=connections.end();++i)
+		if (&*c == &**i)
+		{
+			connections.erase(i);
+			return;
+		}
 }
 
 Handle<ManuProC::Connection_base> ManuProC::get_database(std::string const& name) throw(SQLerror)
 {
-
+	if (name.empty()) return active_connection;
+	for (std::vector<Handle<ManuProC::Connection_base> >::const_iterator i=connections.begin();i!=connections.end();++i)
+		if ((*i)->Name()==name)
+			return *i;
+	throw SQLerror("get_database",100,"Database not found");
 }

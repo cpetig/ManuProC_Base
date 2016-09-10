@@ -293,6 +293,7 @@ class Query : public Query_types
 	PreparedQuery* prepare;
 	std::string portal_name;
 	// if you add members do not forget to mention them in swap!
+	void *implementation_specific; // backend specific
 
 	// not possible yet (because result can not refcount)
 	const Query &operator=(const Query &);
