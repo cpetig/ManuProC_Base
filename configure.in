@@ -81,16 +81,9 @@ then
 fi
 AC_SUBST(SIGC_MAJOR)
 
-AC_ARG_ENABLE(sqlite, [  --enable-sqlite	prefer SQLite over PostgreSQL],
-	[prefer_sqlite=0 
-         block_sqlite=0
-         if test "$enableval" = "no" 
-         then block_sqlite=1
-         else prefer_sqlite=1
-         fi],
-	[prefer_sqlite=0 ; block_sqlite=0 ])
+block_sqlite=0
 
-if true # test $prefer_sqlite -eq 0
+if true 
 then
  if test "${with_postgresdir}" != "no"
  then
@@ -153,6 +146,10 @@ if test "$block_sqlite" -eq 0
 then
  AC_COMPILE_IFELSE([#include <sqlite3.h>],[has_sqlite=1],[])
 fi
+
+dnl echo "-------- ECPG --------"
+dnl echo ${ECPG_INCLUDES}
+dnl echo "--------      --------"
 
 if test "$has_sqlite" -eq 1
 then

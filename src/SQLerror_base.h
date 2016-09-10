@@ -44,6 +44,14 @@ public:
 
    static __deprecated int SQLCode();
 
+#if __cplusplus>=201103L
+   SQLerror_base(SQLerror_base&& b)
+   {
+	   std::swap(context,b.context);
+	   code=b.code;
+	   std::swap(name,b.name);
+   }
+#endif
 private: // forbid
    SQLerror_base(SQLerror_base const&);
    SQLerror_base const& operator=(SQLerror_base const&);

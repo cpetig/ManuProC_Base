@@ -18,17 +18,20 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#pragma once
 #include <Misc/SQLerror.h>
 #include <Misc/Handles.h>
 #ifdef MPC_SQLITE
 struct sqlite3;
 #endif
+#include <vector>
 
 #define POSTGRESQL_PORT	5432
 
 namespace ManuProC
 {
 
+// authentication error (?) used by Connection::Pass()
 class AuthError : public std::exception
 {
  std::string msg;
@@ -46,11 +49,16 @@ public:
 #endif
    class Connection // connect options
    {
+   public:
+	enum CType_t { C_PostgreSQL, C_ECPG, C_SQLite };
+
+   private:
     std::string host;
     std::string dbase;
     std::string user;
     std::string name;
     int port;
+    CType_t type;
 
     public:
      Connection(const std::string &h=std::string(), const std::string &d=std::string(),
@@ -64,11 +72,13 @@ public:
     const std::string Name() const { return name; }
     const std::string Pass() const throw(AuthError);
     const int Port() const { return port; }
+    CType_t Type() const { return type; }
     void setHost(const std::string &h) { if(!h.empty()) host=h; }
     void setDbase(const std::string &d) { if(!d.empty()) dbase=d; }
     void setUser(const std::string &u) { user=u; }
     void setName(const std::string &n) { name=n; }
     void setPort(const int p) { port=p;}
+    void setType(CType_t t) { type=t; }
     // alternative API:
     void Host(const std::string &h) { host=h; }
     void Dbase(const std::string &d) { dbase=d; }
@@ -82,30 +92,39 @@ public:
 /*     transaction
      query execution
      error testing */
+   public:
      virtual void open_transaction() throw(SQLerror)=0;
      virtual void commit_transaction() throw(SQLerror)=0;
      virtual void rollback_transaction() throw(SQLerror)=0;
      virtual void make_default() throw(SQLerror) {}
      virtual void setDTstyle(char const* style="ISO") throw(SQLerror);
      //virtual Query_base
+     virtual void disconnect() throw()=0;
+     virtual std::string const& Name() throw()=0;
    };
 
    std::vector<Handle<Connection_base> > connections;
    Handle<Connection_base> active_connection;
 
-   Connection_base& dbconnect_nt(const Connection &c=Connection()) throw();
+   Handle<Connection_base> dbconnect_nt(const Connection &c=Connection()) throw();
    void dbdisconnect_nt(const std::string &name=std::string()) throw();
-   Connection_base& dbconnect(const Connection &c=Connection()) throw(SQLerror);
+   Handle<Connection_base> dbconnect(const Connection &c=Connection()) throw(SQLerror);
    void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
    void dbdisconnect_nt(Connection_base&) throw();
    void dbdisconnect(Connection_base&) throw(SQLerror);
    void setDTstyle(char const*style="ISO") throw(SQLerror);
-   Connection_base& dbdefault(const std::string &name=std::string()) throw(SQLerror);
+   Handle<Connection_base> dbdefault(const std::string &name=std::string()) throw(SQLerror);
    void dbdefault(Connection_base&) throw(SQLerror);
    std::string get_dbname();
    std::string get_dbname(Connection_base&);
-   Connection_base& get_database(std::string const& name);
+   Handle<Connection_base> get_database(std::string const& name) throw(SQLerror);
    void register_db(Handle<Connection_base> const& c);
+   void unregister_db(Handle<Connection_base> const& c);
+
+   // internal:
+   Handle<Connection_base> dbconnect_SQLite3(const Connection &c) throw(SQLerror);
+   Handle<Connection_base> dbconnect_ECPG(const Connection &c) throw(SQLerror);
+   Handle<Connection_base> dbconnect_PQ(const Connection &c) throw(SQLerror);
 };
 
 namespace Petig

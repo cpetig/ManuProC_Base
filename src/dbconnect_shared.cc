@@ -24,10 +24,11 @@
 //#include <cstring>
 //#include <unistd.h>
 #include <cstdlib>
+#include <Misc/Global_Settings.h>
 
 ManuProC::Connection::Connection(const std::string &h, const std::string &d, 
 		const std::string &u,const std::string &n, const int p)
-        	: host(h), dbase(d), user(u), name(n), port(p)
+        	: host(h), dbase(d), user(u), name(n), port(p), type(C_PostgreSQL)
 {
    std::string host_=DEFAULT_DBHOST;
    std::string db_=DEFAULT_DB;
@@ -45,8 +46,8 @@ ManuProC::Connection::Connection(const std::string &h, const std::string &d,
    if(!opt_port.empty()) port=atoi(opt_port.c_str());
 }
 
-void ManuProC::dbconnect_nt(const Connection &c) throw()
-{  try { dbconnect(c); }
+Handle<ManuProC::Connection_base> ManuProC::dbconnect_nt(const Connection &c) throw()
+{  try { return dbconnect(c); }
    catch (SQLerror &e)
    {  std::cerr << e << '\n';
    }
@@ -59,7 +60,24 @@ void ManuProC::dbdisconnect_nt(const std::string &name) throw()
    }
 }
 
-
+Handle<ManuProC::Connection_base> ManuProC::dbconnect(const Connection &c) throw(SQLerror)
+{
+	Handle<Connection_base> res;
+	switch(c.Type())
+	{
+	case Connection::C_PostgreSQL:
+		return dbconnect_PQ(c);
+	case Connection::C_ECPG:
+		return dbconnect_ECPG(c);
+	case Connection::C_SQLite:
+		return dbconnect_SQLite3(c);
+	default:
+		throw SQLerror("dbconnect", 100, "Database type unknown");
+	}
+	register_db(res);
+	Global_Settings::database_connected();
+	return res;
+}
 
 //#include <iostream>
 //#include <fstream>
@@ -82,38 +100,31 @@ const std::string ManuProC::Connection::Pass() const throw(AuthError)
   return std::string();
 }
 
-
-#ifdef MPC_SQLITE
-#include <sqlite3.h>
-#include <Misc/Global_Settings.h>
-
-struct sqlite3 *ManuProC::db_connection;
-
-void ManuProC::dbconnect(const Connection &c) throw(SQLerror)
-{  assert(!db_connection);
-
-//   char *opt(getenv("SQLOPT"));
-   int error=sqlite3_open(c.Dbase().c_str(),&db_connection);
-   if (error) 
-   {  std::string err=sqlite3_errmsg(db_connection);
-      sqlite3_close(db_connection);
-      db_connection=0;
-      throw(SQLerror("dbconnect",error,err));
-   }
-   // sollte nicht passieren ...
-   Global_Settings::database_connected();
-}
-
 void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
-{  Global_Settings::database_connected(false);
-   assert(db_connection);
-   sqlite3_close(db_connection);
-   db_connection=0;
-}
-
-void ManuProC::dbdefault(std::string const& name) throw(SQLerror)
 {
-  assert(!"dbdefault");
+	Global_Settings::database_connected(false);
+	Handle<Connection_base> h=get_database(name);
+	unregister_db(h);
+	h->disconnect();
 }
 
-#endif
+Handle<ManuProC::Connection_base> ManuProC::dbdefault(std::string const& name) throw(SQLerror)
+{
+	active_connection= get_database(name);
+	return active_connection;
+}
+
+void ManuProC::register_db(Handle<Connection_base> const& c)
+{
+
+}
+
+void ManuProC::unregister_db(Handle<Connection_base> const& c)
+{
+
+}
+
+Handle<ManuProC::Connection_base> ManuProC::get_database(std::string const& name) throw(SQLerror)
+{
+
+}
