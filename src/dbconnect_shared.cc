@@ -108,6 +108,11 @@ void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
 	h->disconnect();
 }
 
+void ManuProC::Connection_base::make_default() throw()
+{
+	active_connection=this;
+}
+
 Handle<ManuProC::Connection_base> ManuProC::dbdefault(std::string const& name) throw(SQLerror)
 {
 	active_connection= get_database(name);
@@ -124,6 +129,8 @@ void ManuProC::register_db(Handle<Connection_base> const& c)
 
 void ManuProC::unregister_db(Handle<Connection_base> const& c)
 {
+	if (&*active_connection==&*c)
+		active_connection = Handle<Connection_base>();
 	for (std::vector<Handle<ManuProC::Connection_base> >::iterator i=connections.begin();i!=connections.end();++i)
 		if (&*c == &**i)
 		{

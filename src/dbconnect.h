@@ -47,6 +47,7 @@ public:
 #if 0 //def MPC_SQLITE
 	extern sqlite3 *db_connection;
 #endif
+   //class Connection_base;
    class Connection // connect options
    {
    public:
@@ -59,6 +60,8 @@ public:
     std::string name;
     int port;
     CType_t type;
+
+    //friend class Connection_base;
 
     public:
      Connection(const std::string &h=std::string(), const std::string &d=std::string(),
@@ -93,14 +96,17 @@ public:
      query execution
      error testing */
    public:
+#if 0 // in all databases identical to execute("BEGIN") etc
      virtual void open_transaction() throw(SQLerror)=0;
      virtual void commit_transaction() throw(SQLerror)=0;
      virtual void rollback_transaction() throw(SQLerror)=0;
-     virtual void make_default() throw(SQLerror) {}
+#endif
+     virtual void make_default() throw();
      virtual void setDTstyle(char const* style="ISO") throw(SQLerror);
      //virtual Query_base
      virtual void disconnect() throw()=0;
      virtual std::string const& Name() throw()=0;
+ 	 virtual void execute(char const*) throw(SQLerror)=0;
    };
 
    extern std::vector<Handle<Connection_base> > connections;

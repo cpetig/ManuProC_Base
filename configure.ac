@@ -122,7 +122,7 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
    AC_MSG_RESULT($ac_no_descriptor_lvalue)
    CXXFLAGS="$tmp_CXXFLAGS"
    LDFLAGS="$tmp_LDFLAGS"
-   LIBS="tmp_LIBS"
+   LIBS="$tmp_LIBS"
 
    if test -z "${DEFAULT_DBHOST}"
    then
