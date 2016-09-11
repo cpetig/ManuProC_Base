@@ -181,7 +181,7 @@ public:
 };
 
 struct Query_types
-{	typedef unsigned Oid;
+{	typedef ManuProC::Oid Oid;
 	template <class T>
 	 struct NullIf_s
 	{	T data;
@@ -204,7 +204,7 @@ struct Query_types
 class ArgumentList
 {
 public:
-	typedef unsigned Oid;
+	typedef ManuProC::Oid Oid;
 	typedef std::vector<std::string>::const_iterator const_iterator;
 private:
 	unsigned params_needed;
@@ -320,11 +320,14 @@ public:
 	Query() : /*eof(true), line(), result(),*/ num_params(), error(), lines(),
 	    prepare()
         { params.setNeededParams(0); }
-        void swap(Query &b);
+    void swap(Query &b);
 
 	Query(const std::string &command);
+	Query(Handle<ManuProC::Connection_base> const&, const std::string &command);
 	Query(std::string const& portal_name, const std::string &command);
+	Query(Handle<ManuProC::Connection_base> const&, std::string const& portal_name, const std::string &command);
 	Query(PreparedQuery& prep);
+	Query(Handle<ManuProC::Connection_base> const&, PreparedQuery& prep);
 	~Query();
 
 	bool good() const;
@@ -332,6 +335,7 @@ public:
 	void ThrowOnBad(const char *where) const;
 
 	static void Execute(const std::string &command) throw(SQLerror);
+	static void Execute(Handle<ManuProC::Connection_base> const&, const std::string &command) throw(SQLerror);
 	int Result() const { return error; }
 	unsigned LinesAffected() const { return lines; }
 

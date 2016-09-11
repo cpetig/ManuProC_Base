@@ -51,7 +51,7 @@ public:
    class Connection // connect options
    {
    public:
-	enum CType_t { C_PostgreSQL, C_ECPG, C_SQLite };
+	enum CType_t { C_PostgreSQL /*libpq*/, C_ECPG, C_SQLite, C_virtual /* aka Fake */, C_default };
 
    private:
     std::string host;
@@ -90,6 +90,29 @@ public:
     void Port(const int p) { port=p; }
    };
 
+   typedef unsigned long Oid;
+
+   class Query_result_row
+   {
+	   virtual unsigned columns() const throw()=0;
+	   virtual int indicator(unsigned col) const=0;
+	   virtual char const* text(unsigned col) const=0;
+	   // Oid?
+//	   virtual double number(unsigned col) const=0;
+//	   virtual long integer(unsigned col) const=0;
+   };
+
+   class Query_result_base
+   {
+	   virtual ~Query_result_base() {}
+	   virtual unsigned LinesAffected() const throw()=0;
+	   virtual Query_result_row* Fetch()=0;
+	   virtual void AddParameter(const std::string &s, Oid type)=0;
+//	   virtual void AddParameter(long integer, Oid type)=0;
+//	   virtual void AddParameter(double fl, Oid type)=0;
+	   virtual void complete() const throw()=0;
+   };
+
    class Connection_base : public HandleContent // actual connection object
    {
 /*     transaction
@@ -101,12 +124,16 @@ public:
      virtual void commit_transaction() throw(SQLerror)=0;
      virtual void rollback_transaction() throw(SQLerror)=0;
 #endif
-     virtual void make_default() throw();
+     virtual void make_default() const throw();
      virtual void setDTstyle(char const* style="ISO") throw(SQLerror);
      //virtual Query_base
      virtual void disconnect() throw()=0;
-     virtual std::string const& Name() throw()=0;
+     virtual std::string const& Name() const throw()=0;
+     virtual Connection::CType_t Type() const throw()=0;
  	 virtual void execute(char const*) throw(SQLerror)=0;
+ 	 // with parameters and results
+ 	 virtual Query_result_base* execute2(char const*) throw(SQLerror)=0;
+ 	 // prepared queries?
    };
 
    extern std::vector<Handle<Connection_base> > connections;

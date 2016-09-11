@@ -13,8 +13,10 @@ struct connectionPQ : ManuProC::Connection_base
 //	virtual void setDTstyle(char const* style="ISO") throw(SQLerror)
 //	{}
 	virtual void disconnect() throw();
-	virtual std::string const& Name() throw() { return name; }
+	virtual std::string const& Name() const throw() { return name; }
 	virtual void execute(char const*) throw(SQLerror);
+	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_PostgreSQL; }
+	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c) throw(SQLerror)
@@ -85,4 +87,9 @@ void connectionPQ::execute(char const* q) throw(SQLerror)
 	}
 	if (Query::debugging.on) std::cerr << "OK\n";
 	PQclear(res);
+}
+
+ManuProC::Query_result_base* connectionPQ::execute2(char const* s) throw(SQLerror)
+{
+	throw SQLerror(s, 100, "not implemented");
 }

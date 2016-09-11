@@ -19,8 +19,10 @@ struct sqliteConnection : ManuProC::Connection_base
 //	virtual void setDTstyle(char const* style="ISO") throw(SQLerror)
 //	{}
 	virtual void disconnect() throw();
-	virtual std::string const& Name() throw() { return name; }
+	virtual std::string const& Name() const throw() { return name; }
 	virtual void execute(char const*) throw(SQLerror);
+	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_SQLite; }
+	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
@@ -93,10 +95,15 @@ void sqliteConnection::execute(char const* query) throw(SQLerror)
 	   eof=!lines; */
 }
 
+ManuProC::Query_result_base* sqliteConnection::execute2(char const* s) throw(SQLerror)
+{
+	throw SQLerror(s, 100, "not implemented");
+}
+
 #else
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
 {
-	throw SQLerror("Database type not implemented");
+	throw SQLerror("dbconnect_SQLite3", 100, "Database type not implemented");
 }
 #endif

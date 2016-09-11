@@ -108,9 +108,9 @@ void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
 	h->disconnect();
 }
 
-void ManuProC::Connection_base::make_default() throw()
+void ManuProC::Connection_base::make_default() const throw()
 {
-	active_connection=this;
+	active_connection=const_cast<ManuProC::Connection_base*>(this);
 }
 
 Handle<ManuProC::Connection_base> ManuProC::dbdefault(std::string const& name) throw(SQLerror)
