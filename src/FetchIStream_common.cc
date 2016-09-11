@@ -479,7 +479,18 @@ Query::~Query()
 {
 }
 
+Query::Query(PreparedQuery &pq)
+{
+}
 
+Query::Query(std::string const& portal, std::string const& command)
+{
+}
+
+int Query::Code()
+{
+	return 42;
+}
 
 #endif
 #if 0
