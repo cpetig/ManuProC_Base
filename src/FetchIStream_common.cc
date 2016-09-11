@@ -439,12 +439,14 @@ void Query::ThrowOnBad(const char *where) const
 
 #if 1 //def MPC_SQLITE
 Query_Row::Query_Row() //const char *const *res, unsigned _nfields, int line)
-	: naechstesFeld(), zeile() /*, is_fake(), fake_null(),
-	  result(res), nfields(_nfields)*/
+	: naechstesFeld()/*, zeile() / *, is_fake(), fake_null(),
+	  result(res), nfields(_nfields)*/, impl()
 {}
 
 Query_Row &Query_Row::operator>>(std::string &str)
 {
+	str= impl->text(naechstesFeld);
+	++naechstesFeld;
 	return *this;
 }
 
@@ -453,7 +455,7 @@ void Query_Row::ThrowIfNotEmpty(const char *where)
 
 int Query_Row::getIndicator() const
 {
-	return false;
+	return impl->indicator(naechstesFeld);
 }
 
 void Query::Execute() throw(SQLerror)
@@ -467,12 +469,14 @@ void Query::Execute() throw(SQLerror)
 
 void Query::Fetch(Query_Row &is)
 {
+	is.impl= implementation_specific->Fetch();
 }
 
 Query::Query(const std::string &command)
 : /*eof(true), line(), result(),*/ query(command), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database(std::string())), implementation_specific()
 {
+	implementation_specific= backend->execute2(command.c_str());
 }
 
 Query::~Query()

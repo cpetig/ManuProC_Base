@@ -50,10 +50,10 @@
 #define USE_PARAMETERS
 //#endif
 
-struct Query_Row_impl
-{
-//  std::string getFieldName() const;
-};
+//struct Query_Row_impl
+//{
+////  std::string getFieldName() const;
+//};
 
 // please access this class under the new alias "Query::Row"
 class Query_Row
@@ -68,7 +68,7 @@ class Query_Row
 //	};
 private:
 	int naechstesFeld;
-	/* const */ int zeile;
+	/* const */ //int zeile;
 
 //	bool is_fake;
 //	std::string fake_result;
@@ -82,7 +82,7 @@ private:
 //        const PGresult * /* const */ result;
 //private:
 //#endif
-	Query_Row_impl *impl;
+	ManuProC::Query_result_row *impl;
 
 	friend class Query;
 	friend class ArgumentList;
@@ -110,7 +110,7 @@ private:
 	 	  : var(v), ind(i) {}
 	};
 public:
-	Query_Row(Query_Row_impl* i);
+	Query_Row(ManuProC::Query_result_row* i);
 	Query_Row();
 //#ifndef MPC_SQLITE
 //	Query_Row(const std::string &descr, int line=0);
@@ -293,7 +293,7 @@ class Query : public Query_types
 	PreparedQuery* prepare;
 	std::string portal_name;
 	// if you add members do not forget to mention them in swap!
-	void *implementation_specific; // backend specific
+	ManuProC::Query_result_base *implementation_specific; // backend specific
 	Handle<ManuProC::Connection_base> backend;
 
 	// not possible yet (because result can not refcount)

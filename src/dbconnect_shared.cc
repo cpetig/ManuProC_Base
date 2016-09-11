@@ -66,11 +66,14 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect(const Connection &c) throw
 	switch(c.Type())
 	{
 	case Connection::C_PostgreSQL:
-		return dbconnect_PQ(c);
+		res= dbconnect_PQ(c);
+		break;
 	case Connection::C_ECPG:
-		return dbconnect_ECPG(c);
+		res= dbconnect_ECPG(c);
+		break;
 	case Connection::C_SQLite:
-		return dbconnect_SQLite3(c);
+		res= dbconnect_SQLite3(c);
+		break;
 	default:
 		throw SQLerror("dbconnect", 100, "Database type unknown");
 	}
@@ -125,6 +128,7 @@ Handle<ManuProC::Connection_base> ManuProC::active_connection;
 void ManuProC::register_db(Handle<Connection_base> const& c)
 {
 	connections.push_back(c);
+	if (!active_connection) active_connection=c;
 }
 
 void ManuProC::unregister_db(Handle<Connection_base> const& c)

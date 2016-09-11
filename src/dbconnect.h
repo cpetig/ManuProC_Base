@@ -92,7 +92,7 @@ public:
 
    typedef unsigned long Oid;
 
-   class Query_result_row
+   struct Query_result_row
    {
 	   virtual unsigned columns() const throw()=0;
 	   virtual int indicator(unsigned col) const=0;
@@ -102,7 +102,7 @@ public:
 //	   virtual long integer(unsigned col) const=0;
    };
 
-   class Query_result_base
+   struct Query_result_base
    {
 	   virtual ~Query_result_base() {}
 	   virtual unsigned LinesAffected() const throw()=0;
@@ -110,7 +110,7 @@ public:
 	   virtual void AddParameter(const std::string &s, Oid type)=0;
 //	   virtual void AddParameter(long integer, Oid type)=0;
 //	   virtual void AddParameter(double fl, Oid type)=0;
-	   virtual void complete() const throw()=0;
+	   virtual bool complete() const throw()=0;
    };
 
    class Connection_base : public HandleContent // actual connection object

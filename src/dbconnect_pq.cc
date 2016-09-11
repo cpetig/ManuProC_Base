@@ -89,7 +89,59 @@ void connectionPQ::execute(char const* q) throw(SQLerror)
 	PQclear(res);
 }
 
-ManuProC::Query_result_base* connectionPQ::execute2(char const* s) throw(SQLerror)
+struct rowPQ : ManuProC::Query_result_row
 {
-	throw SQLerror(s, 100, "not implemented");
+	PGresult* res;
+	unsigned row;
+
+	// PQfname, PQftype
+
+	virtual unsigned columns() const throw() { return PQnfields(res); }
+	virtual int indicator(unsigned col) const { return PQgetisnull(res, row, col) ? -1 : 0; }
+	virtual char const* text(unsigned col) const { return PQgetvalue(res, row, col); }
+};
+
+struct resultsPQ : ManuProC::Query_result_base
+{
+	PGresult* res;
+	unsigned next_row;
+	rowPQ rowres;
+
+	virtual unsigned LinesAffected() const throw() { return PQntuples(res); }
+	virtual ManuProC::Query_result_row* Fetch();
+	virtual void AddParameter(const std::string &s, ManuProC::Oid type) {}
+//	   virtual void AddParameter(long integer, Oid type)=0;
+//	   virtual void AddParameter(double fl, Oid type)=0;
+	virtual bool complete() const throw() { return true; }
+
+	resultsPQ() : res(), next_row() {}
+	~resultsPQ() { if (res) PQclear(res); }
+};
+
+ManuProC::Query_result_row* resultsPQ::Fetch()
+{
+	if (next_row>=LinesAffected()) throw(SQLerror("fetch",100,"end of lines"));
+	rowres.res=res;
+	rowres.row=next_row;
+	++next_row;
+	return &rowres;
+}
+
+ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerror)
+{
+	if (Query::debugging.on) std::cerr << "QUERY: " << q << '\n';
+	PGresult* res= PQexec(connection, q);
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	{
+		std::string msg= PQresultErrorMessage(res);
+		unsigned stat=PQresultStatus(res);
+		PQclear(res);
+		if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
+		throw(SQLerror(q,stat,msg));
+	}
+	if (Query::debugging.on) std::cerr << "Returned " << PQntuples(res) << " lines\n";
+	resultsPQ* res2= new resultsPQ;
+	res2->res= res;
+	return res2;
+//	PQclear(res);
 }
