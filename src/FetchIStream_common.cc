@@ -437,12 +437,52 @@ void Query::ThrowOnBad(const char *where) const
 
 // ====================== SQLite =================================
 
-#if 0 //def MPC_SQLITE
-Query_Row::Query_Row(const char *const *res, unsigned _nfields, int line)
-	: naechstesFeld(), zeile(line), is_fake(), fake_null(),
-	  result(res), nfields(_nfields)
+#if 1 //def MPC_SQLITE
+Query_Row::Query_Row() //const char *const *res, unsigned _nfields, int line)
+	: naechstesFeld(), zeile() /*, is_fake(), fake_null(),
+	  result(res), nfields(_nfields)*/
 {}
 
+Query_Row &Query_Row::operator>>(std::string &str)
+{
+	return *this;
+}
+
+void Query_Row::ThrowIfNotEmpty(const char *where)
+{}
+
+int Query_Row::getIndicator() const
+{
+	return false;
+}
+
+void Query::Execute() throw(SQLerror)
+{
+}
+
+//int Query::last_insert_rowid() const
+//{
+//	return 0;
+//}
+
+void Query::Fetch(Query_Row &is)
+{
+}
+
+Query::Query(const std::string &command)
+: /*eof(true), line(), result(),*/ query(command), num_params(),
+	error(ECPG_TOO_FEW_ARGUMENTS), lines()
+{
+}
+
+Query::~Query()
+{
+}
+
+
+
+#endif
+#if 0
 Query_Row &Query_Row::operator>>(std::string &str)
 {  if (is_fake)
    { if (naechstesFeld || zeile)

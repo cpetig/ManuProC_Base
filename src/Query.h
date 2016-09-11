@@ -294,6 +294,7 @@ class Query : public Query_types
 	std::string portal_name;
 	// if you add members do not forget to mention them in swap!
 	void *implementation_specific; // backend specific
+	Handle<ManuProC::Connection_base> backend;
 
 	// not possible yet (because result can not refcount)
 	const Query &operator=(const Query &);
