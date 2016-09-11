@@ -37,10 +37,16 @@ ManuProC::Connection::Connection(const std::string &h, const std::string &d,
    char *h_opt(getenv("PGHOST"));
    char *d_opt(getenv("PGDATABASE"));
    char *p_opt(getenv("PGPORT"));
+   char *t_opt(getenv("PGTYPE"));
    if(h_opt) host_=h_opt;
    if(d_opt) db_=d_opt;
    if(p_opt) opt_port=p_opt;
-
+   if(t_opt && *t_opt)
+   {
+	  if (t_opt[0]=='P' || t_opt[0]=='p') type= ManuProC::Connection::C_PostgreSQL;
+	  else if (t_opt[0]=='S' || t_opt[0]=='s') type= ManuProC::Connection::C_SQLite;
+	  else if (isdigit(t_opt[0])) type= ManuProC::Connection::CType_t(strtol(t_opt,0,0));
+   }
    if(host.empty())  host=host_;
    if(dbase.empty()) dbase=db_;
    if(!opt_port.empty()) port=atoi(opt_port.c_str());

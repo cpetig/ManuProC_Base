@@ -134,6 +134,7 @@ public:
  	 // with parameters and results
  	 virtual Query_result_base* execute2(char const*) throw(SQLerror)=0;
  	 // prepared queries?
+ 	 virtual int LastError() const throw()=0;
    };
 
    extern std::vector<Handle<Connection_base> > connections;

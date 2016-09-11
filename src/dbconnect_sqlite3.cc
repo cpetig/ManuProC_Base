@@ -23,6 +23,7 @@ struct sqliteConnection : ManuProC::Connection_base
 	virtual void execute(char const*) throw(SQLerror);
 	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_SQLite; }
 	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
+	virtual int LastError() const throw() { return last_code; }
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)

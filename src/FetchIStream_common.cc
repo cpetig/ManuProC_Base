@@ -89,8 +89,12 @@ void Query_Row::mythrow(const SQLerror &e)
 }
 
 void Query::Check100() const throw(SQLerror)
-{  if (!params.complete()) Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
-   if (!LinesAffected()) Query_Row::mythrow(SQLerror(query,100,"no lines selected"));
+{
+	if (!backend || !implementation_specific || !implementation_specific->complete())
+		 Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
+//	if (!params.complete())
+   if (!implementation_specific->LinesAffected())
+	   Query_Row::mythrow(SQLerror(query,100,"no lines selected"));
 }
 
 Query &Query::operator>>(const check100 &s)
@@ -429,7 +433,7 @@ Query_Row &Query::FetchOne()
 }
 
 void Query::ThrowOnBad(const char *where) const
-{  if (!good())
+{  if (!implementation_specific || !backend)
    {  SQLerror::test(__FUNCTION__);
       Query_Row::mythrow(SQLerror(__FUNCTION__,-1,"unspecific bad result"));
    }
@@ -479,31 +483,42 @@ Query::Query(const std::string &command)
 	implementation_specific= backend->execute2(command.c_str());
 }
 
+Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
+: query(command), num_params(),
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(conn), implementation_specific()
+{
+	implementation_specific= backend->execute2(command.c_str());
+}
+
 Query::~Query()
 {
+	if (implementation_specific)
+		delete implementation_specific;
 }
 
 Query::Query(PreparedQuery &pq)
 {
+	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
 }
 
 Query::Query(std::string const& portal, std::string const& command)
 {
+	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
 }
 
 int Query::Code()
 {
-	return 42;
+	return backend->LastError();
 }
 
 bool Query::already_run() const
 {
-	return false;
+	return implementation_specific!=0;
 }
 
 bool Query::good() const
 {
-	return false;
+	return !backend->LastError();
 }
 
 #endif

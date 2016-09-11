@@ -6,6 +6,9 @@ struct connectionPQ : ManuProC::Connection_base
 {
 	PGconn *connection;
 	std::string name;
+	int last_error;
+
+	connectionPQ() : last_error(), connection() {}
 
 //	virtual void open_transaction() throw(SQLerror);
 //	virtual void commit_transaction() throw(SQLerror);
@@ -17,6 +20,7 @@ struct connectionPQ : ManuProC::Connection_base
 	virtual void execute(char const*) throw(SQLerror);
 	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_PostgreSQL; }
 	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
+	virtual int LastError() const throw() { return last_error; }
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c) throw(SQLerror)
@@ -131,7 +135,14 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 {
 	if (Query::debugging.on) std::cerr << "QUERY: " << q << '\n';
 	PGresult* res= PQexec(connection, q);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+	if (PQresultStatus(res) == PGRES_EMPTY_QUERY)
+	{
+		std::string msg= PQresultErrorMessage(res);
+		PQclear(res);
+		if (Query::debugging.on) std::cerr << "Empty: " << 100 << '\t' << msg << '\n';
+		throw(SQLerror(q,100,msg));
+	}
+	if (PQresultStatus(res) != PGRES_TUPLES_OK)
 	{
 		std::string msg= PQresultErrorMessage(res);
 		unsigned stat=PQresultStatus(res);
@@ -139,7 +150,7 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 		if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
 		throw(SQLerror(q,stat,msg));
 	}
-	if (Query::debugging.on) std::cerr << "Returned " << PQntuples(res) << " lines\n";
+	if (Query::debugging.on) std::cerr << "Returned " << PQntuples(res) << " lines with " << PQnfields(res) << " columns\n";
 	resultsPQ* res2= new resultsPQ;
 	res2->res= res;
 	return res2;
