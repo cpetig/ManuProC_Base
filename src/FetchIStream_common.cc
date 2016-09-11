@@ -498,17 +498,17 @@ Query::~Query()
 
 Query::Query(PreparedQuery &pq)
 {
-	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
+	Query_Row::mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
 }
 
 Query::Query(std::string const& portal, std::string const& command)
 {
-	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
+	Query_Row::mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
 }
 
 int Query::Code()
 {
-	return backend->LastError();
+	return ManuProC::get_database(std::string())->LastError();
 }
 
 bool Query::already_run() const

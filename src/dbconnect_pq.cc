@@ -87,10 +87,12 @@ void connectionPQ::execute(char const* q) throw(SQLerror)
 		unsigned stat=PQresultStatus(res);
 		PQclear(res);
 		if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
+		last_error= stat;
 		throw(SQLerror(q,stat,msg));
 	}
 	if (Query::debugging.on) std::cerr << "OK\n";
 	PQclear(res);
+	last_error=0;
 }
 
 struct rowPQ : ManuProC::Query_result_row
@@ -107,6 +109,7 @@ struct rowPQ : ManuProC::Query_result_row
 
 struct resultsPQ : ManuProC::Query_result_base
 {
+	connectionPQ *conn;
 	PGresult* res;
 	unsigned next_row;
 	rowPQ rowres;
@@ -118,13 +121,17 @@ struct resultsPQ : ManuProC::Query_result_base
 //	   virtual void AddParameter(double fl, Oid type)=0;
 	virtual bool complete() const throw() { return true; }
 
-	resultsPQ() : res(), next_row() {}
+	resultsPQ() : conn(), res(), next_row() {}
 	~resultsPQ() { if (res) PQclear(res); }
 };
 
 ManuProC::Query_result_row* resultsPQ::Fetch()
 {
-	if (next_row>=LinesAffected()) throw(SQLerror("fetch",100,"end of lines"));
+	if (next_row>=LinesAffected())
+	{
+		conn->last_error=100;
+		return 0;
+	}
 	rowres.res=res;
 	rowres.row=next_row;
 	++next_row;
@@ -140,19 +147,24 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 		std::string msg= PQresultErrorMessage(res);
 		PQclear(res);
 		if (Query::debugging.on) std::cerr << "Empty: " << 100 << '\t' << msg << '\n';
-		throw(SQLerror(q,100,msg));
+		last_error=100;
+		return 0;
+//		throw(SQLerror(q,100,msg));
 	}
 	if (PQresultStatus(res) != PGRES_TUPLES_OK)
 	{
 		std::string msg= PQresultErrorMessage(res);
 		unsigned stat=PQresultStatus(res);
 		PQclear(res);
+		last_error=stat;
 		if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
 		throw(SQLerror(q,stat,msg));
 	}
 	if (Query::debugging.on) std::cerr << "Returned " << PQntuples(res) << " lines with " << PQnfields(res) << " columns\n";
 	resultsPQ* res2= new resultsPQ;
 	res2->res= res;
+	res2->conn= this;
+	last_error=0;
 	return res2;
 //	PQclear(res);
 }
