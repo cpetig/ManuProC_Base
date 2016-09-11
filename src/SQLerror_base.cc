@@ -24,6 +24,11 @@ void SQLerror_base::test(std::string const&, int)
 
 std::ostream& operator<<(std::ostream& o, SQLerror_base const& c) throw ()
 {
-	o << "SQLerror Code" << c.Code() << " Msg " << c.Message() << " Ctx " << c.Context();
+	c.ostream_out(o);
 	return o;
+}
+
+void SQLerror_base::ostream_out(std::ostream& o) const throw()
+{
+	o << "SQLerror Code" << Code() << " Msg " << Message() << " Ctx " << Context();
 }
