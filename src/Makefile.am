@@ -36,7 +36,8 @@ if DATABASE
 DB_SRCES=SQLerror_postgres.cc Transaction.cc Query.cc \
 	Event.cc Global_Settings_db.cc dbconnect_shared.cc \
 	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc \
-	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc
+	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc dbconnect_sqlite3.cc \
+	SQLerror_base.cc
 else 
 DB_SRCES=
 endif

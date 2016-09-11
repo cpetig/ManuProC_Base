@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <Misc/Global_Settings.h>
 
-ManuProC::Connection::Connection(const std::string &h, const std::string &d, 
+ManuProC::Connection::Connection(const std::string &h, const std::string &d,
 		const std::string &u,const std::string &n, const int p)
         	: host(h), dbase(d), user(u), name(n), port(p), type(C_PostgreSQL)
 {
@@ -36,10 +36,10 @@ ManuProC::Connection::Connection(const std::string &h, const std::string &d,
 
    char *h_opt(getenv("PGHOST"));
    char *d_opt(getenv("PGDATABASE"));
-   char *p_opt(getenv("PGPORT"));   
+   char *p_opt(getenv("PGPORT"));
    if(h_opt) host_=h_opt;
    if(d_opt) db_=d_opt;
-   if(p_opt) opt_port=p_opt;   
+   if(p_opt) opt_port=p_opt;
 
    if(host.empty())  host=host_;
    if(dbase.empty()) dbase=db_;
@@ -91,7 +91,7 @@ const std::string ManuProC::Connection::Pass() const throw(AuthError)
 
   ifstream passfile (".remote_access");
   if (! passfile.is_open())
-    { throw AuthError(".remote_access not found"); } 
+    { throw AuthError(".remote_access not found"); }
   if(!passfile.eof())
     passfile.getline(buf,sizeof buf);
 
@@ -146,4 +146,15 @@ Handle<ManuProC::Connection_base> ManuProC::get_database(std::string const& name
 		if ((*i)->Name()==name)
 			return *i;
 	throw SQLerror("get_database",100,"Database not found");
+}
+
+void ManuProC::Connection_base::setDTstyle(char const*) throw(SQLerror)
+{
+
+}
+
+// until implemented
+Handle<ManuProC::Connection_base> ManuProC::dbconnect_ECPG(ManuProC::Connection const&) throw(SQLerror)
+{
+	throw SQLerror("dbconnect_ECPG", 100, "not implemented");
 }

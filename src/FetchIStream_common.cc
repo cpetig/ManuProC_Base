@@ -492,6 +492,16 @@ int Query::Code()
 	return 42;
 }
 
+bool Query::already_run() const
+{
+	return false;
+}
+
+bool Query::good() const
+{
+	return false;
+}
+
 #endif
 #if 0
 Query_Row &Query_Row::operator>>(std::string &str)

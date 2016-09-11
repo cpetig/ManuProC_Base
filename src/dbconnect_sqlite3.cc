@@ -5,8 +5,9 @@
 
 #ifdef MPC_SQLITE
 #include <sqlite3.h>
+#include <Misc/Query.h>
 
-struct sqliteConnection
+struct sqliteConnection : ManuProC::Connection_base
 {
 	std::string name;
 	sqlite3 *db_connection;
@@ -36,13 +37,13 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &
    }
    // sollte nicht passieren ...
    sqliteConnection* res= new sqliteConnection;
-   res->name= c.name;
+   res->name= c.Name();
    res->last_code= 0;
    res->db_connection=db_connection;
    return res;
 }
 
-void sqliteConnection::disconnect()
+void sqliteConnection::disconnect() throw()
 {
 	sqlite3_close(db_connection);
 	db_connection=NULL;
@@ -69,14 +70,14 @@ void sqliteConnection::execute(char const* query) throw(SQLerror)
 
 
 	   if (Query::debugging.on) std::cerr << "QUERY: " << query << '\n';
-	   error=sqlite3_exec(db_connection, query, 0, 0, &msgbuf);
+	   int error=sqlite3_exec(db_connection, query, 0, 0, &msgbuf);
 
 /*	   error=sqlite3_get_table(db_connection, query.c_str(),
 	   		&local_result, &rows, &cols, &msgbuf);*/
 	   last_code=error;
 	   if (Query::debugging.on)
 	      std::cerr << "RESULT: " << error << ':' << (msgbuf?msgbuf:"")
-	      		<< ", " << rows << 'x' << cols << '\n';
+	      		/*<< ", " << rows << 'x' << cols */<< '\n';
 	   if(error!=SQLITE_OK)
 	   {  std::string err=msgbuf;
 	      sqlite3_free(msgbuf);
