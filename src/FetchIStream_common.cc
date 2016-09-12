@@ -474,6 +474,7 @@ void Query::Execute() throw(SQLerror)
 void Query::Fetch(Query_Row &is)
 {
 	is.impl= implementation_specific->Fetch();
+	is.naechstesFeld=0;
 }
 
 Query::Query(const std::string &command)
