@@ -160,7 +160,7 @@ dnl dann brauchst du aber das !!! CP
   AC_SUBST(ECPG_LIBS)
   if test -z "${ECPG}" ; then ECPG="/bin/touch --" ; fi
   AC_SUBST(ECPG)
-  ECPG_INCLUDES="${ECPG_INLCLUDES}"
+  ECPG_INCLUDES="${ECPG_INCLUDES}"
   ECPG_LDFLAGS="${ECPG_LDFLAGS}"
   AC_SUBST(ECPG_INCLUDES)
   ECPG_CFLAGS="${ECPG_INCLUDES}"
