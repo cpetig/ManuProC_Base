@@ -26,9 +26,11 @@
 
 
 #include <Misc/SQLerror.h>
+#include <Misc/Handles.h>
 #ifdef MPC_SQLITE
 struct sqlite3;
 #endif
+#include <vector>
 
 
 #define POSTGRESQL_PORT	5432
@@ -36,46 +38,57 @@ struct sqlite3;
 namespace ManuProC
 {
 
+// authentication error (?) used by Connection::Pass()
 class AuthError : public std::exception
 {
  std::string msg;
- 
-public: 
- 
+
+public:
+
  ~AuthError() throw() {}
  AuthError(const std::string &m) throw() :msg(m) {}
  const std::string Msg() const { return msg; }
- 
+
 };
 
-#ifdef MPC_SQLITE
+#if 0 //def MPC_SQLITE
 	extern sqlite3 *db_connection;
 #endif
-   class Connection
+   //class Connection_base;
+   class Connection // connect options
    {
+   public:
+	enum CType_t { C_PostgreSQL /*libpq*/, C_ECPG, C_SQLite, C_virtual /* aka Fake */, C_default };
+
+   private:
     std::string host;
     std::string dbase;
     std::string user;
     std::string name;
     int port;
-    
+    CType_t type;
+
+    //friend class Connection_base;
+
     public:
-     Connection(const std::string &h=std::string(), const std::string &d=std::string(), 
+     Connection(const std::string &h=std::string(), const std::string &d=std::string(),
                 const std::string &u=std::string(),const std::string &n=std::string(),
                 const int p=POSTGRESQL_PORT);
-        	
-        	
+
+
     const std::string Host() const { return host; }
     const std::string Dbase() const { return dbase; }
     const std::string User() const { return user; }
     const std::string Name() const { return name; }
     const std::string Pass() const throw(AuthError);
     int Port() const { return port; }
+    CType_t Type() const { return type; }
     void setHost(const std::string &h) { if(!h.empty()) host=h; }
     void setDbase(const std::string &d) { if(!d.empty()) dbase=d; }
     void setUser(const std::string &u) { user=u; }
     void setName(const std::string &n) { name=n; }
     void setPort(const int p) { port=p;}
+    void setType(CType_t t) { type=t; }
     // alternative API:
     void Host(const std::string &h) { host=h; }
     void Dbase(const std::string &d) { dbase=d; }
@@ -84,13 +97,75 @@ public:
     void Port(const int p) { port=p; }
    };
 
-   void dbconnect_nt(const Connection &c=Connection()) throw();
-   void dbdisconnect_nt(const std::string &name=std::string()) throw();  
-   void dbconnect(const Connection &c=Connection()) throw(SQLerror);
+   typedef unsigned long Oid;
+
+   struct Query_result_row
+   {
+	   virtual unsigned columns() const throw()=0;
+	   virtual int indicator(unsigned col) const=0;
+	   virtual char const* text(unsigned col) const=0;
+	   // Oid?
+//	   virtual double number(unsigned col) const=0;
+//	   virtual long integer(unsigned col) const=0;
+   };
+
+   struct Query_result_base
+   {
+	   virtual ~Query_result_base() {}
+	   virtual unsigned LinesAffected() const throw()=0;
+	   virtual Query_result_row* Fetch()=0;
+	   virtual void AddParameter(const std::string &s, Oid type)=0;
+//	   virtual void AddParameter(long integer, Oid type)=0;
+//	   virtual void AddParameter(double fl, Oid type)=0;
+	   virtual bool complete() const throw()=0;
+   };
+
+   class Connection_base : public HandleContent // actual connection object
+   {
+/*     transaction
+     query execution
+     error testing */
+   public:
+#if 0 // in all databases identical to execute("BEGIN") etc
+     virtual void open_transaction() throw(SQLerror)=0;
+     virtual void commit_transaction() throw(SQLerror)=0;
+     virtual void rollback_transaction() throw(SQLerror)=0;
+#endif
+     virtual void make_default() const throw();
+     virtual void setDTstyle(char const* style="ISO") throw(SQLerror);
+     //virtual Query_base
+     virtual void disconnect() throw()=0;
+     virtual std::string const& Name() const throw()=0;
+     virtual Connection::CType_t Type() const throw()=0;
+ 	 virtual void execute(char const*) throw(SQLerror)=0;
+ 	 // with parameters and results
+ 	 virtual Query_result_base* execute2(char const*) throw(SQLerror)=0;
+ 	 // prepared queries?
+ 	 virtual int LastError() const throw()=0;
+   };
+
+   extern std::vector<Handle<Connection_base> > connections;
+   extern Handle<Connection_base> active_connection;
+
+   Handle<Connection_base> dbconnect_nt(const Connection &c=Connection()) throw();
+   void dbdisconnect_nt(const std::string &name=std::string()) throw();
+   Handle<Connection_base> dbconnect(const Connection &c=Connection()) throw(SQLerror);
    void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
-   void setDTstyle(const char *style="ISO") throw(SQLerror);
-   void dbdefault(const std::string &name=std::string()) throw(SQLerror);
+   void dbdisconnect_nt(Connection_base&) throw();
+   void dbdisconnect(Connection_base&) throw(SQLerror);
+   void setDTstyle(char const*style="ISO") throw(SQLerror);
+   Handle<Connection_base> dbdefault(const std::string &name=std::string()) throw(SQLerror);
+   void dbdefault(Connection_base&) throw(SQLerror);
    std::string get_dbname();
+   std::string get_dbname(Connection_base&);
+   Handle<Connection_base> get_database(std::string const& name) throw(SQLerror);
+   void register_db(Handle<Connection_base> const& c);
+   void unregister_db(Handle<Connection_base> const& c);
+
+   // internal:
+   Handle<Connection_base> dbconnect_SQLite3(const Connection &c) throw(SQLerror);
+   Handle<Connection_base> dbconnect_ECPG(const Connection &c) throw(SQLerror);
+   Handle<Connection_base> dbconnect_PQ(const Connection &c) throw(SQLerror);
 };
 
 namespace Petig

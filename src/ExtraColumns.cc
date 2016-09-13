@@ -18,6 +18,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#if 0
 #include <Misc/ExtraColumns.h>
 #include <cassert>
 #include <Misc/TraceNV.h>
@@ -175,3 +176,4 @@ Query::Row::Fake ExtraColumns::fake_contents(const std::string &column)
 bool ExtraColumns::hasColumn(const std::string &column) const
 { return (which->available_columns.find(column)!=which->available_columns.end());
 }
+#endif

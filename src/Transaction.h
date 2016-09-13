@@ -23,22 +23,26 @@
 #define CXX_AUX_TRANSACTION_H
 #include <Misc/SQLerror.h>
 #include <list>
+#include <Misc/dbconnect.h>
 
 // default is to roll back on close
 class Transaction
 {	bool owner:1;
 	bool commit_vs_rollback:1;
-	std::string connection;
+	Handle<ManuProC::Connection_base> connection;
 
-	static std::list<std::string> open_connections;
+	static std::list<Handle<ManuProC::Connection_base> > open_connections;
 public:
 	Transaction(const std::string &connection=std::string(),bool open_now=true) throw(SQLerror);
+	Transaction(Handle<ManuProC::Connection_base> const&, bool open_now=true) throw(SQLerror);
 //	Transaction(bool open_now) throw(SQLerror); // old ctor
 	// attention: if you specify no connection its last value is used
 	//            e.g. by last open or ctor
 	// I feel this is the most intuitive behaviour
 	void open(const std::string &connection=std::string()) throw(SQLerror);
 	void open_exclusive(const std::string &connection=std::string()) throw(SQLerror);
+	void open(Handle<ManuProC::Connection_base> const&) throw(SQLerror);
+	void open_exclusive(Handle<ManuProC::Connection_base> const&) throw(SQLerror);
 	void close() throw(SQLerror);
 	void commit_on_close(bool val=true)
 	{  commit_vs_rollback=val; }

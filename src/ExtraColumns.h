@@ -18,6 +18,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#if 0 // I have no idea what this is needed for, reimplement more sanely once dbabstraction in place
 #ifndef E70FA3BE_6B3E_4FF7_AB14_6B173AE5BAF1
 #define E70FA3BE_6B3E_4FF7_AB14_6B173AE5BAF1
 
@@ -77,4 +78,5 @@ public:
     }
 };
 
+#endif
 #endif

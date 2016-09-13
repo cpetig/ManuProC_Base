@@ -47,3 +47,7 @@
 #else
 #define std_neq(x,y) (x)!=(y)
 #endif
+
+#if __cplusplus<201103L
+#define constexpr const
+#endif

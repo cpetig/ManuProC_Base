@@ -39,10 +39,11 @@ includedir=@includedir@/ManuProC_Base
 AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@ $(WIN_LDFLAGS)
 
 if DATABASE
-DB_SRCES=dbconnect.cc SQLerror_postgres.cc Transaction.cc Query.cc \
+DB_SRCES=SQLerror_postgres.cc Transaction.cc Query.cc \
 	Event.cc Global_Settings_db.cc dbconnect_shared.cc \
 	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc \
-	Transaction_sqlite.cc pg_type.cc
+	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc dbconnect_sqlite3.cc \
+	SQLerror_base.cc
 else 
 DB_SRCES=
 endif
@@ -64,7 +65,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 		DllObject_caller.cc DllObject_dll.cc win32_utf8.cc \
 		getuid.cc md5/md5string.cc md5/md5.c
 
-EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
+EXTRA_DIST=SQLerror_postgres.pgcc Transaction.pgcc \
 	Query.pgcc
 
 BUILT_SOURCES=Misc ostream ${EXTRA_DIST:.pgcc=.cc} $(DLL_DEF) copy_libs

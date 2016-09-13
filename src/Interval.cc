@@ -153,7 +153,7 @@ Query::Row &operator>>(Query::Row &is, ManuProC::Interval &v)
 }
 
 template<>
-const Oid Query::NullIf_s<ManuProC::Interval>::postgres_type=INTERVALOID;
+const Query_types::Oid Query::NullIf_s<ManuProC::Interval>::postgres_type=INTERVALOID;
 
 ArgumentList &operator<<(ArgumentList &q, const ManuProC::Interval &v)
 {  q.add_argument(v.str(),Query::NullIf_s<ManuProC::Interval>::postgres_type);

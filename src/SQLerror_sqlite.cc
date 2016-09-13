@@ -18,6 +18,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#if 0 // broken for now
 #include <ManuProCConfig.h>
 #ifdef MPC_SQLITE
 #include "SQLerror_sqlite.h"
@@ -74,4 +75,5 @@ void SQLerror_sqlite::test(const std::string &context,const char *cursor,
 //int SQLerror_sqlite::SQLCode()
 //{  return last_code; }
 
+#endif
 #endif

@@ -22,8 +22,8 @@
 #include <Misc/Query.h>
 
 template<>
-const Oid Query::NullIf_s<fixedpoint<3,double,long> >::postgres_type=Query::NullIf_s<int>::postgres_type;
+const Query_types::Oid Query::NullIf_s<fixedpoint<3,double,long> >::postgres_type=Query::NullIf_s<int>::postgres_type;
 template<>
-const Oid Query::NullIf_s<fixedpoint<2,double,long> >::postgres_type=Query::NullIf_s<int>::postgres_type;
+const Query_types::Oid Query::NullIf_s<fixedpoint<2,double,long> >::postgres_type=Query::NullIf_s<int>::postgres_type;
 template<>
-const Oid Query::NullIf_s<fixedpoint<5,double,long> >::postgres_type=Query::NullIf_s<int>::postgres_type;
+const Query_types::Oid Query::NullIf_s<fixedpoint<5,double,long> >::postgres_type=Query::NullIf_s<int>::postgres_type;
