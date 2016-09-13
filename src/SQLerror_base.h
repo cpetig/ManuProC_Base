@@ -17,6 +17,7 @@ class SQLerror_base : public std::exception
 {  std::string context;
    int code;
    std::string name;
+   std::string state;
 //   char separator;
 
 public:
@@ -33,6 +34,7 @@ public:
    const std::string Context() const { return context; }
    int Code() const { return code; }
    const std::string Message() const { return name; }
+   const std::string State() const { return state; }
 
    // what is this used for?
    static void print(const std::string &context,int codeok=0);

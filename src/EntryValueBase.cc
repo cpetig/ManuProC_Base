@@ -20,8 +20,6 @@
 
 #include <Misc/EntryValueBase.h>
 
-#if 0
-//#ifdef _MSC_VER
 EntryValueBase::operator bool() const
 {  return getIntVal()!=int_NaN || !getStrVal().empty();
 }
@@ -48,8 +46,12 @@ bool EntryValueBase::operator<(const EntryValueBase &v) const
 EntryValueBase::operator double() const
 { return getDoubleVal(); }
 
- #if __cplusplus < 201103L
- const double EntryValueBase::double_NaN;
- #else
- constexpr double EntryValueBase::double_NaN; 
- #endif
+#if __cplusplus < 201103L
+	#if defined(__GNUC__) && __GNUC__>=3 
+	// needed for g++ 4.0
+	const double EntryValueBase::double_NaN;
+	#endif
+#else
+constexpr double EntryValueBase::double_NaN; 
+#endif
+

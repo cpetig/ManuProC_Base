@@ -26,8 +26,7 @@ libManuProC_Base_res.o: libManuProC_Base.rc
 #libManuProC_Base_res.o: libManuProC_Base.rc
 #	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
-AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION 
-#-std=c++11
+AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION -std=gnu++11
 
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 

@@ -27,7 +27,6 @@
 #ifdef __cplusplus
 class SQLerror_postgres : public SQLerror_base
 {  char separator;
-   std::string state;
    std::string detail;
 
 public:
@@ -39,7 +38,7 @@ public:
 
    const SQLerror_postgres &Separator(char sep) { separator=sep; return *this; }
    // member access functions
-   const std::string State() const { return state; }
+   
    const std::string Detail() const { return detail; }
 
 //   static void print(const std::string &context,int codeok=0);

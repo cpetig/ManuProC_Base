@@ -18,12 +18,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#ifndef MPB_DBCONNECT_H
+#define MPB_DBCONNECT_H
 
 #if defined(WIN32) && !defined(__MINGW32__)
 #	pragma once
 #	pragma warning( disable : 4290 )  // for VS2010
 #endif
-
 
 #include <Misc/SQLerror.h>
 #include <Misc/Handles.h>
@@ -171,3 +172,7 @@ public:
 namespace Petig
 {  using namespace ManuProC;
 };
+
+
+#endif
+
