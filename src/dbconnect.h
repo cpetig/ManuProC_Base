@@ -116,9 +116,18 @@ public:
 	   virtual unsigned LinesAffected() const throw()=0;
 	   virtual Query_result_row* Fetch()=0;
 	   virtual void AddParameter(const std::string &s, Oid type)=0;
+	   virtual void AddNull(Oid type=0)=0;
 //	   virtual void AddParameter(long integer, Oid type)=0;
 //	   virtual void AddParameter(double fl, Oid type)=0;
 	   virtual bool complete() const throw()=0;
+	   virtual int last_insert_rowid() const { return -1; }
+   };
+
+   struct Prepared_Statement_base
+   {
+	   // execution is delayed until last parameter is passed
+	   virtual Query_result_base* execute() throw(SQLerror)=0;
+	   virtual ~Prepared_Statement_base() {}
    };
 
    class Connection_base : public HandleContent // actual connection object
@@ -139,8 +148,14 @@ public:
      virtual std::string const& Name() const throw()=0;
      virtual Connection::CType_t Type() const throw()=0;
  	 virtual void execute(char const*) throw(SQLerror)=0;
- 	 // with parameters and results
+ 	 // with results
  	 virtual Query_result_base* execute2(char const*) throw(SQLerror)=0;
+ 	 // execution is delayed until last parameter is passed
+ 	 virtual Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror)=0;
+
+ 	 virtual Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)=0;
+// 	 virtual Query_result_base* execute_prepared(char const* name, unsigned numparam) throw(SQLerror)=0;
+
  	 // prepared queries?
  	 virtual int LastError() const throw()=0;
    };
@@ -159,7 +174,7 @@ public:
    void dbdefault(Connection_base&) throw(SQLerror);
    std::string get_dbname();
    std::string get_dbname(Connection_base&);
-   Handle<Connection_base> get_database(std::string const& name) throw(SQLerror);
+   Handle<Connection_base> get_database(std::string const& name=std::string()) throw(SQLerror);
    void register_db(Handle<Connection_base> const& c);
    void unregister_db(Handle<Connection_base> const& c);
 

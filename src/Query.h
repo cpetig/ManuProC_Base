@@ -226,6 +226,7 @@ public:
 	Oid type_of(const_iterator const& which) const;
 	bool is_null(const_iterator const& which) const;
 	bool is_binary(const_iterator const& which) const;
+	std::string const& get_string(const_iterator const& which) const;
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
@@ -340,6 +341,7 @@ public:
 	unsigned LinesAffected() const { return lines; }
 
 	void Check100() const throw(SQLerror);
+	int last_insert_rowid() const;
 
 	// please migrate to the functions above
 	static __deprecated int Code(); // SQLCA.sqlcode

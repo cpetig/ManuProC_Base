@@ -212,6 +212,11 @@ bool ArgumentList::is_null(const_iterator const& which) const
 { return null[which-begin()];
 }
 
+std::string const& ArgumentList::get_string(const_iterator const& which) const
+{
+	return params[which-begin()];
+}
+
 static bool needs_quotes(Query_types::Oid type)
 { switch (type)
   { case CHAROID:
@@ -232,6 +237,7 @@ static bool needs_quotes(Query_types::Oid type)
   }
 }
 
+#if 0 // now part of backend
 std::string Query::standardize_parameters(std::string const& in)
 {
   std::string expanded;
@@ -251,6 +257,7 @@ std::string Query::standardize_parameters(std::string const& in)
   } while(p);
   return expanded;
 }
+#endif
 
 void Query::Execute_if_complete()
 {  if (params.complete() && !already_run())
@@ -283,7 +290,7 @@ void Query::Execute_if_complete()
       } while(p);
       query=expanded;
 #else // replace ? by $N
-      if (!params.empty()) query=standardize_parameters(query);
+      //if (!params.empty()) query=standardize_parameters(query);
 #endif
       Execute();
    }
@@ -472,6 +479,18 @@ int Query_Row::getIndicator() const
 
 void Query::Execute() throw(SQLerror)
 {
+	// pass all parameters
+	if (params.empty())
+		implementation_specific= backend->execute2(query.c_str());
+	else
+	{
+		implementation_specific= backend->execute_param(query.c_str(), params.size());
+		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
+		{
+			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
+			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
+		}
+	}
 }
 
 //int Query::last_insert_rowid() const
@@ -487,9 +506,14 @@ void Query::Fetch(Query_Row &is)
 
 Query::Query(const std::string &command)
 : /*eof(true), line(), result(),*/ query(command), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database(std::string())), implementation_specific()
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
-	implementation_specific= backend->execute2(command.c_str());
+	char const *p=query.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	params.setNeededParams(num_params);
+	Execute_if_complete();
+
+//	implementation_specific= backend->execute2(command.c_str());
 }
 
 Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
@@ -517,7 +541,7 @@ Query::Query(std::string const& portal, std::string const& command)
 
 int Query::Code()
 {
-	return ManuProC::get_database(std::string())->LastError();
+	return ManuProC::get_database()->LastError();
 }
 
 bool Query::already_run() const
@@ -528,6 +552,11 @@ bool Query::already_run() const
 bool Query::good() const
 {
 	return !backend->LastError();
+}
+
+int Query::last_insert_rowid() const
+{
+	return implementation_specific->last_insert_rowid();
 }
 
 #endif

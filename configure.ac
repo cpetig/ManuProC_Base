@@ -139,14 +139,14 @@ dnl fi
 
 dnl if test -z "$ECPG_INCLUDES"
 dnl then
+AC_MSG_CHECKING(for sqlite3)
 AC_COMPILE_IFELSE([#include <sqlite3.h>],[has_sqlite=1],[has_sqlite=0])
+AC_MSG_RESULT($has_sqlite)
 dnl fi
 
 if test "$has_sqlite" -eq 1 
 then
   AC_DEFINE(MPC_SQLITE, 1, [Define to 1 if you want to use the SQLite backend])
-dnl dann brauchst du aber das !!! CP  
-#  PETIG_CHECK_POSTGRES
   ECPG_LIBS="${ECPG_LIBS} -lsqlite3"
   AC_SUBST(ECPG_LIBS)
   if test -z "${ECPG}" ; then ECPG="/bin/touch --" ; fi

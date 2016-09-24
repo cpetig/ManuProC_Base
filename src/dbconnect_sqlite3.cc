@@ -14,23 +14,20 @@ struct sqliteConnection : ManuProC::Connection_base
 	sqlite3 *db_connection;
 	int last_code;
 
-//	virtual void open_transaction() throw(SQLerror);
-//	virtual void commit_transaction() throw(SQLerror);
-//	virtual void rollback_transaction() throw(SQLerror);
-//	virtual void setDTstyle(char const* style="ISO") throw(SQLerror)
-//	{}
 	virtual void disconnect() throw();
 	virtual std::string const& Name() const throw() { return name; }
 	virtual void execute(char const*) throw(SQLerror);
 	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_SQLite; }
 	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
 	virtual int LastError() const throw() { return last_code; }
+	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror) { return 0; }
+	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror) { return 0; }
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
-{  //assert(!db_connection);
+{  sqlite3 *db_connection=0;
+   if (Query::debugging.on) std::cerr << "SQLite3 connect: " << c.Name() << " " << c.Dbase() << '\n';
 
-	sqlite3 *db_connection=0;
 //   char *opt(getenv("SQLOPT"));
    int error=sqlite3_open(c.Dbase().c_str(),&db_connection);
    if (error)
@@ -52,19 +49,6 @@ void sqliteConnection::disconnect() throw()
 	sqlite3_close(db_connection);
 	db_connection=NULL;
 }
-
-//void sqliteConnection::open_transaction() throw(SQLerror)
-//{
-//	execute("begin");
-//}
-//void sqliteConnection::commit_transaction() throw(SQLerror)
-//{
-//	execute("commit");
-//}
-//void sqliteConnection::rollback_transaction() throw(SQLerror)
-//{
-//	execute("rollback");
-//}
 
 void sqliteConnection::execute(char const* query) throw(SQLerror)
 {
@@ -133,9 +117,14 @@ struct resultsSQ : ManuProC::Query_result_base
 		return &rowres;
 	}
 	virtual void AddParameter(const std::string &s, ManuProC::Oid type) {}
+	virtual void AddNull(ManuProC::Oid type) {}
 //	   virtual void AddParameter(long integer, Oid type)=0;
 //	   virtual void AddParameter(double fl, Oid type)=0;
 	virtual bool complete() const throw() { return true; }
+	virtual int last_insert_rowid() const
+	{
+		return sqlite3_last_insert_rowid(conn->db_connection);
+	}
 
 	resultsSQ() : conn(), local_result(), next_row(), rows(),cols(),lines() {}
 	~resultsSQ() { if (local_result) sqlite3_free_table(local_result); }
