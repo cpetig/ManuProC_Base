@@ -497,7 +497,7 @@ int Query_Row::getIndicator() const
 void Query::Execute() throw(SQLerror)
 {
 	// pass all parameters
-	if (params.empty())
+	if (params.empty() && portal_name.empty())
 	{
 		implementation_specific= backend->execute2(query.c_str());
 		error= backend->LastError();
@@ -505,7 +505,8 @@ void Query::Execute() throw(SQLerror)
 	}
 	else
 	{
-		implementation_specific= backend->execute_param(query.c_str(), params.size());
+		if (portal_name.empty()) implementation_specific= backend->execute_param(query.c_str(), params.size());
+		else implementation_specific= backend->open_cursor(portal_name.c_str(), query.c_str(), params.size());
 		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
 		{
 			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
@@ -515,11 +516,6 @@ void Query::Execute() throw(SQLerror)
 		lines= implementation_specific->LinesAffected();
 	}
 }
-
-//int Query::last_insert_rowid() const
-//{
-//	return 0;
-//}
 
 void Query::Fetch(Query_Row &is)
 {
@@ -563,7 +559,7 @@ Query::Query(PreparedQuery &pq)
 //   fetch 1 from portal
 //   close portal
 Query::Query(std::string const& portal, std::string const& command)
-: query(command), num_params(),
+: query(command), num_params(), portal_name(portal),
 		error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
 	char const *p=query.c_str();

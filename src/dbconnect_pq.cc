@@ -20,6 +20,7 @@ struct connectionPQ : ManuProC::Connection_base
 	virtual int LastError() const throw() { return last_error; }
 	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror);
 	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror);
+	virtual ManuProC::Query_result_base* open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror);
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c) throw(SQLerror)
@@ -162,6 +163,8 @@ void resultsPQ::execute()
 		}
 		types[i]= parameters[i].type;
 	}
+	if (Query::debugging.on)
+		printf("Executing %s (%d)\n", query.c_str(), psize);
 	if (prep)
 		res= PQexecPrepared(conn->connection, prep->name.c_str(), prep->numparam, values, lengths, formats, 0);
 	else
@@ -373,4 +376,44 @@ ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char 
 	res->name=name;
 	res->numparam=numparam;
 	return res;
+}
+
+struct PQ_Cursor : resultsPQ
+{
+	std::string name;
+//	unsigned lines;
+//	bool open;
+
+//	virtual unsigned LinesAffected() const throw() { return lines; }
+	virtual ManuProC::Query_result_row* Fetch();
+
+	PQ_Cursor() {} //: lines(), open() {}
+	~PQ_Cursor()
+	{
+		std::string q= "CLOSE "+name;
+		conn->execute(q.c_str());
+	}
+};
+
+ManuProC::Query_result_row* PQ_Cursor::Fetch()
+{
+	parameters.clear();
+	query= "FETCH NEXT FROM "+name;
+	execute();
+	return resultsPQ::Fetch();
+}
+
+ManuProC::Query_result_base* connectionPQ::open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror)
+{
+	std::string parameter_style;
+	q= convert_parameters(parameter_style, q);
+
+	PQ_Cursor *res2= new PQ_Cursor;
+	res2->conn= this;
+	res2->missing_params = num;
+	res2->query= std::string("DECLARE ")+name+" CURSOR FOR "+q;
+	res2->name= name;
+	if (!num) res2->execute();
+	last_error=0;
+	return res2;
 }

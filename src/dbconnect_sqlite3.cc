@@ -22,6 +22,8 @@ struct sqliteConnection : ManuProC::Connection_base
 	virtual int LastError() const throw() { return last_code; }
 	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror);
 	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror);
+	virtual ManuProC::Query_result_base* open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror)
+	{ return execute_param(q,num); } // using cursors by default
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
