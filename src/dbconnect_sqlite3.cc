@@ -21,7 +21,7 @@ struct sqliteConnection : ManuProC::Connection_base
 	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
 	virtual int LastError() const throw() { return last_code; }
 	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror);
-	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror) { return 0; }
+	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror);
 };
 
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
@@ -122,6 +122,7 @@ struct resultsSQ_params : ManuProC::Query_result_base
 	bool ready;
 	rowSQ_step step;
 	unsigned lines;
+	bool owned; // statement is owned by this object
 
 	virtual unsigned LinesAffected() const throw() { return lines; }
 	virtual ManuProC::Query_result_row* Fetch()
@@ -144,10 +145,10 @@ struct resultsSQ_params : ManuProC::Query_result_base
 	void fetch();
 
 	resultsSQ_params()
-	: conn(), missing_params(), ready(), lines()
+	: conn(), missing_params(), ready(), lines(), owned(true)
 	{}
 	~resultsSQ_params()
-	{ if (step.stmt) sqlite3_finalize(step.stmt);
+	{ if (owned && step.stmt) sqlite3_finalize(step.stmt);
 	}
 };
 
@@ -240,12 +241,13 @@ void resultsSQ_params::fetch()
 		conn->last_code=0;
 		lines=1; // perhaps more!
 		ready=true;
-
+#if 0
 		printf("cols %d\n", sqlite3_column_count(step.stmt));
 		for (unsigned i=0;i<sqlite3_column_count(step.stmt);++i)
 			printf("type %d %d %s %s\n", i, sqlite3_column_type(step.stmt,i),
 					sqlite3_column_database_name(step.stmt,i),
 					sqlite3_column_text(step.stmt,i));
+#endif
 	}
 }
 
@@ -253,8 +255,8 @@ void resultsSQ_params::execute()
 {
 	unsigned psize= parameters.size();
 
-	int error= sqlite3_prepare_v2(conn->db_connection, query.c_str(), -1, &step.stmt, 0);
-	if (error!=SQLITE_OK) throw SQLerror(query,error,"prepare");
+//	int error= sqlite3_prepare_v2(conn->db_connection, query.c_str(), -1, &step.stmt, 0);
+//	if (error!=SQLITE_OK) throw SQLerror(query,error,"prepare");
 
 	assert(sqlite3_bind_parameter_count(step.stmt)==psize);
 	for (unsigned i=0;i<psize;++i)
@@ -305,6 +307,56 @@ ManuProC::Query_result_base* sqliteConnection::execute_param(char const* q, unsi
 	res2->conn= this;
 	res2->missing_params = num;
 	res2->query= q;
+
+	int error= sqlite3_prepare_v2(db_connection, q, -1, &res2->step.stmt, 0);
+	if (error!=SQLITE_OK) throw SQLerror(q,error,"execute_param");
+
+	last_code=0;
+	return res2;
+}
+
+struct SQ_Prepared_Statement : ManuProC::Prepared_Statement_base
+{
+	std::string name;
+	std::string query;
+	sqlite3_stmt *stmt;
+//	unsigned numparam;
+	sqliteConnection *conn;
+
+    // execution is delayed until last parameter is passed
+	virtual ManuProC::Query_result_base* execute() throw(SQLerror);
+	SQ_Prepared_Statement() : stmt(), conn() {}
+	virtual ~SQ_Prepared_Statement();
+};
+
+SQ_Prepared_Statement::~SQ_Prepared_Statement()
+{
+	if (stmt) sqlite3_finalize(stmt);
+}
+
+ManuProC::Query_result_base* SQ_Prepared_Statement::execute() throw(SQLerror)
+{
+	resultsSQ_params* res2= new resultsSQ_params;
+	res2->conn= conn;
+	res2->missing_params = sqlite3_bind_parameter_count(stmt);
+	res2->query= query;
+	res2->owned= false;
+	res2->step.stmt = stmt;
+	sqlite3_reset(stmt);
+	conn->last_code=0;
+	return res2;
+}
+
+ManuProC::Prepared_Statement_base* sqliteConnection::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)
+{
+	SQ_Prepared_Statement* res2= new SQ_Prepared_Statement;
+	res2->conn= this;
+	res2->name = name ? name : std::string();
+	res2->query= q;
+
+	int error= sqlite3_prepare_v2(db_connection, q, -1, &res2->stmt, 0);
+	if (error!=SQLITE_OK) throw SQLerror(q,error,"prepare");
+
 	last_code=0;
 	return res2;
 }
