@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#if 0
+#if 1
 #include <Misc/ExtraColumns.h>
 #include <cassert>
 #include <Misc/TraceNV.h>
@@ -36,26 +36,29 @@ void ExtraColumns::register_table(const std::string &table, const std::vector<st
   { info=table_infos.insert(std::make_pair(table,TableInformation(table))).first;
     info->second.key_columns=keycols;
     // look for available_columns
-#ifndef MPC_SQLITE
-    Query q("select attname from pg_attribute where attrelid"
-        "=(select oid from pg_class where relname=?)");
-    q << table;
-    Query::Row is;
-    while ((q>>is).good()) 
-    { info->second.available_columns.insert(is.Fetch<std::string>());
-    }        
-#else
-    Query q("pragma table_info(?)");
-    q << table;
-    Query::Row is;
-    while ((q>>is).good()) 
-    {std::string s;
-     is >> s;
-     is >> s;
-     info->second.available_columns.insert(s);
-    }        
-#endif
-
+    Handle<ManuProC::Connection_base> db= ManuProC::get_database();
+    if (db->Type()==ManuProC::Connection::C_PostgreSQL)
+    {
+		Query q("select attname from pg_attribute where attrelid"
+			"=(select oid from pg_class where relname=?)");
+		q << table;
+		Query::Row is;
+		while ((q>>is).good())
+		{ info->second.available_columns.insert(is.Fetch<std::string>());
+		}
+    }
+    else
+    {
+		Query q("pragma table_info(?)");
+		q << table;
+		Query::Row is;
+		while ((q>>is).good())
+		{std::string s;
+		 is >> s;
+		 is >> s;
+		 info->second.available_columns.insert(s);
+		}
+    }
   }
   else assert(info->second.table_name==table && info->second.key_columns==keycols);
   which=&info->second;
@@ -107,10 +110,12 @@ std::string ExtraColumns::from_where() const
 void ExtraColumns::Execute_if_complete()
 { if (key_values.complete())
   { if (which->requested_columns.empty())
-    { 
-#ifdef MPC_SQLITE  
+    {
+	 Handle<ManuProC::Connection_base> db= ManuProC::get_database();
+	 if (db->Type()==ManuProC::Connection::C_SQLite)
       return;
-#else
+     else if (db->Type()==ManuProC::Connection::C_PostgreSQL)
+     {
       Query q("select * "+from_where());
       q << key_values;
       Query::Row is;
@@ -126,7 +131,7 @@ void ExtraColumns::Execute_if_complete()
         is_good=true;
       }
       return;
-#endif
+     }
     }
     std::string cols;
     for (std::set<std::string>::const_iterator i=which->requested_columns.begin();
@@ -153,7 +158,7 @@ void ExtraColumns::Execute_if_complete()
 Query::Row::Fake ExtraColumns::fake_contents(const std::string &column)
 { if (!good()) throw Query::Error("fake_istream",100,"no line available");
   std::map<std::string,value_t>::const_iterator v=column_values.find(column);
-  if (v!=column_values.end()) 
+  if (v!=column_values.end())
   { if (which->requested_columns.find(column)==which->requested_columns.end())
       which->requested_columns.insert(column);
     if (v->second.null) return Query::Row::Fake();
@@ -168,7 +173,7 @@ Query::Row::Fake ExtraColumns::fake_contents(const std::string &column)
   value_t &v2=column_values[column];
   Query q("select "+column+" "+from_where());
   q << key_values >> Query::Row::WithIndicator(v2.value,ind);
-  if (!ind) 
+  if (!ind)
   { v2.null=false; return Query::Row::Fake(v2.value); }
   return Query::Row::Fake();
 }

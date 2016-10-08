@@ -36,6 +36,12 @@
 class Query_Row
 {public:
 	struct check_eol { check_eol() {} };
+	struct Fake
+	{ std::string what;
+	  bool is_null;
+	  explicit Fake(std::string const& w) : what(w), is_null() {}
+	  explicit Fake() : is_null(true) {}
+	};
 private:
 	int naechstesFeld;
 	ManuProC::Query_result_row *impl;
@@ -68,6 +74,7 @@ private:
 public:
 	Query_Row(ManuProC::Query_result_row* i);
 	Query_Row();
+	Query_Row(Fake const& f); // this isn't a real database ...
 
 	int getIndicator() const;
 	std::string getFieldName() const;

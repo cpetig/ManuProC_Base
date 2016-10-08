@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#if 0 // I have no idea what this is needed for, reimplement more sanely once dbabstraction in place
+#if 1 // I have no idea what this is needed for, reimplement more sanely once dbabstraction in place
 #ifndef E70FA3BE_6B3E_4FF7_AB14_6B173AE5BAF1
 #define E70FA3BE_6B3E_4FF7_AB14_6B173AE5BAF1
 
@@ -38,7 +38,7 @@ public:
     };
 private:
     static std::map<std::string,TableInformation> table_infos;
-    
+
     struct value_t
     { bool null;
       std::string value;
@@ -48,11 +48,11 @@ private:
     ArgumentList key_values;
     TableInformation *which;
     bool is_good;
-    
+
     void Execute_if_complete();
 
     Query::Row::Fake fake_contents(const std::string &column);
-    
+
     void register_table(const std::string &table, const std::vector<std::string> &keycols);
     std::string from_where() const;
 public:

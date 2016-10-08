@@ -452,6 +452,11 @@ Query_Row &Query::FetchOne()
    return embedded_iterator;
 }
 
+bool Query_Row::good() const
+{
+	return impl && naechstesFeld<impl->columns();
+}
+
 void Query::ThrowOnBad(const char *where) const
 {  if (!implementation_specific || !backend)
    {  SQLerror::test(__FUNCTION__);
@@ -589,158 +594,25 @@ int Query::last_insert_rowid() const
 }
 
 #endif
-#if 0
-Query_Row &Query_Row::operator>>(std::string &str)
-{  if (is_fake)
-   { if (naechstesFeld || zeile)
-	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end on fake"));
-     if (fake_null)
-	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator on fake"));
-     str=fake_result;
-     if (Query::debugging.on)
-        std::cerr << "FIS fake result="<<str << '\n';
-     naechstesFeld++;
-     return *this;
-   }
-   if (!result)
-	mythrow(SQLerror(__FUNCTION__,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from (left?)"));
-   if (naechstesFeld>=nfields)
-	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
-   if (!result[naechstesFeld])
-	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator"));
-   str=result[naechstesFeld];
-   if (Query::debugging.on)
-      std::cerr << "FIS result["<<zeile<<','<<naechstesFeld<<"]="<<str << '\n';
-   naechstesFeld++;
-   return *this;
-}
 
-void Query_Row::ThrowIfNotEmpty(const char *where)
-{  if (!result)
-	mythrow(SQLerror(where,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from"));
-   if (naechstesFeld<nfields)
-	mythrow(SQLerror(where,ECPG_TOO_FEW_ARGUMENTS,"too few arguments"));
-}
-
-int Query_Row::getIndicator() const
+namespace {
+struct FakeDatabaseRow : ManuProC::Query_result_row
 {
-   if (naechstesFeld>=nfields)
-	mythrow(SQLerror("Query_Row::getIndicator",ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
-   return -(result[naechstesFeld]==0);
+	Query_Row::Fake val;
+
+   virtual unsigned columns() const throw() { return 1; }
+   virtual int indicator(unsigned col) const { return val.is_null ? -1 : 0; }
+   virtual char const* text(unsigned col) const { return val.what.c_str(); }
+   virtual char const* getFieldName(unsigned col) const { return "fake"; }
+	FakeDatabaseRow(Query_Row::Fake const& v) : val(v)
+	{}
+};
 }
 
-/// QUERY
-
-// note cursor is the name for both the cursor and the descriptor
-void Query::Execute() throw(SQLerror)
-{  char **local_result=0;
-   char *msgbuf=0;
-   int rows,cols;
-   if (Query::debugging.on) std::cerr << "QUERY: " << query << '\n';
-   error=sqlite3_get_table(ManuProC::db_connection, query.c_str(),
-   		&local_result, &rows, &cols, &msgbuf);
-   SQLerror::last_code=error;
-   if (Query::debugging.on)
-      std::cerr << "RESULT: " << error << ':' << (msgbuf?msgbuf:"")
-      		<< ", " << rows << 'x' << cols << '\n';
-   if(error!=SQLITE_OK)
-   {  std::string err=msgbuf;
-      sqlite3_free(msgbuf);
-      throw SQLerror(query,error,err);
-   }
-   lines=rows;
-   nfields=cols;
-   if (msgbuf) sqlite3_free(msgbuf);
-   if (!lines && STRNCASECMP(query.c_str(),"select",6))
-     lines=sqlite3_changes(ManuProC::db_connection);
-   if (!lines) SQLerror::last_code=error=100;
-   result=local_result;
-   eof=!lines;
-}
-
-int Query::last_insert_rowid() const
-{
-  return sqlite3_last_insert_rowid(ManuProC::db_connection);
-}
-
-void Query::Fetch(Query_Row &is)
-{  if (!params.complete())
-      Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
-
-   if (!eof)
-   {  if (line<lines)
-      {  is=Query_Row(result+((line+1)*nfields),nfields,line);
-         ++line;
-         return;
-      }
-      eof=true;
-   }
-  is=Query_Row();
-}
-
-Query::Query(const std::string &command)
-: eof(true), line(), result(), query(command), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
-{  const char *p=query.c_str();
-   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-   params.setNeededParams(num_params);
-   Execute_if_complete();
-}
-
-Query::Query(std::string const& portal, std::string const& command)
-: eof(true), line(), result(), query(command), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
-{  const char *p=query.c_str();
-   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-   params.setNeededParams(num_params);
-   Execute_if_complete();
-}
-
-Query::Query(PreparedQuery &pq)
-: eof(true), line(), result(), query(pq.Command()), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
-{  const char *p=query.c_str();
-   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-   params.setNeededParams(num_params);
-   Execute_if_complete();
-}
-
-Query::~Query()
-{  if (!params.complete())
-   {  std::cerr << "The query " << query << " still needed "
-   	<< params.HowManyNeededParams()
-   	<< " parameters on destruction and got never executed!\n";
-      SQLerror::last_code=ECPG_TOO_FEW_ARGUMENTS;
-   }
-   if (result)
-   {  sqlite3_free_table((char**)result);
-      result=0;
-   }
-}
-
-int Query::Code()
-{  return SQLerror::last_code;
-}
-
-void Query::Execute(std::string const& command2) throw(SQLerror)
-{
-  Query q(command2);
-}
-
-bool Query_Row::good() const
-{ if (is_fake) return !naechstesFeld && !zeile;
-  return result && naechstesFeld<nfields;
-}
-
-#endif
-
-#if 0
 Query_Row::Query_Row(Fake const& val)
-  : naechstesFeld(), zeile(), is_fake(true), fake_result(val.what),
-    fake_null(val.is_null), result()
+  : naechstesFeld(), impl(new FakeDatabaseRow(val))
 {
 }
-#endif
 
 PreparedQuery::PreparedQuery(std::string const& cmd)
   : prep(), command(cmd), connection(ManuProC::get_database())
