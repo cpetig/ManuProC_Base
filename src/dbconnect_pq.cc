@@ -124,7 +124,7 @@ struct resultsPQ : ManuProC::Query_result_base
 	virtual bool complete() const throw() { return !missing_params; }
 	void execute();
 
-	resultsPQ() : conn(), res(), next_row(), prep() {}
+	resultsPQ() : conn(), res(), next_row(), prep(), missing_params() {}
 	~resultsPQ() { if (res) PQclear(res); }
 };
 
@@ -291,7 +291,8 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 		return 0;
 //		throw(SQLerror(q,100,msg));
 	}
-	if (PQresultStatus(res) != PGRES_TUPLES_OK)
+	if (PQresultStatus(res) != PGRES_TUPLES_OK
+		&& PQresultStatus(res) != PGRES_COMMAND_OK)
 	{
 		std::string msg= PQresultErrorMessage(res);
 		unsigned stat=PQresultStatus(res);
