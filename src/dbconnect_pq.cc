@@ -87,7 +87,7 @@ struct rowPQ : ManuProC::Query_result_row
 	unsigned row;
 
 	// PQfname, PQftype
-
+	rowPQ() : res(), row() {}
 	virtual unsigned columns() const throw() { return PQnfields(res); }
 	virtual int indicator(unsigned col) const { return PQgetisnull(res, row, col) ? -1 : 0; }
 	virtual char const* text(unsigned col) const { return PQgetvalue(res, row, col); }
@@ -133,7 +133,7 @@ struct PQ_Prepared_Statement : ManuProC::Prepared_Statement_base
 	std::string name;
 	unsigned numparam;
 	connectionPQ *conn;
-	resultsPQ obj;
+//	resultsPQ obj;
 
     // execution is delayed until last parameter is passed
 	virtual ManuProC::Query_result_base* execute() throw(SQLerror);
@@ -179,6 +179,7 @@ void resultsPQ::execute()
 		std::string msg= PQresultErrorMessage(res);
 		unsigned stat=PQresultStatus(res);
 		PQclear(res);
+		res=0;
 		conn->last_error=stat;
 		if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
 		throw(SQLerror(prep? prep->name : query,stat,msg));
@@ -228,6 +229,7 @@ static char const* convert_parameters(std::string& parameter_style, char const* 
 		for (;*in;)
 		{
 			char const* delim= strpbrk(in, "?'\"");
+			if (!delim) break;
 			switch(*delim)
 			{
 			case '"':
@@ -314,8 +316,11 @@ std::map<std::string,PQ_Prepared_Statement*> prepared_stmts;
 
 PQ_Prepared_Statement::~PQ_Prepared_Statement()
 {
-	std::string cmd= "DEALLOCATE "+name;
-	conn->execute(cmd.c_str());
+	if (!name.empty())
+	{
+		std::string cmd= "DEALLOCATE "+name;
+		conn->execute(cmd.c_str());
+	}
 	std::map<std::string,PQ_Prepared_Statement*>::iterator i= prepared_stmts.find(name);
 	if (i!=prepared_stmts.end())
 		prepared_stmts.erase(i);
@@ -323,25 +328,30 @@ PQ_Prepared_Statement::~PQ_Prepared_Statement()
 
 ManuProC::Query_result_base* PQ_Prepared_Statement::execute() throw(SQLerror)
 {
-	obj.conn= conn;
-	obj.prep= this;
-	obj.missing_params= numparam;
-	obj.parameters.clear();
-	if (obj.res)
-	{
-		PQclear(obj.res);
-		obj.res=0;
-	}
-	return &obj;
+	resultsPQ* obj = new resultsPQ;
+	obj->conn= conn;
+	obj->prep= this;
+	obj->missing_params= numparam;
+	obj->parameters.clear();
+//	if (obj.res)
+//	{
+//		PQclear(obj.res);
+//		obj.res=0;
+//	}
+	return obj;
 }
 
 ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)
 {
+	if (!name) name="";
 	std::map<std::string,PQ_Prepared_Statement*>::iterator i= prepared_stmts.find(name);
 	if (i!=prepared_stmts.end()) delete i->second;
 	PQ_Prepared_Statement*& res= prepared_stmts[name];
 	::Oid types2[numparam];
-	for (unsigned i=0;i<numparam;++i) types2[i]=types[i];
+	if (types) for (unsigned i=0;i<numparam;++i) types2[i]=types[i];
+	else memset(types2, 0, sizeof(*types2)*numparam);
+	std::string parameter_style;
+	q= convert_parameters(parameter_style, q);
 	PGresult *res2= PQprepare(connection, name, q, numparam, types2);
 	if (!res2)
 	{

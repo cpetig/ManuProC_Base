@@ -30,30 +30,7 @@
 #include <Misc/compiler_ports.h>
 #include <Misc/dbconnect.h>
 
-//#ifndef MPC_SQLITE
-//#  define MPC_POSTGRESQL
-//#endif
-
-//#ifdef MPC_SQLITE
-//#include <algorithm>
-//#include <sqlite3.h>
-//typedef unsigned long Oid;
-//// enum ECPG...
-//#elif defined (MANUPROC_WITH_DATABASE)
-//#include <ecpgerrno.h>
-//extern "C" {
-//#include <libpq-fe.h>
-//}
-//#endif
-
-//#if !defined(OLD_ECPG) && defined(HAVE_PQPREPARE)
 #define USE_PARAMETERS
-//#endif
-
-//struct Query_Row_impl
-//{
-////  std::string getFieldName() const;
-//};
 
 // please access this class under the new alias "Query::Row"
 class Query_Row
@@ -259,30 +236,6 @@ public:
 
 class PreparedQuery;
 
-struct Query_impl
-{
-//#ifndef MPC_SQLITE
-//	std::string descriptor;
-//#endif
-//	bool eof;
-//	int line;
-//#ifdef MPC_SQLITE
-//	const char * const *result;
-//	unsigned nfields;
-//#else
-//#ifndef USE_PARAMETERS
-//	const
-//#endif
-//	      PGresult *result;
-//#endif
-//#ifndef MPC_SQLITE
-//	static __deprecated unsigned Lines(); // SQLCA.sqlcode
-//#endif
-//#ifdef MPC_SQLITE
-//	int last_insert_rowid() const;
-//#endif
-};
-
 class Query : public Query_types
 {
 	std::string query;
@@ -406,40 +359,20 @@ public:
 	static debug_environment debugging;
 };
 
-//#ifdef MPC_POSTGRESQL
-//# define MPC_ONLY_WITH_POSTGRESQL(x) x
-//#elsestd::string getFieldName() const
-//# define MPC_ONLY_WITH_POSTGRESQL(x)
-//#endif
-
 class PreparedQuery
 {	std::string command;
-//#ifdef MPC_POSTGRESQL
-//        std::string name;
-//        std::vector<Oid> types;
-//        const PGconn *connection;
-//
-//        friend class Query;
-//#endif
+	Handle<ManuProC::Connection_base> connection;
+	ManuProC::Prepared_Statement_base *prep;
+	unsigned no_arguments;
+	friend class Query;
+
 public:
-        PreparedQuery()
-//#ifdef MPC_POSTGRESQL
-//          : connection()
-//#endif
+        PreparedQuery() : prep(), no_arguments()
         {}
-        PreparedQuery(std::string const& cmd)
-          : command(cmd)
-//#ifdef MPC_POSTGRESQL
-//            ,connection()
-//#endif
-        {}
+        PreparedQuery(std::string const& cmd);
+        ~PreparedQuery();
         std::string const& Command() const { return command; }
         bool ready() const;
-//#ifdef USE_PARAMETERS
-//        bool ready() const { return !name.empty(); }
-//#else
-//        bool ready() const { return false; }
-//#endif
 };
 
 // we use the embedded Query_Row but that's ok,

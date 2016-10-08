@@ -262,7 +262,7 @@ std::string Query::standardize_parameters(std::string const& in)
 void Query::Execute_if_complete()
 {  if (params.complete() && !already_run())
    {
-#ifndef USE_PARAMETERS
+#if 0 //ndef USE_PARAMETERS
       std::string expanded;
       const char *p=query.c_str();
       const char *last=p;
@@ -305,7 +305,7 @@ Query &Query::add_argument(const std::string &s, Oid type)
 ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 { if (complete())
       Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
-#ifdef USE_PARAMETERS
+#if 1 //def USE_PARAMETERS
   params.push_back(std::string());
 #else
   params.push_back("NULL");
@@ -329,22 +329,24 @@ ArgumentList &ArgumentList::add_argument(const std::string &x, Oid type)
    return *this;
 }
 
+#if 1
 static bool transparent_char(unsigned char x)
 { return (true
-#ifndef MPC_SQLITE // escape these
+#if 1 //ndef MPC_SQLITE // escape these
           && ((' '<=x&&x<=126) || (128<=x))
           && x!='\\'
 #endif
-#ifndef USE_PARAMETERS
+#if 0 // ndef USE_PARAMETERS
           && x!='\''
 #endif
         );
 }
+#endif
 
 ArgumentList &ArgumentList::operator<<(const std::string &str)
 { // do we need to escape it?
   // do we need bytea?
-#if (defined(MPC_SQLITE) && defined(USE_PARAMETERS)) || (!defined(MPC_SQLITE) && defined(USE_PARAMETERS))
+#if 1 // (defined(MPC_SQLITE) && defined(USE_PARAMETERS)) || (!defined(MPC_SQLITE) && defined(USE_PARAMETERS))
   return add_argument(str,TEXTOID);
 #else
   std::string p;
@@ -405,7 +407,7 @@ ArgumentList &ArgumentList::operator<<(char i)
      x[1]=0;
    }
    else
-#ifdef MPC_SQLITE // there's no escaping here, hopefully we use parameters
+#if 0 // def MPC_SQLITE // there's no escaping here, hopefully we use parameters
      return add_argument(std::string(1,i),TEXTOID);
 #else
    { x[0]='\\';
@@ -530,13 +532,24 @@ Query::~Query()
 }
 
 Query::Query(PreparedQuery &pq)
+: query(pq.command), num_params(pq.no_arguments), error(ECPG_TOO_FEW_ARGUMENTS),
+  	  lines(), backend(pq.connection), implementation_specific(pq.prep->execute())
 {
-	Query_Row::mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
 }
 
+// this will work for now, but we really should implement cursors later on:
+//   declare portal cursor for ...
+//   fetch 1 from portal
+//   close portal
 Query::Query(std::string const& portal, std::string const& command)
+: query(command), num_params(),
+		error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
-	Query_Row::mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
+	char const *p=query.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	params.setNeededParams(num_params);
+	Execute_if_complete();
+//	Query_Row::mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
 }
 
 int Query::Code()
@@ -712,3 +725,19 @@ Query_Row::Query_Row(Fake const& val)
 {
 }
 #endif
+
+PreparedQuery::PreparedQuery(std::string const& cmd)
+  : prep(), command(cmd), connection(ManuProC::get_database())
+{
+	ArgumentList al;
+	unsigned num_params=0;
+	char const* p= command.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	// TODO: how to specify the type of parameters?
+	prep= connection->prepare(0, cmd.c_str(), num_params,0);
+}
+
+PreparedQuery::~PreparedQuery()
+{
+	if (prep) delete prep;
+}

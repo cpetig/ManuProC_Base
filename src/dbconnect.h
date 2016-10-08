@@ -153,6 +153,8 @@ public:
  	 // execution is delayed until last parameter is passed
  	 virtual Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror)=0;
 
+ 	 // TODO: Add cursors
+
  	 virtual Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)=0;
 // 	 virtual Query_result_base* execute_prepared(char const* name, unsigned numparam) throw(SQLerror)=0;
 
