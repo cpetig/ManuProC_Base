@@ -30,35 +30,14 @@
 #include <Misc/compiler_ports.h>
 #include <Misc/dbconnect.h>
 
-#define USE_PARAMETERS
+//#define USE_PARAMETERS
 
 // please access this class under the new alias "Query::Row"
 class Query_Row
 {public:
 	struct check_eol { check_eol() {} };
-	// do we need fake any longer?
-//	struct Fake
-//	{ std::string what;
-//	  bool is_null;
-//	  explicit Fake(std::string const& w) : what(w), is_null() {}
-//	  explicit Fake() : is_null(true) {}
-//	};
 private:
 	int naechstesFeld;
-	/* const */ //int zeile;
-
-//	bool is_fake;
-//	std::string fake_result;
-//	bool fake_null;
-
-//#ifdef MPC_SQLITE
-//	const char * const * result;
-//	unsigned nfields;
-//#else
-//protected:
-//        const PGresult * /* const */ result;
-//private:
-//#endif
 	ManuProC::Query_result_row *impl;
 
 	friend class Query;
@@ -89,20 +68,9 @@ private:
 public:
 	Query_Row(ManuProC::Query_result_row* i);
 	Query_Row();
-//#ifndef MPC_SQLITE
-//	Query_Row(const std::string &descr, int line=0);
-//	Query_Row(const PGresult *res=0, int line=0)
-//	  : naechstesFeld(), zeile(line), is_fake(), fake_null(), result(res)
-//	{}
-//#else
-//	Query_Row(const char *const *res=0, unsigned nfields=0, int line=0);
-//#endif
-//        Query_Row(Fake const& f);
 
 	int getIndicator() const;
-//#ifdef MPC_POSTGRESQL
-//        std::string getFieldName() const;
-//#endif
+	std::string getFieldName() const;
 	bool good() const; // noch Spalten verfügbar
 
 	Query_Row &operator>>(std::string &str);

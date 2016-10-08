@@ -443,9 +443,12 @@ Query_Row &Query::FetchOne()
 {  ThrowOnBad(__FUNCTION__);
    if (portal_name.empty()) Check100();
    Fetch(embedded_iterator);
-   Query_Row dummy;
-   Fetch(dummy);
-   if (good()) Query_Row::mythrow(SQLerror(__FUNCTION__,-2,"more than one result"));
+   if (backend->Type()!=ManuProC::Connection::C_SQLite) // doesn't work yet
+   {
+	   Query_Row dummy;
+	   Fetch(dummy);
+	   if (good()) Query_Row::mythrow(SQLerror(__FUNCTION__,-2,"more than one result"));
+   }
    return embedded_iterator;
 }
 
@@ -454,6 +457,13 @@ void Query::ThrowOnBad(const char *where) const
    {  SQLerror::test(__FUNCTION__);
       Query_Row::mythrow(SQLerror(__FUNCTION__,-1,"unspecific bad result"));
    }
+}
+
+std::string Query_Row::getFieldName() const
+{
+	if (!impl)
+		return "?";
+	return impl->getFieldName(naechstesFeld);
 }
 
 // ====================== SQLite =================================
@@ -483,7 +493,11 @@ void Query::Execute() throw(SQLerror)
 {
 	// pass all parameters
 	if (params.empty())
+	{
 		implementation_specific= backend->execute2(query.c_str());
+		error= backend->LastError();
+		lines= implementation_specific->LinesAffected();
+	}
 	else
 	{
 		implementation_specific= backend->execute_param(query.c_str(), params.size());
@@ -492,6 +506,8 @@ void Query::Execute() throw(SQLerror)
 			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
 			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
 		}
+		error= backend->LastError();
+		lines= implementation_specific->LinesAffected();
 	}
 }
 
