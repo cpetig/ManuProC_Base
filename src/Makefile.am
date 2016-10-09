@@ -16,6 +16,9 @@ endif
 libManuProC_Base_sqlite3.def: libManuProC_Base.def libManuProC_Base_sqlite.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^
+libManuProC_Base_pg_sqlite3.def: libManuProC_Base.def libManuProC_Base_pg_sqlite3.defadd \
+		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
+	cat >$@ $^
 libManuProC_Base_pg.def: libManuProC_Base.def libManuProC_Base_pg.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^

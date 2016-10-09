@@ -1,5 +1,5 @@
 #include "dbconnect.h"
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 #include <Misc/Query.h>
 #include <string.h>
 #include <Misc/itos.h>
