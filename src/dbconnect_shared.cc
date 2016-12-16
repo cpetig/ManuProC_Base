@@ -32,7 +32,7 @@
 
 ManuProC::Connection::Connection(const std::string &h, const std::string &d,
 		const std::string &u,const std::string &n, const int p)
-        	: host(h), dbase(d), user(u), name(n), port(p), type(C_PostgreSQL)
+        	: host(h), dbase(d), user(u), name(n), port(p), type(C_SQLite)
 {
    std::string host_=DEFAULT_DBHOST;
    std::string db_=DEFAULT_DB;

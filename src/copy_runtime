@@ -2,6 +2,8 @@
 
 PLATFORM=$1
 
+mkdir -p ../../runtime_ManuProC_Base/$PLATFORM
+
 cp .libs/libManuProC_Base.a ../../runtime_ManuProC_Base/$PLATFORM
 
 CHG=`mtn ls changed | wc -l`
