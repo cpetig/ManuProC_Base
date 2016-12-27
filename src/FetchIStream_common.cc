@@ -596,7 +596,7 @@ void Query::Execute(const std::string &command) throw(SQLerror)
 
 void Query::Execute(Handle<ManuProC::Connection_base> const& backend, const std::string &command) throw(SQLerror)
 {
-   backend->execute2(command.c_str());
+   backend->execute(command.c_str());
 }
 
 #endif

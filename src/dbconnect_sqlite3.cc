@@ -91,8 +91,9 @@ struct rowSQ : ManuProC::Query_result_row
 	unsigned row;
 
 	virtual unsigned columns() const throw() { return cols; }
-	virtual int indicator(unsigned col) const { return local_result[row*cols+col]!=0; }
+	virtual int indicator(unsigned col) const { return local_result[row*cols+col]==0; }
 	virtual char const* text(unsigned col) const { return local_result[row*cols+col]; }
+	virtual char const* getFieldName(unsigned col) const { return local_result[col]; }
 	rowSQ() : local_result(), rows(), cols(), row() {}
 };
 
@@ -168,14 +169,25 @@ struct resultsSQ : ManuProC::Query_result_base
 	{
 		if (next_row>=rows)
 		{
+			if (Query::debugging.on) std::cerr << "FETCH: end\n";
 			conn->last_code=100;
 			return 0;
 		}
 		rowres.local_result=local_result;
-		rowres.row=next_row;
+		rowres.row=next_row+1; // 1st row contains the names
 		rowres.rows=rows;
 		rowres.cols=cols;
 		++next_row;
+		if (Query::debugging.on)
+		{
+			std::cerr << "FETCH: ";
+			for (unsigned i=0;i<rowres.columns();++i)
+			{
+				if (rowres.indicator(i)) std::cerr << "NULL, ";
+				else std::cerr << rowres.text(i) << ", ";
+			}
+			std::cerr << '\n';
+		}
 		return &rowres;
 	}
 	virtual void AddParameter(const std::string &s, ManuProC::Oid type) {}
@@ -236,6 +248,8 @@ void resultsSQ_params::fetch()
 			lines=0;
 			ready=false;
 			conn->last_code=100;
+			if (Query::debugging.on)
+				std::cerr << "RESULT: empty\n";
 		}
 	}
 	else
@@ -250,6 +264,13 @@ void resultsSQ_params::fetch()
 					sqlite3_column_database_name(step.stmt,i),
 					sqlite3_column_text(step.stmt,i));
 #endif
+		if (Query::debugging.on)
+		{
+			std::cerr << "RESULT: ";
+			for (unsigned i=0;i<sqlite3_column_count(step.stmt);++i)
+				printf("%s, ", sqlite3_column_text(step.stmt,i));
+			std::cerr << '\n';
+		}
 	}
 }
 
@@ -266,6 +287,17 @@ void resultsSQ_params::execute()
 		if (parameters[i].null) sqlite3_bind_null(step.stmt,i+1);
 		else sqlite3_bind_text(step.stmt, i+1, parameters[i].s.data(), parameters[i].s.size(), 0);
 	}
+	if (Query::debugging.on)
+	{
+		std::cerr << "QUERY: " << query << '\n';
+		std::cerr << "PARAM: ";
+		for (unsigned i=0;i<psize;++i)
+		{
+			if (parameters[i].null) std::cerr << "NULL, ";
+			else std::cerr << parameters[i].s.c_str() << ", ";
+		}
+		std::cerr << '\n';
+	}
 	fetch();
 }
 
@@ -281,7 +313,7 @@ ManuProC::Query_result_base* sqliteConnection::execute2(char const* query) throw
 	   		&local_result, &rows, &cols, &msgbuf);
 	   last_code=error;
 	   if (Query::debugging.on)
-	      std::cerr << "RESULT: " << error << ':' << (msgbuf?msgbuf:"")
+	      std::cerr << "RESULT: error " << error << ':' << (msgbuf?msgbuf:"")
 	      		<< ", " << rows << 'x' << cols << '\n';
 	   if(error!=SQLITE_OK)
 	   {  std::string err=msgbuf;
