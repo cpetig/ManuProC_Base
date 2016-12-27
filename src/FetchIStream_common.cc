@@ -589,6 +589,16 @@ int Query::last_insert_rowid() const
 	return implementation_specific->last_insert_rowid();
 }
 
+void Query::Execute(const std::string &command) throw(SQLerror)
+{
+   Execute(ManuProC::get_database(), command);
+}
+
+void Query::Execute(Handle<ManuProC::Connection_base> const& backend, const std::string &command) throw(SQLerror)
+{
+   backend->execute2(command.c_str());
+}
+
 #endif
 
 namespace {
