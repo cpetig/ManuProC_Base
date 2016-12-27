@@ -135,7 +135,7 @@ private:
 class HandleContentCopyable : public HandleContent
 {  public:
 	HandleContentCopyable() {}
-	HandleContentCopyable(const HandleContentCopyable &b) { MPC_HANDLE_CHECK_MAGIC(&b); }
+	HandleContentCopyable(const HandleContentCopyable &b) : HandleContent() { MPC_HANDLE_CHECK_MAGIC(&b); }
 	const HandleContentCopyable &operator=(const HandleContentCopyable &b)
 	{ MPC_HANDLE_CHECK_MAGIC(this);
 	  MPC_HANDLE_CHECK_MAGIC(&b); 

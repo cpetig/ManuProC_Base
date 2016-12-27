@@ -5,13 +5,18 @@ WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ -lintl -ladvapi32 -lsecur32
 #libManuProC_Base_res.o
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
+PLATFORM=w32
 else
 WIN_LDFLAGS=
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=
+PLATFORM=linux
 endif
 
 libManuProC_Base_sqlite3.def: libManuProC_Base.def libManuProC_Base_sqlite.defadd \
+		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
+	cat >$@ $^
+libManuProC_Base_pg_sqlite3.def: libManuProC_Base.def libManuProC_Base_pg_sqlite3.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^
 libManuProC_Base_pg.def: libManuProC_Base.def libManuProC_Base_pg.defadd \
@@ -24,7 +29,7 @@ libManuProC_Base_res.o: libManuProC_Base.rc
 #libManuProC_Base_res.o: libManuProC_Base.rc
 #	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
-AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION 
+AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION -std=gnu++11
 
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
@@ -36,10 +41,11 @@ includedir=@includedir@/ManuProC_Base
 AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@ $(WIN_LDFLAGS)
 
 if DATABASE
-DB_SRCES=dbconnect.cc SQLerror_postgres.cc Transaction.cc Query.cc \
+DB_SRCES=SQLerror_postgres.cc Transaction.cc Query.cc \
 	Event.cc Global_Settings_db.cc dbconnect_shared.cc \
 	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc \
-	Transaction_sqlite.cc pg_type.cc
+	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc dbconnect_sqlite3.cc \
+	SQLerror_base.cc
 else 
 DB_SRCES=
 endif
@@ -61,10 +67,10 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 		DllObject_caller.cc DllObject_dll.cc win32_utf8.cc \
 		getuid.cc md5/md5string.cc md5/md5.c
 
-EXTRA_DIST=dbconnect.pgcc SQLerror_postgres.pgcc Transaction.pgcc \
+EXTRA_DIST=SQLerror_postgres.pgcc Transaction.pgcc \
 	Query.pgcc
 
-BUILT_SOURCES=Misc ostream ${EXTRA_DIST:.pgcc=.cc} $(DLL_DEF)
+BUILT_SOURCES=Misc ostream ${EXTRA_DIST:.pgcc=.cc} $(DLL_DEF) copy_libs
 
 noinst_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 	IOerror.h Kalenderwoche.h Pointer.h Postgres.h Rundungsmacros.h \
@@ -80,6 +86,11 @@ noinst_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 	ManuProcEintrag.h ManuProcEntity.h ManuProcVorgang.h
 
 CLEANFILES= *~ $(BUILT_SOURCES)
+
+
+# copy to runtime branch
+copy_libs:
+	./copy_runtime $(PLATFORM)
 
 # create compatibility links
 

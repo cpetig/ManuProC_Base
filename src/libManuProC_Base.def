@@ -96,8 +96,8 @@ EXPORTS
 	_ZN7IOerrorD1Ev 
 	_ZN8ManuProC10un_wstringERKSbIwSt11char_traitsIwESaIwEE
 	_ZN8ManuProC11GetRealNameEv
-	_ZN8ManuProC12DatumsfehlerC1Ei 
-	_ZN8ManuProC12DatumsfehlerC2Ei 
+	_ZN8ManuProC12DatumsfehlerC1EiSs 
+	_ZN8ManuProC12DatumsfehlerC2EiSs 
 	_ZN8ManuProC12DatumsfehlerD0Ev 
 	_ZN8ManuProC12DatumsfehlerD1Ev 
 	_ZN8ManuProC12GetUserNameAEv

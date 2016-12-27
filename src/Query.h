@@ -28,27 +28,9 @@
 #include <ManuProCConfig.h>
 #include <Misc/SQLerror.h>
 #include <Misc/compiler_ports.h>
+#include <Misc/dbconnect.h>
 
-#ifndef MPC_SQLITE
-#  define MPC_POSTGRESQL
-#endif
-
-#ifdef MPC_SQLITE
-#include <algorithm>
-#include <sqlite3.h>
-typedef unsigned long Oid;
-// enum ECPG...
-#elif defined (MANUPROC_WITH_DATABASE)
-#include <ecpgerrno.h>
-extern "C" {
-#include <libpq-fe.h>
-}
-#endif
-
-#if !defined(OLD_ECPG) && defined(HAVE_PQPREPARE)
-#define USE_PARAMETERS
-#endif
-
+//#define USE_PARAMETERS
 
 // please access this class under the new alias "Query::Row"
 class Query_Row
@@ -62,20 +44,7 @@ class Query_Row
 	};
 private:
 	int naechstesFeld;
-	/* const */ int zeile;
-
-	bool is_fake;
-	std::string fake_result;
-	bool fake_null;
-
-#ifdef MPC_SQLITE
-	const char * const * result;
-	unsigned nfields;
-#else
-protected:
-        const PGresult * /* const */ result;
-private:
-#endif
+	ManuProC::Query_result_row *impl;
 
 	friend class Query;
 	friend class ArgumentList;
@@ -103,20 +72,12 @@ private:
 	 	  : var(v), ind(i) {}
 	};
 public:
-#ifndef MPC_SQLITE
-	Query_Row(const std::string &descr, int line=0);
-	Query_Row(const PGresult *res=0, int line=0)
-	  : naechstesFeld(), zeile(line), is_fake(), fake_null(), result(res)
-	{}
-#else
-	Query_Row(const char *const *res=0, unsigned nfields=0, int line=0);
-#endif
-        Query_Row(Fake const& f);
+	Query_Row(ManuProC::Query_result_row* i);
+	Query_Row();
+	Query_Row(Fake const& f); // this isn't a real database ...
 
 	int getIndicator() const;
-#ifdef MPC_POSTGRESQL
-        std::string getFieldName() const;
-#endif
+	std::string getFieldName() const;
 	bool good() const; // noch Spalten verfügbar
 
 	Query_Row &operator>>(std::string &str);
@@ -130,7 +91,7 @@ public:
 	Query_Row &operator>>(bool &b);
 	Query_Row &operator>>(char &c);
 	void operator>>(const check_eol &eol)
-	{ ThrowIfNotEmpty("check_eol"); }
+	{ ThrowIfNotEmpty("check_eol"); check_eol e(eol); }
 
 	template <class T> static WithIndicator_s<T> WithIndicator(T &v,int &i)
 	{ return WithIndicator_s<T>(v,i); }
@@ -172,7 +133,8 @@ public:
 };
 
 struct Query_types
-{	template <class T>
+{	typedef ManuProC::Oid Oid;
+	template <class T>
 	 struct NullIf_s
 	{	T data;
 		bool null;
@@ -192,13 +154,17 @@ struct Query_types
 };
 
 class ArgumentList
-{	unsigned params_needed;
+{
+public:
+	typedef ManuProC::Oid Oid;
+	typedef std::vector<std::string>::const_iterator const_iterator;
+private:
+	unsigned params_needed;
         std::vector<Oid> types;
 	std::vector<std::string> params;
 	std::vector<bool> binary;
 	std::vector<bool> null;
 public:
-	typedef std::vector<std::string>::const_iterator const_iterator;
 	ArgumentList() : params_needed(unsigned(-1)) {}
 	void setNeededParams(unsigned i)
 	{  params_needed=i; }
@@ -212,6 +178,7 @@ public:
 	Oid type_of(const_iterator const& which) const;
 	bool is_null(const_iterator const& which) const;
 	bool is_binary(const_iterator const& which) const;
+	std::string const& get_string(const_iterator const& which) const;
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
@@ -246,20 +213,6 @@ class PreparedQuery;
 
 class Query : public Query_types
 {
-#ifndef MPC_SQLITE
-	std::string descriptor;
-#endif
-	bool eof;
-	int line;
-#ifdef MPC_SQLITE
-	const char * const *result;
-	unsigned nfields;
-#else
-#ifndef USE_PARAMETERS
-	const
-#endif
-	      PGresult *result;
-#endif
 	std::string query;
 	ArgumentList params;
 	unsigned num_params;
@@ -269,6 +222,8 @@ class Query : public Query_types
 	PreparedQuery* prepare;
 	std::string portal_name;
 	// if you add members do not forget to mention them in swap!
+	ManuProC::Query_result_base *implementation_specific; // backend specific
+	Handle<ManuProC::Connection_base> backend;
 
 	// not possible yet (because result can not refcount)
 	const Query &operator=(const Query &);
@@ -280,7 +235,7 @@ class Query : public Query_types
 	void raise(std::string const& state, int code, std::string const& message, std::string const& detail=std::string());
 	void raise(char const* state, int code, char const* message, char const* detail=0);
 	static std::string standardize_parameters(std::string const& in);
-	bool already_run() const { return result; }
+	bool already_run() const; // { return result; }
 
 	void free(); // called by destructor and failed constructor
 public:
@@ -291,34 +246,33 @@ public:
 	typedef SQLerror Error;
 
 	// you can exchange this via std::swap
-	Query() : eof(true), line(), result(), num_params(), error(), lines(),
+	Query() : /*eof(true), line(), result(),*/ num_params(), error(), lines(),
 	    prepare()
         { params.setNeededParams(0); }
-        void swap(Query &b);
+    void swap(Query &b);
 
 	Query(const std::string &command);
+	Query(Handle<ManuProC::Connection_base> const&, const std::string &command);
 	Query(std::string const& portal_name, const std::string &command);
+	Query(Handle<ManuProC::Connection_base> const&, std::string const& portal_name, const std::string &command);
 	Query(PreparedQuery& prep);
+	Query(Handle<ManuProC::Connection_base> const&, PreparedQuery& prep);
 	~Query();
 
-	bool good() const
-	{ return !eof; }
+	bool good() const;
+//	{ return !eof; }
 	void ThrowOnBad(const char *where) const;
 
 	static void Execute(const std::string &command) throw(SQLerror);
+	static void Execute(Handle<ManuProC::Connection_base> const&, const std::string &command) throw(SQLerror);
 	int Result() const { return error; }
 	unsigned LinesAffected() const { return lines; }
 
 	void Check100() const throw(SQLerror);
+	int last_insert_rowid() const;
 
 	// please migrate to the functions above
 	static __deprecated int Code(); // SQLCA.sqlcode
-#ifndef MPC_SQLITE
-	static __deprecated unsigned Lines(); // SQLCA.sqlcode
-#endif
-#ifdef MPC_SQLITE
-	int last_insert_rowid() const;
-#endif
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
@@ -380,39 +334,20 @@ public:
 	static debug_environment debugging;
 };
 
-//#ifdef MPC_POSTGRESQL
-//# define MPC_ONLY_WITH_POSTGRESQL(x) x
-//#else
-//# define MPC_ONLY_WITH_POSTGRESQL(x)
-//#endif
-
 class PreparedQuery
 {	std::string command;
-#ifdef MPC_POSTGRESQL
-        std::string name;
-        std::vector<Oid> types;
-        const PGconn *connection;
+	Handle<ManuProC::Connection_base> connection;
+	ManuProC::Prepared_Statement_base *prep;
+	unsigned no_arguments;
+	friend class Query;
 
-        friend class Query;
-#endif
 public:
-        PreparedQuery()
-#ifdef MPC_POSTGRESQL
-          : connection()
-#endif
+        PreparedQuery() : prep(), no_arguments()
         {}
-        PreparedQuery(std::string const& cmd)
-          : command(cmd)
-#ifdef MPC_POSTGRESQL
-            ,connection()
-#endif
-        {}
+        PreparedQuery(std::string const& cmd);
+        ~PreparedQuery();
         std::string const& Command() const { return command; }
-#ifdef USE_PARAMETERS
-        bool ready() const { return !name.empty(); }
-#else
-        bool ready() const { return false; }
-#endif
+        bool ready() const;
 };
 
 // we use the embedded Query_Row but that's ok,

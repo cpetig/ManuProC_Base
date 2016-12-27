@@ -27,6 +27,8 @@
 #include <Misc/itos.h>
 #include <Misc/pg_type.h>
 #include <cstdlib>
+ #include <ecpgerrno.h>
+ #include <ecpgerrno.h>
 
 #ifdef MPC_SQLITE
 #include <sqlite3.h>
@@ -68,14 +70,15 @@ Query::debug_environment::~debug_environment()
 void Query::swap(Query &b)
 {
 #ifdef MPC_POSTGRESQL
-  std::swap(descriptor,b.descriptor);
+//  std::swap(descriptor,b.descriptor);
 #endif
-  std::swap(eof,b.eof);
-  std::swap(line,b.line);
-  std::swap(result,b.result);
+//  std::swap(eof,b.eof);
+//  std::swap(line,b.line);
+//  std::swap(result,b.result);
 #ifdef MPC_SQLITE
-  std::swap(nfields,b.nfields);
+//  std::swap(nfields,b.nfields);
 #endif
+  std::swap(implementation_specific,b.implementation_specific);
   std::swap(query,b.query);
   std::swap(params,b.params);
   std::swap(num_params,b.num_params);
@@ -94,8 +97,12 @@ void Query_Row::mythrow(const SQLerror &e)
 }
 
 void Query::Check100() const throw(SQLerror)
-{  if (!params.complete()) Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
-   if (!LinesAffected()) Query_Row::mythrow(SQLerror(query,100,"no lines selected"));
+{
+	if (!backend || !implementation_specific || !implementation_specific->complete())
+		 Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
+//	if (!params.complete())
+   if (!implementation_specific->LinesAffected())
+	   Query_Row::mythrow(SQLerror(query,100,"no lines selected"));
 }
 
 Query &Query::operator>>(const check100 &s)
@@ -193,7 +200,7 @@ const char *ArgumentList::next_insert(const char *text)
     return (*ptr == '\0') ? 0 : ptr;
 }
 
-Oid ArgumentList::type_of(const_iterator const& which) const
+Query_types::Oid ArgumentList::type_of(const_iterator const& which) const
 { return types[which-begin()];
 }
 
@@ -205,7 +212,12 @@ bool ArgumentList::is_null(const_iterator const& which) const
 { return null[which-begin()];
 }
 
-bool needs_quotes(Oid type)
+std::string const& ArgumentList::get_string(const_iterator const& which) const
+{
+	return params[which-begin()];
+}
+
+static bool needs_quotes(Query_types::Oid type)
 { switch (type)
   { case CHAROID:
     case DATEOID:
@@ -225,6 +237,7 @@ bool needs_quotes(Oid type)
   }
 }
 
+#if 0 // now part of backend
 std::string Query::standardize_parameters(std::string const& in)
 {
   std::string expanded;
@@ -244,11 +257,12 @@ std::string Query::standardize_parameters(std::string const& in)
   } while(p);
   return expanded;
 }
+#endif
 
 void Query::Execute_if_complete()
 {  if (params.complete() && !already_run())
    {
-#ifndef USE_PARAMETERS
+#if 0 //ndef USE_PARAMETERS
       std::string expanded;
       const char *p=query.c_str();
       const char *last=p;
@@ -276,7 +290,7 @@ void Query::Execute_if_complete()
       } while(p);
       query=expanded;
 #else // replace ? by $N
-      if (!params.empty()) query=standardize_parameters(query);
+      //if (!params.empty()) query=standardize_parameters(query);
 #endif
       Execute();
    }
@@ -291,7 +305,7 @@ Query &Query::add_argument(const std::string &s, Oid type)
 ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 { if (complete())
       Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
-#ifdef USE_PARAMETERS
+#if 1 //def USE_PARAMETERS
   params.push_back(std::string());
 #else
   params.push_back("NULL");
@@ -315,22 +329,24 @@ ArgumentList &ArgumentList::add_argument(const std::string &x, Oid type)
    return *this;
 }
 
+#if 1
 static bool transparent_char(unsigned char x)
 { return (true
-#ifndef MPC_SQLITE // escape these
+#if 1 //ndef MPC_SQLITE // escape these
           && ((' '<=x&&x<=126) || (128<=x))
           && x!='\\'
 #endif
-#ifndef USE_PARAMETERS
+#if 0 // ndef USE_PARAMETERS
           && x!='\''
 #endif
         );
 }
+#endif
 
 ArgumentList &ArgumentList::operator<<(const std::string &str)
 { // do we need to escape it?
   // do we need bytea?
-#if (defined(MPC_SQLITE) && defined(USE_PARAMETERS)) || (!defined(MPC_SQLITE) && defined(USE_PARAMETERS))
+#if 1 // (defined(MPC_SQLITE) && defined(USE_PARAMETERS)) || (!defined(MPC_SQLITE) && defined(USE_PARAMETERS))
   return add_argument(str,TEXTOID);
 #else
   std::string p;
@@ -347,32 +363,32 @@ ArgumentList &ArgumentList::operator<<(const std::string &str)
 #endif
 }
 template<>
-const Oid Query::NullIf_s<std::string>::postgres_type=TEXTOID;
+const Query_types::Oid Query::NullIf_s<std::string>::postgres_type=TEXTOID;
 template<>
-const Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
+const Query_types::Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
 
 ArgumentList &ArgumentList::operator<<(long i)
 { return add_argument(itos(i),INT4OID);
 }
-template<> const Oid Query::NullIf_s<long>::postgres_type=INT4OID;
-template<> const Oid Query::NullIf_s<int>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<long>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<int>::postgres_type=INT4OID;
 
 ArgumentList &ArgumentList::operator<<(unsigned long i)
 {  return add_argument(ulltos(i),INT4OID);
 }
-template<> const Oid Query::NullIf_s<unsigned long>::postgres_type=INT4OID;
-template<> const Oid Query::NullIf_s<unsigned int>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<unsigned long>::postgres_type=INT4OID;
+template<> const Query_types::Oid Query::NullIf_s<unsigned int>::postgres_type=INT4OID;
 
 ArgumentList &ArgumentList::operator<<(unsigned long long i)
 {  return add_argument(ulltos(i),INT8OID);
 }
-template<> const Oid Query::NullIf_s<unsigned long long>::postgres_type=INT8OID;
+template<> const Query_types::Oid Query::NullIf_s<unsigned long long>::postgres_type=INT8OID;
 
 ArgumentList &ArgumentList::operator<<(double i)
 {  return add_argument(dtos(i),FLOAT4OID);
 }
-template<> const Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
-template<> const Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
+template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
+template<> const Query_types::Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
 
 ArgumentList &ArgumentList::operator<<(bool i)
 {
@@ -382,7 +398,7 @@ ArgumentList &ArgumentList::operator<<(bool i)
   return add_argument(btos(i),BOOLOID);
 #endif
 }
-template<> const Oid Query::NullIf_s<bool>::postgres_type=BOOLOID;
+template<> const Query_types::Oid Query::NullIf_s<bool>::postgres_type=BOOLOID;
 
 ArgumentList &ArgumentList::operator<<(char i)
 {  char x[8];
@@ -391,7 +407,7 @@ ArgumentList &ArgumentList::operator<<(char i)
      x[1]=0;
    }
    else
-#ifdef MPC_SQLITE // there's no escaping here, hopefully we use parameters
+#if 0 // def MPC_SQLITE // there's no escaping here, hopefully we use parameters
      return add_argument(std::string(1,i),TEXTOID);
 #else
    { x[0]='\\';
@@ -403,7 +419,7 @@ ArgumentList &ArgumentList::operator<<(char i)
 #endif
    return add_argument(x,CHAROID);
 }
-template<> const Oid Query::NullIf_s<char>::postgres_type=CHAROID;
+template<> const Query_types::Oid Query::NullIf_s<char>::postgres_type=CHAROID;
 
 ArgumentList &ArgumentList::operator<<(const ArgumentList &list)
 {  for (const_iterator i=list.begin();i!=list.end();++i)
@@ -427,173 +443,185 @@ Query_Row &Query::FetchOne()
 {  ThrowOnBad(__FUNCTION__);
    if (portal_name.empty()) Check100();
    Fetch(embedded_iterator);
-   Query_Row dummy;
-   Fetch(dummy);
-   if (good()) Query_Row::mythrow(SQLerror(__FUNCTION__,-2,"more than one result"));
+   if (backend->Type()!=ManuProC::Connection::C_SQLite) // doesn't work yet
+   {
+	   Query_Row dummy;
+	   Fetch(dummy);
+	   if (good()) Query_Row::mythrow(SQLerror(__FUNCTION__,-2,"more than one result"));
+   }
    return embedded_iterator;
 }
 
+bool Query_Row::good() const
+{
+	return impl && naechstesFeld<impl->columns();
+}
+
 void Query::ThrowOnBad(const char *where) const
-{  if (!good())
+{  if (!implementation_specific || !backend)
    {  SQLerror::test(__FUNCTION__);
       Query_Row::mythrow(SQLerror(__FUNCTION__,-1,"unspecific bad result"));
    }
 }
 
+std::string Query_Row::getFieldName() const
+{
+	if (!impl)
+		return "?";
+	return impl->getFieldName(naechstesFeld);
+}
+
 // ====================== SQLite =================================
 
-#ifdef MPC_SQLITE
-Query_Row::Query_Row(const char *const *res, unsigned _nfields, int line)
-	: naechstesFeld(), zeile(line), is_fake(), fake_null(),
-	  result(res), nfields(_nfields)
+#if 1 //def MPC_SQLITE
+Query_Row::Query_Row() //const char *const *res, unsigned _nfields, int line)
+	: naechstesFeld()/*, zeile() / *, is_fake(), fake_null(),
+	  result(res), nfields(_nfields)*/, impl()
 {}
 
 Query_Row &Query_Row::operator>>(std::string &str)
-{  if (is_fake)
-   { if (naechstesFeld || zeile)
-	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end on fake"));
-     if (fake_null)
-	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator on fake"));
-     str=fake_result;
-     if (Query::debugging.on)
-        std::cerr << "FIS fake result="<<str << '\n';
-     naechstesFeld++;
-     return *this;
-   }
-   if (!result)
-	mythrow(SQLerror(__FUNCTION__,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from (left?)"));
-   if (naechstesFeld>=nfields)
-	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
-   if (!result[naechstesFeld])
-	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator"));
-   str=result[naechstesFeld];
-   if (Query::debugging.on)
-      std::cerr << "FIS result["<<zeile<<','<<naechstesFeld<<"]="<<str << '\n';
-   naechstesFeld++;
-   return *this;
+{
+	str= impl->text(naechstesFeld);
+	++naechstesFeld;
+	return *this;
 }
 
 void Query_Row::ThrowIfNotEmpty(const char *where)
-{  if (!result)
-	mythrow(SQLerror(where,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from"));
-   if (naechstesFeld<nfields)
-	mythrow(SQLerror(where,ECPG_TOO_FEW_ARGUMENTS,"too few arguments"));
-}
+{}
 
 int Query_Row::getIndicator() const
 {
-   if (naechstesFeld>=nfields)
-	mythrow(SQLerror("Query_Row::getIndicator",ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
-   return -(result[naechstesFeld]==0);
+	return impl->indicator(naechstesFeld);
 }
 
-/// QUERY
-
-// note cursor is the name for both the cursor and the descriptor
 void Query::Execute() throw(SQLerror)
-{  char **local_result=0;
-   char *msgbuf=0;
-   int rows,cols;
-   if (Query::debugging.on) std::cerr << "QUERY: " << query << '\n';
-   error=sqlite3_get_table(ManuProC::db_connection, query.c_str(),
-   		&local_result, &rows, &cols, &msgbuf);
-   SQLerror::last_code=error;
-   if (Query::debugging.on)
-      std::cerr << "RESULT: " << error << ':' << (msgbuf?msgbuf:"")
-      		<< ", " << rows << 'x' << cols << '\n';
-   if(error!=SQLITE_OK)
-   {  std::string err=msgbuf;
-      sqlite3_free(msgbuf);
-      throw SQLerror(query,error,err);
-   }
-   lines=rows;
-   nfields=cols;
-   if (msgbuf) sqlite3_free(msgbuf);
-   if (!lines && STRNCASECMP(query.c_str(),"select",6))
-     lines=sqlite3_changes(ManuProC::db_connection);
-   if (!lines) SQLerror::last_code=error=100;
-   result=local_result;
-   eof=!lines;
+{
+	// pass all parameters
+	if (params.empty() && portal_name.empty())
+	{
+		implementation_specific= backend->execute2(query.c_str());
+		error= backend->LastError();
+		lines= implementation_specific->LinesAffected();
+	}
+	else
+	{
+		if (portal_name.empty()) implementation_specific= backend->execute_param(query.c_str(), params.size());
+		else implementation_specific= backend->open_cursor(portal_name.c_str(), query.c_str(), params.size());
+		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
+		{
+			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
+			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
+		}
+		error= backend->LastError();
+		lines= implementation_specific->LinesAffected();
+	}
+}
+
+void Query::Fetch(Query_Row &is)
+{
+	is.impl= implementation_specific->Fetch();
+	is.naechstesFeld=0;
+}
+
+Query::Query(const std::string &command)
+: /*eof(true), line(), result(),*/ query(command), num_params(),
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
+{
+	char const *p=query.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	params.setNeededParams(num_params);
+	Execute_if_complete();
+
+//	implementation_specific= backend->execute2(command.c_str());
+}
+
+Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
+: query(command), num_params(),
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(conn), implementation_specific()
+{
+	implementation_specific= backend->execute2(command.c_str());
+}
+
+Query::~Query()
+{
+	if (implementation_specific)
+		delete implementation_specific;
+}
+
+Query::Query(PreparedQuery &pq)
+: query(pq.command), num_params(pq.no_arguments), error(ECPG_TOO_FEW_ARGUMENTS),
+  	  lines(), backend(pq.connection), implementation_specific(pq.prep->execute())
+{
+}
+
+// this will work for now, but we really should implement cursors later on:
+//   declare portal cursor for ...
+//   fetch 1 from portal
+//   close portal
+Query::Query(std::string const& portal, std::string const& command)
+: query(command), num_params(), portal_name(portal),
+		error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
+{
+	char const *p=query.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	params.setNeededParams(num_params);
+	Execute_if_complete();
+//	Query_Row::mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"not implemented"));
+}
+
+int Query::Code()
+{
+	return ManuProC::get_database()->LastError();
+}
+
+bool Query::already_run() const
+{
+	return implementation_specific!=0;
+}
+
+bool Query::good() const
+{
+	return !backend->LastError();
 }
 
 int Query::last_insert_rowid() const
 {
-  return sqlite3_last_insert_rowid(ManuProC::db_connection);
-}
-
-void Query::Fetch(Query_Row &is)
-{  if (!params.complete())
-      Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
-
-   if (!eof)
-   {  if (line<lines)
-      {  is=Query_Row(result+((line+1)*nfields),nfields,line);
-         ++line;
-         return;
-      }
-      eof=true;
-   }
-  is=Query_Row();
-}
-
-Query::Query(const std::string &command)
-: eof(true), line(), result(), query(command), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
-{  const char *p=query.c_str();
-   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-   params.setNeededParams(num_params);
-   Execute_if_complete();
-}
-
-Query::Query(std::string const& portal, std::string const& command)
-: eof(true), line(), result(), query(command), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
-{  const char *p=query.c_str();
-   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-   params.setNeededParams(num_params);
-   Execute_if_complete();
-}
-
-Query::Query(PreparedQuery &pq)
-: eof(true), line(), result(), query(pq.Command()), num_params(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines()
-{  const char *p=query.c_str();
-   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-   params.setNeededParams(num_params);
-   Execute_if_complete();
-}
-
-Query::~Query()
-{  if (!params.complete())
-   {  std::cerr << "The query " << query << " still needed "
-   	<< params.HowManyNeededParams()
-   	<< " parameters on destruction and got never executed!\n";
-      SQLerror::last_code=ECPG_TOO_FEW_ARGUMENTS;
-   }
-   if (result)
-   {  sqlite3_free_table((char**)result);
-      result=0;
-   }
-}
-
-int Query::Code()
-{  return SQLerror::last_code;
-}
-
-void Query::Execute(std::string const& command2) throw(SQLerror)
-{
-  Query q(command2);
-}
-
-bool Query_Row::good() const
-{ if (is_fake) return !naechstesFeld && !zeile;
-  return result && naechstesFeld<nfields;
+	return implementation_specific->last_insert_rowid();
 }
 
 #endif
 
-Query_Row::Query_Row(Fake const& val)
-  : naechstesFeld(), zeile(), is_fake(true), fake_result(val.what),
-    fake_null(val.is_null), result()
+namespace {
+struct FakeDatabaseRow : ManuProC::Query_result_row
 {
+	Query_Row::Fake val;
+
+   virtual unsigned columns() const throw() { return 1; }
+   virtual int indicator(unsigned col) const { return val.is_null ? -1 : 0; }
+   virtual char const* text(unsigned col) const { return val.what.c_str(); }
+   virtual char const* getFieldName(unsigned col) const { return "fake"; }
+	FakeDatabaseRow(Query_Row::Fake const& v) : val(v)
+	{}
+};
+}
+
+Query_Row::Query_Row(Fake const& val)
+  : naechstesFeld(), impl(new FakeDatabaseRow(val))
+{
+}
+
+PreparedQuery::PreparedQuery(std::string const& cmd)
+  : prep(), command(cmd), connection(ManuProC::get_database())
+{
+	ArgumentList al;
+	unsigned num_params=0;
+	char const* p= command.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	// TODO: how to specify the type of parameters?
+	prep= connection->prepare(0, cmd.c_str(), num_params,0);
+}
+
+PreparedQuery::~PreparedQuery()
+{
+	if (prep) delete prep;
 }

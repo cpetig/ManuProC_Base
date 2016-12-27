@@ -27,11 +27,14 @@
 #endif
 
 #include <ManuProCConfig.h>
-#ifndef MPC_SQLITE
-# include <Misc/SQLerror_postgres.h>
- typedef SQLerror_postgres SQLerror;
-#else
-# include <Misc/SQLerror_sqlite.h>
- typedef SQLerror_sqlite SQLerror;
-#endif
+
+#include <Misc/SQLerror_base.h>
+ typedef SQLerror_base SQLerror;
+//#ifndef MPC_SQLITE
+//# include <Misc/SQLerror_postgres.h>
+// typedef SQLerror_postgres SQLerror;
+//#else
+//# include <Misc/SQLerror_sqlite.h>
+// typedef SQLerror_sqlite SQLerror;
+//#endif
 #endif

@@ -26,24 +26,20 @@
 #include <Misc/Transaction.h>
 
 int main()
-{  ManuProC::dbconnect(ManuProC::Connection("","template1"));
+{  Handle<ManuProC::Connection_base> conn= ManuProC::dbconnect(ManuProC::Connection("","template1"));
 
    std::cout << "simple use " << Query("select 1").FetchOne<int>() << '\n';
 
-// now test it   
-  {Query query("select "
-#ifdef MPC_SQLITE
-                  "'2008-04-24 23:13:04.577404+02','2008-04-23',"
-#else
-                  "now(),date('yesterday'),"
-#endif
-                  "null,null,200,20.5,'t'");
+// now test it
+  {Query query(conn->Type() == ManuProC::Connection::C_SQLite
+		  ? "select '2008-04-24 23:13:04.577404+02','2008-04-23',null,null,200,20.5,'t'"
+		  : "select now(),date('yesterday'),null,null,200,20.5,'t'");
    std::string s,s2,s3,s4;
    bool b;
    int i;
    float f;
    int ind3=0;
-   
+
    query >> s >> s2 >> Query::Row::WithIndicator(s3,ind3)
       >> Query::Row::MapNull(s4,"<NULL>")
       >> i >> f >> b;
@@ -63,29 +59,29 @@ int main()
    std::cout << query2.FetchOne<int>() << '\n';
    Query query3("select 2;");
    std::cout << query3.FetchOne<int>() << '\n';
-}   
+}
   {int a,b,c,d; std::string x,y,z; bool e,f;
    std::string in="\"'\\";
    Query ("select ?,?,?,'?',?, ?,?, ?,?")
-   	<< 1 << Query::null<int>() << "test" << in 
+   	<< 1 << Query::null<int>() << "test" << in
    		<< Query::NullIf(1,2) << Query::NullIf(2,2) << true << false
-   	>> a >> Query::Row::MapNull(b,-1) >> x >> y >> z 
+   	>> a >> Query::Row::MapNull(b,-1) >> x >> y >> z
    		>> c >> Query::Row::MapNull(d,-1) >> e >> f;
-   std::cout << a << ' ' << b << ' ' << x << ' ' << y << ' ' << z 
+   std::cout << a << ' ' << b << ' ' << x << ' ' << y << ' ' << z
    		<< ' ' << c << ' ' << d << ' ' << e << ' ' << f << '\n';
   }
    Query ("analyze pg_class");
    // should never select any lines
    Query ("update pg_class set relname=relname where relname='' and oid=0");
    SQLerror::print("should be 100");
-   
+
 //   std::cout << (Query("select ? from pg_class limit 1")
 //   	.add_argument("relname",TEXTOID).FetchOne<std::string>()) << '\n';
    std::cout << "this should give a warning:\n";
    Query("select ?");
    SQLerror::print("should be -202");
- 
-   try {  
+
+   try {
    Query ("update pg_class set relname=relname where relname='' and oid=?")
    	<< 0 >> Query::check100();
    std::cerr << "check100 did not work\n";
@@ -93,7 +89,7 @@ int main()
    } catch (SQLerror &e)
    {  assert(e.Code()==100);
    }
-   
+
    try {
    Query ("close inexistant");
    std::cerr << "CLOSE does never throw\n";
@@ -141,7 +137,7 @@ int main()
    q << "pg_%";
    std::cout << q.FetchOne<std::string>() << '\n';
   }
-  
+
   {ArgumentList arg;
    arg << 1 << Query::null<int>();
    Query q("select ?,?");
@@ -151,7 +147,7 @@ int main()
    std::cout << res.FetchMap<std::string>("<NULL>") << '\n';
    res >> Query::Row::check_eol();
   }
-   
+
    ManuProC::dbdisconnect();
    return 0;
 }
