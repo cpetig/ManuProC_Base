@@ -56,8 +56,11 @@ public:
 	   std::swap(name,b.name);
    }
 #endif
-protected:
-   friend class Query_Row;
+//protected:
+//   friend class Query_Row;
+//   friend class Global_Settings;
+// does not build without c++11 as neede for old mingw. SQLerror_base used by static methods in MabuProC namespace which cannot be friend 
+
    // restrict
    SQLerror_base(SQLerror_base const&);
 

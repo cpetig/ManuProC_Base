@@ -5,11 +5,13 @@ WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ -lintl -ladvapi32 -lsecur32
 #libManuProC_Base_res.o
 DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
+WIN_CXXFLAGS=
 PLATFORM=w32
 else
 WIN_LDFLAGS=
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=
+WIN_CXXFLAGS=-std=gnu++11
 PLATFORM=linux
 endif
 
@@ -29,7 +31,7 @@ libManuProC_Base_res.o: libManuProC_Base.rc
 #libManuProC_Base_res.o: libManuProC_Base.rc
 #	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
-AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION -std=gnu++11
+AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION $(WIN_CXXFLAGS)
 
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
