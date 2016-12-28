@@ -497,16 +497,23 @@ int Query_Row::getIndicator() const
 void Query::Execute() throw(SQLerror)
 {
 	// pass all parameters
+	if(!backend)
+          Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));	  
+	  
 	if (params.empty() && portal_name.empty())
 	{
 		implementation_specific= backend->execute2(query.c_str());
 		error= backend->LastError();
+		if(!implementation_specific)
+                  Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));
 		lines= implementation_specific->LinesAffected();
 	}
 	else
 	{
 		if (portal_name.empty()) implementation_specific= backend->execute_param(query.c_str(), params.size());
 		else implementation_specific= backend->open_cursor(portal_name.c_str(), query.c_str(), params.size());
+		if(!implementation_specific)
+                  Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));		
 		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
 		{
 			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));

@@ -32,7 +32,7 @@
 
 ManuProC::Connection::Connection(const std::string &h, const std::string &d,
 		const std::string &u,const std::string &n, const int p)
-        	: host(h), dbase(d), user(u), name(n), port(p), type(C_SQLite)
+        	: host(h), dbase(d), user(u), name(n), port(p), type(C_PostgreSQL)
 {
    std::string host_=DEFAULT_DBHOST;
    std::string db_=DEFAULT_DB;
@@ -117,6 +117,7 @@ void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
 {
 	Global_Settings::database_connected(false);
 	Handle<Connection_base> h=get_database(name);
+	if(!h) return;
 	unregister_db(h);
 	h->disconnect();
 }
