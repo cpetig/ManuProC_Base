@@ -65,28 +65,39 @@ void Global_Settings::database_save(int userid,const std::string& program,
 {  // saves one query in comparison to Global_Settings().set_Wert
    //  ... the select ...
    Query *qp = NULL;
-   if (userid==global_id)
-   { qp= new Query("update global_settings set wert=? "
- 	"where userid is null and program=? and name=?");
-     (*qp) << wert << program << name;
-   }
-   else
+
+   try
    {
-     qp = new Query("update global_settings set wert=? "
-#ifdef MPC_SQLITE
- 	"where userid=? and program=? and name=?"
-#else
-	"where (userid,program,name)=(?,?,?)"
-#endif
-	);
-     (*qp) << wert << userid << program << name;
-   }
-  if (qp->Result()==100)
-  {  Query("insert into global_settings "
-	"(userid,program,name,wert) values (?,?,?,?)")
-	<< Query::NullIf(userid,global_id) << program << name << wert;
-     SQLerror::test(__FILELINE__);
+     if (userid==global_id)
+     { 
+      qp= new Query("update global_settings set wert=? "
+   	                "where userid is null and program=? and name=?");
+       (*qp) << wert << program << name;
+     }
+     else
+     {
+       qp = new Query("update global_settings set wert=? "
+  #ifdef MPC_SQLITE
+   	"where userid=? and program=? and name=?"
+  #else
+  	"where (userid,program,name)=(?,?,?)"
+  #endif
+  	   );
+       (*qp) << wert << userid << program << name;
+     }
   }
+  catch(SQLerror &e)
+  {
+    if (e.Code()==100)
+    {  
+      Query("insert into global_settings "
+  	       "(userid,program,name,wert) values (?,?,?,?)")
+  	       << Query::NullIf(userid,global_id) << program << name << wert;
+      SQLerror::test(__FILELINE__);
+    }
+    e.print(__FILELINE__);
+  }
+  
   delete qp;
 }
 

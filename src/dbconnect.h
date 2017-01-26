@@ -96,6 +96,9 @@ public:
     void User(const std::string &u) { user=u; }
     void Name(const std::string &n) { name=n; }
     void Port(const int p) { port=p; }
+
+    std::string get_current_dbname();
+    //std::string get_dbname(Connection_base&);
    };
 
    typedef unsigned long Oid;
@@ -176,8 +179,6 @@ public:
    void setDTstyle(char const*style="ISO") throw(SQLerror);
    Handle<Connection_base> dbdefault(const std::string &name=std::string()) throw(SQLerror);
    void dbdefault(Connection_base&) throw(SQLerror);
-   std::string get_dbname();
-   std::string get_dbname(Connection_base&);
    Handle<Connection_base> get_database(std::string const& name=std::string()) throw(SQLerror);
    void register_db(Handle<Connection_base> const& c);
    void unregister_db(Handle<Connection_base> const& c);

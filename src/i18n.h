@@ -6,7 +6,7 @@
 #	pragma once
 #	include <ManuProCConfig.h>
 #else
-#	include "config.h"
+#	include <ManuProCConfig.h>
 #endif
 
 #ifdef ENABLE_NLS

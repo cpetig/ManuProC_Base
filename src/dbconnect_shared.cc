@@ -56,6 +56,11 @@ ManuProC::Connection::Connection(const std::string &h, const std::string &d,
    if(!opt_port.empty()) port=atoi(opt_port.c_str());
 }
 
+std::string ManuProC::Connection::get_current_dbname()
+{ 
+	return Name();
+}
+
 Handle<ManuProC::Connection_base> ManuProC::dbconnect_nt(const Connection &c) throw()
 {  try { return dbconnect(c); }
    catch (SQLerror &e)
@@ -173,3 +178,5 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect_ECPG(ManuProC::Connection 
 {
 	throw SQLerror("dbconnect_ECPG", 100, "not implemented");
 }
+
+
