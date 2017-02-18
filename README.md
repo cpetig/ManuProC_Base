@@ -1,1 +1,28 @@
 # cpdbi
+
+These are those parts of ManuProC's (now called cpdbi) main c++ library which are of 
+interest to a wider user group.
+
+This library contains:
+
+- guaranteed zero terminating equivalents of snprintf and strncpy
+	(please, NEVER use sprintf and strcpy! -> Buffer overflow)
+
+- integer to string (itos) functions
+
+- Date/Time conversion functions
+
+- SQL wrapper classes (database interface for PostgreSQL and SQLite)
+
+- Handle classes
+
+- Caching classes
+
+and perhaps more.
+
+I apologize for not documenting them up to now and (of course) these 
+classes have a long history so they sometimes start to smell ...
+
+Use them, improve them, share them.
+    Christof Petig
+
