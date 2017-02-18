@@ -1,0 +1,524 @@
+// $Id: Query.pgcc,v 1.23 2006/10/31 16:07:16 christof Exp $
+/*  libcommonc++: ManuProC's main OO library
+ *  Copyright (C) 2001-2005 Adolf Petig GmbH & Co. KG
+ *  		written by Christof Petig
+ *  Copyright (C) 2006 Christof Petig
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+// NOTE that this code might be duplicated for SQLite
+
+#include <ManuProCConfig.h>
+#ifndef MPC_SQLITE
+#include <Misc/Query.h>
+#include <Misc/SQLerror.h>
+#include <Misc/itos.h>
+#ifdef USE_PARAMETERS
+#include <libpq-fe.h>
+#include <Misc/pg_type.h>
+#endif
+#include <cassert>
+#include <cstdlib>
+#include <time.h>
+
+//#ifdef HAVE_LIBECPG6_UP
+//#define ECPGget_connection ecpg_get_connection
+//#endif
+
+exec sql include sqlca;
+
+#ifdef OLD_ECPG
+#define ECPGdo300
+#else
+#define ECPGdo300 0,1,
+#endif
+
+#define DEBUG_FIS(x) std::cerr << x << '\n'
+// ,y...) x,##y
+
+#ifdef USE_PARAMETERS
+#define ECPG_SQLSTATE_NO_DATA				"02000"
+#define ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_PARAMETERS	"07001"
+#define ECPG_SQLSTATE_USING_CLAUSE_DOES_NOT_MATCH_TARGETS		"07002"
+#define ECPG_SQLSTATE_RESTRICTED_DATA_TYPE_ATTRIBUTE_VIOLATION	"07006"
+#define ECPG_SQLSTATE_INVALID_DESCRIPTOR_INDEX		"07009"
+#define ECPG_SQLSTATE_SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION	"08001"
+#define ECPG_SQLSTATE_CONNECTION_DOES_NOT_EXIST		"08003"
+#define ECPG_SQLSTATE_TRANSACTION_RESOLUTION_UNKNOWN	"08007"
+#define ECPG_SQLSTATE_CARDINALITY_VIOLATION "21000"
+#define ECPG_SQLSTATE_NULL_VALUE_NO_INDICATOR_PARAMETER "22002"
+#define ECPG_SQLSTATE_ACTIVE_SQL_TRANSACTION		"25001"
+#define ECPG_SQLSTATE_NO_ACTIVE_SQL_TRANSACTION		"25P01"
+#define ECPG_SQLSTATE_INVALID_SQL_STATEMENT_NAME	"26000"
+#define ECPG_SQLSTATE_INVALID_SQL_DESCRIPTOR_NAME	"33000"
+#define ECPG_SQLSTATE_INVALID_CURSOR_NAME	"34000"
+#define ECPG_SQLSTATE_SYNTAX_ERROR			"42601"
+#define ECPG_SQLSTATE_DATATYPE_MISMATCH		"42804"
+#define ECPG_SQLSTATE_DUPLICATE_CURSOR		"42P03"
+
+/* implementation-defined internal errors of ecpg */
+#define ECPG_SQLSTATE_ECPG_INTERNAL_ERROR	"YE000"
+#define ECPG_SQLSTATE_ECPG_OUT_OF_MEMORY	"YE001"
+#endif
+
+//#ifndef USE_PARAMETERS
+// this is still used somewhere within Komponenten ...
+#ifndef HAVE_LIBECPG6_UP
+extern "C" {
+extern PGresult **ECPGdescriptor_lvalue(int line, const char *descriptor);
+}
+
+Query_Row::Query_Row(const std::string &descr, int line)
+	: naechstesFeld(), zeile(line), is_fake(), fake_null(), result()
+{  PGresult **r=ECPGdescriptor_lvalue(__LINE__,descr.c_str());
+   if (r) result=*r;
+}
+#endif
+
+//#endif
+
+Query_Row &Query_Row::operator>>(std::string &str)
+{  if (is_fake)
+   { if (naechstesFeld || zeile)
+	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end on fake"));
+     if (fake_null)
+	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator on fake"));
+     str=fake_result;
+     if (Query::debugging.on) 
+        std::cerr << "FIS fake result="<<str << '\n';
+     naechstesFeld++;
+     return *this;
+   }
+   if (!result)
+	mythrow(SQLerror(__FUNCTION__,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from (left?)"));
+   if (naechstesFeld>=PQnfields(result)) 
+	mythrow(SQLerror(__FUNCTION__,ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
+   if (PQgetisnull(result, zeile, naechstesFeld))
+	mythrow(SQLerror(__FUNCTION__,ECPG_MISSING_INDICATOR,"missing indicator"));
+   const char *pval = PQgetvalue(result, zeile, naechstesFeld);
+   if (pval) str=pval;
+   else str=std::string();
+   if (Query::debugging.on) 
+      std::cerr << "FIS result["<<zeile<<','<<naechstesFeld<<"]="<<str << '\n';
+   naechstesFeld++;
+   return *this;
+}
+
+void Query_Row::ThrowIfNotEmpty(const char *where)
+{  if (!result)
+	mythrow(SQLerror(where,ECPG_UNKNOWN_DESCRIPTOR,"no result to fetch from"));
+   if (naechstesFeld<PQnfields(result))
+	mythrow(SQLerror(where,ECPG_TOO_FEW_ARGUMENTS,"too few arguments"));
+}
+
+int Query_Row::getIndicator() const
+{  if (is_fake)
+   { if (naechstesFeld || zeile)
+	mythrow(SQLerror("Query_Row::getIndicator",ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end on fake"));
+     return fake_null;
+   }
+   if (naechstesFeld>=PQnfields(result)) 
+	mythrow(SQLerror("Query_Row::getIndicator",ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
+   return -PQgetisnull(result, zeile, naechstesFeld);
+}
+
+bool Query_Row::good() const
+{ if (is_fake) return !naechstesFeld && !zeile;
+  return result && naechstesFeld<PQnfields(result);
+}
+
+std::string Query_Row::getFieldName() const
+{  if (naechstesFeld>=PQnfields(result)) 
+	mythrow(SQLerror("Query_Row::getFieldName",ECPG_INVALID_DESCRIPTOR_INDEX,"reading beyond line end"));
+   return PQfname(result,naechstesFeld);
+}
+
+/// QUERY
+
+#ifdef USE_PARAMETERS
+#ifndef HAVE_LIBECPG6_UP
+struct ecpg_connection // stolen from ecpg internals
+{   char	   *name;
+    PGconn	   *connection;
+    // ...
+};
+
+extern "C" ecpg_connection *ECPGget_connection(const char *);
+#else
+extern "C" PGconn* ECPGget_PGconn(const char *connection_name);
+#endif
+
+void Query::raise(std::string const& state, int code, std::string const& message, std::string const& detail)
+{ strncpy(sqlca.sqlstate,state.c_str(),5);
+  sqlca.sqlcode=code;
+  error=code;
+  strncpy(sqlca.sqlerrm.sqlerrmc, message.c_str(), sizeof(sqlca.sqlerrm.sqlerrmc));
+  if (debugging.on || code!=ECPG_NOT_FOUND)
+  { std::cerr << "raising " << state << " (" << code << ") " << message << "\n" << detail;
+    if (!detail.empty()) std::cerr << "\n";
+  }
+  if (code!=ECPG_NOT_FOUND)
+    Row::mythrow(SQLerror(query,detail));
+}
+
+void Query::raise(char const* state, int code, char const* message, char const* detail)
+{ if (!state) state=ECPG_SQLSTATE_ECPG_INTERNAL_ERROR;
+  if (!message) message="internal error";
+  if (!detail) detail="";
+  raise(std::string(state),code,message,detail);
+}
+#endif
+
+// note cursor is the name for both the cursor and the descriptor
+void Query::Execute() throw(SQLerror)
+{
+   time_t start=-1;
+   if (debugging.time_queries) start=time(0);
+   if (debugging.count_queries)
+   { if (!prepare) debugging.counts[query]++;
+     else if (!prepare->ready()) debugging.counts[prepare->Command()]++;
+     else debugging.counts["("+prepare->Command()+")"]++;
+   }
+#ifndef USE_PARAMETERS
+   exec sql begin declare section;
+   char *COMMAND=const_cast<char*>(query.c_str());
+   exec sql end declare section;
+
+   eof=false;
+//   exec sql allocate descriptor X;
+sqlca.sqlcode=0;
+   ECPGallocate_desc(__LINE__, descriptor.c_str());
+   if (sqlca.sqlcode) { DEBUG_FIS(SQLerror("allocate descriptor")); eof=true; }
+//   exec sql prepare com from :COMMAND;
+//   exec sql execute com into descriptor X;
+#ifdef MPC_ECPG_PREPARE
+   ECPGprepare(__LINE__, "com" , COMMAND);
+   ECPGdo(__LINE__, 0, 1, NULL, "?",
+	ECPGt_char_variable,ECPGprepared_statement("com"),1L,1L,sizeof(char),
+	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EOIT,
+	ECPGt_descriptor, descriptor.c_str(), 0L, 0L, 0L,
+	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
+#else
+   ECPGdo(__LINE__, ECPGdo300 NULL, COMMAND, 
+   	ECPGt_EOIT,
+   	ECPGt_descriptor, descriptor.c_str(), 0L, 0L, 0L,
+   	ECPGt_NO_INDICATOR, NULL , 0L, 0L, 0L, ECPGt_EORT);
+#endif
+   error=sqlca.sqlcode;
+   lines=sqlca.sqlerrd[2];
+   
+   if (sqlca.sqlcode && sqlca.sqlcode!=100)
+   {  eof=true;
+#ifdef OLD_ECPG   
+      Query_Row::mythrow(SQLerror(query)); 
+#else
+      PGresult *lresult=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
+      std::string detail;
+      if (lresult && PQresultErrorField(lresult,PG_DIAG_MESSAGE_DETAIL)) 
+        detail=PQresultErrorField(lresult,PG_DIAG_MESSAGE_DETAIL);
+//      Message(lresult);
+      Query_Row::mythrow(SQLerror(query,detail)); 
+#endif
+   }
+   else if (sqlca.sqlcode==100 && Query::debugging.on)
+   {  DEBUG_FIS("no lines returned/changed");
+   }
+   result=*(ECPGdescriptor_lvalue(__LINE__,descriptor.c_str()));
+#else // query parameters (using libpq)
+#ifndef HAVE_LIBECPG6_UP
+  PGconn *conn=ECPGget_connection(NULL)->connection;
+#else 
+  PGconn *conn=ECPGget_PGconn(NULL);
+#endif
+  eof=false;
+  sqlca.sqlcode=0;
+  int numparams=params.size();
+  int binary[params.size()];
+  Oid types[params.size()];
+  char const * values[params.size()];
+  int length[params.size()];
+//  memset(binary,0,sizeof(binary));
+  if (Query::debugging.on)
+  { if (!query.empty()) std::cerr << "Query " << query << "\n";
+    if (!params.empty()) std::cerr << "with params: ";
+  }
+  unsigned idx=0;
+  for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i,++idx)
+  { if (params.is_null(i))
+    { values[idx]=0;
+      length[idx]=0;
+      types[idx]=params.type_of(i);
+      binary[idx]=params.is_binary(i);
+      if (Query::debugging.on) std::cerr << "<NULL>,";
+    }
+    else if (params.is_binary(i))
+    { values[idx]=i->data();
+      length[idx]=i->size();
+      types[idx]=params.type_of(i);
+      binary[idx]=true;
+      if (Query::debugging.on) std::cerr << "<bin>,";
+    }
+    else
+    { values[idx]=i->c_str();
+      length[idx]=0;
+      types[idx]=params.type_of(i);
+      binary[idx]=false;
+      if (Query::debugging.on) std::cerr << *i << ",";
+    }
+  }
+  if (Query::debugging.on && !params.empty()) std::cerr << "\n";
+  // oder PQsendPrepare PQsendQueryPrepared PQgetResult
+#ifdef HAVE_PQPREPARE  
+  if (prepare)
+  { if (!prepare->ready() || conn!=prepare->connection)
+    {reprepare:
+      static int serial;
+      std::string prepname="PrepQ"+itos(serial++);
+      prepare->types=params.getTypes();
+      std::string cmd=standardize_parameters(prepare->Command());
+      if (Query::debugging.on) std::cerr << "preparing " << prepname << " as "
+          << cmd << '\n';
+      result=PQprepare(conn,prepname.c_str(),cmd.c_str(),numparams,types);
+      if (!result) raise(ECPG_SQLSTATE_ECPG_INTERNAL_ERROR,ECPG_PGSQL,PQerrorMessage(conn));
+      if (PQresultStatus(result)!=PGRES_COMMAND_OK)
+        raise(PQresultErrorField(result, PG_DIAG_SQLSTATE), ECPG_PGSQL, 
+          PQresultErrorField(result, PG_DIAG_MESSAGE_PRIMARY),
+          PQresultErrorField(result,PG_DIAG_MESSAGE_DETAIL));
+      // since we overwrite it below ...
+      PQclear(result);
+      result=0;
+      prepare->name=prepname;
+      prepare->connection=conn;
+    }
+    else if (prepare->types!=params.getTypes())
+    { raise(ECPG_SQLSTATE_ECPG_INTERNAL_ERROR,ECPG_PGSQL,
+                  "prepare/bind type mismatch",prepare->Command());
+    }
+    if (Query::debugging.on) std::cerr << "binding " << prepare->name << '\n';
+    result=PQexecPrepared(conn,prepare->name.c_str(), numparams,values,length,binary,0);
+    if (result && PQresultStatus(result)==PGRES_FATAL_ERROR 
+    		&& std::string(PQresultErrorField(result, PG_DIAG_SQLSTATE))=="26000")
+    { // prepared query does not exist
+      goto reprepare;
+    }
+  }
+  else 
+#endif  
+    result=PQexecParams(conn,query.c_str(),numparams,types,values,length,binary,0);
+  if (!result) raise(ECPG_SQLSTATE_ECPG_INTERNAL_ERROR,ECPG_PGSQL,PQerrorMessage(conn));
+  if (Query::debugging.on) std::cerr << "result "<< PQresultStatus(result) << " " << PQcmdStatus(result) << "\n";
+  // this resembles the code in ecpglib/execute.c
+  switch (PQresultStatus(result))
+  { case PGRES_TUPLES_OK:
+      error=0;
+      lines=PQntuples(result);
+      eof=false; // !lines; // ??? oder immer false?
+      if (!lines) 
+        raise(ECPG_SQLSTATE_NO_DATA, ECPG_NOT_FOUND, "no lines selected");
+      break;
+    case PGRES_EMPTY_QUERY:
+      raise(ECPG_SQLSTATE_ECPG_INTERNAL_ERROR,ECPG_EMPTY,"empty query");
+    case PGRES_COMMAND_OK:
+      sqlca.sqlerrd[1] = PQoidValue(result);
+      lines = sqlca.sqlerrd[2] = atol(PQcmdTuples(result));
+      if (!lines &&
+		(!strncmp(PQcmdStatus(result), "UPDATE", 6)
+		|| !strncmp(PQcmdStatus(result), "INSERT", 6)
+		|| !strncmp(PQcmdStatus(result), "DELETE", 6)))
+	raise(ECPG_SQLSTATE_NO_DATA, ECPG_NOT_FOUND, "no lines affected");
+      if (!strncmp(PQcmdStatus(result), "DECLARE CURSOR", 14))
+        eof=false;
+      else
+        eof=true;
+      break;
+    case PGRES_COPY_OUT:
+    case PGRES_COPY_IN:
+      PQendcopy(conn);
+      eof=true;
+      break;
+    case PGRES_NONFATAL_ERROR:
+    case PGRES_FATAL_ERROR:
+    case PGRES_BAD_RESPONSE:
+    default:
+      raise(PQresultErrorField(result, PG_DIAG_SQLSTATE), ECPG_PGSQL, 
+          PQresultErrorField(result, PG_DIAG_MESSAGE_PRIMARY),
+          PQresultErrorField(result,PG_DIAG_MESSAGE_DETAIL));
+      break;
+  }
+  PGnotify *notify = PQnotifies(conn);
+  if (notify)
+  { PQfreemem(notify);
+  }
+#endif
+  if (debugging.time_queries && (time(0)-start)>4)
+  { std::cerr << (time(0)-start) << " secs: " << query << '\n';
+  }
+}
+
+static std::string descriptor_name(Query *t)
+{
+#ifndef USE_PARAMETERS 
+  static unsigned serial;
+  return std::string("Query")+itos(serial++);
+#else
+  return std::string();
+#endif  
+}
+
+// note cursor is the name for both the cursor and the descriptor
+Query::Query(const std::string &command)
+: descriptor(descriptor_name(this)), 
+  eof(true), line(), result(), query(command), num_params(), 
+  error(ECPG_TOO_FEW_ARGUMENTS), lines(), prepare()
+{  const char *p=query.c_str();
+   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+   params.setNeededParams(num_params);
+   try
+   { Execute_if_complete();
+   } catch (...)
+   { free();
+     throw;
+   }
+}
+
+Query::Query(std::string const& _portal_name,std::string const&command)
+: descriptor(_portal_name), eof(true), line(), result(), 
+  query("declare \""+_portal_name+"\" cursor for "+command), 
+  num_params(), error(ECPG_TOO_FEW_ARGUMENTS), lines(), prepare(), 
+  portal_name(_portal_name)
+{  const char *p=query.c_str();
+   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+   params.setNeededParams(num_params);
+   try
+   { Execute_if_complete();
+   } catch (...)
+   { free();
+     throw;
+   }
+}
+
+Query::Query(PreparedQuery &prep)
+: descriptor(descriptor_name(this)), eof(true), line(), result(), 
+  query(), num_params(), error(ECPG_TOO_FEW_ARGUMENTS), lines(), 
+  prepare(&prep)
+{  const char *p=prep.Command().c_str();
+   while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+   params.setNeededParams(num_params);
+#if !defined(USE_PARAMETERS) || !defined(HAVE_PQPREPARE)
+   query=prep.Command();
+#endif
+   try
+   { Execute_if_complete();
+   } catch (...)
+   { free();
+     throw;
+   }
+}
+
+void Query::free()
+{
+      if (!portal_name.empty())
+      { Query("close \""+portal_name+"\"");
+      }
+#ifndef USE_PARAMETERS
+      if (!descriptor.empty())
+      {
+#ifdef OLD_ECPG
+        struct sqlca copy=sqlca;
+#else
+        struct sqlca_t copy=sqlca;
+#endif
+        //   exec sql deallocate descriptor X;
+        ECPGdeallocate_desc(__LINE__, descriptor.c_str());
+        // do not change sqlca ... believe me, you don't want to
+        sqlca=copy;
+      }
+#else
+      if (result) PQclear(result);
+      result=0;
+#endif
+}
+
+Query::~Query()
+{  if (!params.complete())
+   {  std::cerr << "The query " << query << " still needed " 
+   	<< params.HowManyNeededParams() 
+   	<< " parameters on destruction and got never executed!\n";
+      if (Query::debugging.on)
+      {  std::cerr << "existing parameters: ";
+         for (ArgumentList::const_iterator i=params.begin();i!=params.end();
+			++i)
+            std::cerr << *i << ',';
+         std::cerr << '\n';
+      }
+      sqlca.sqlcode=ECPG_TOO_FEW_ARGUMENTS;
+      assert(!result); // make sure to not leak
+   }
+   else
+   {  free();
+   }
+}
+
+void Query::Fetch(Query_Row &is)
+{  if (!params.complete())
+      Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
+   if (!eof)
+   {  if (line<PQntuples(result))
+      {  is=Query_Row(result,line++);
+         return;
+      }
+      if (!portal_name.empty())
+      { { Query q2("fetch 32 from \""+portal_name+"\"");
+          std::swap(result,q2.result);
+	  std::swap(descriptor,q2.descriptor);
+        }
+        line=0;
+        // optimization: portal is at end
+        if (PQntuples(result)<32) 
+        { Query("close \""+portal_name+"\"");
+#if defined(__GNUC__) && __GNUC__ < 3
+	  portal_name=std::string();
+#else
+          portal_name.clear();
+#endif
+        }
+        if (line<PQntuples(result))
+        {  is=Query_Row(result,line++);
+           return;
+        }
+      }
+      eof=true;
+   }
+ is=Query_Row();
+}
+
+void Query::Execute(const std::string &command) throw(SQLerror)
+{  exec sql begin declare section;
+   char *COMMAND=const_cast<char*>(command.c_str());
+   exec sql end declare section;
+
+   exec sql execute immediate :COMMAND;
+}
+
+int Query::Code() {  
+	return sqlca.sqlcode; 
+}
+
+unsigned Query::Lines() { 
+	return sqlca.sqlerrd[2]; 
+}
+
+#endif

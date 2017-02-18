@@ -1,0 +1,117 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Eduard Wille GmbH & Co. KG
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: manuproc_base 0.8.0\n"
+"Report-Msgid-Bugs-To: manuproc-developer-de@berlios.de\n"
+"POT-Creation-Date: 2013-11-16 00:04+0100\n"
+"PO-Revision-Date: 2011-03-07 10:15+0100\n"
+"Last-Translator: Christof Petig <petig@stahlwille.de>\n"
+"Language-Team: Spanish <LL@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/Datum.cc:37
+msgid "January"
+msgstr "Enero"
+
+#: src/Datum.cc:38
+msgid "February"
+msgstr "Febrero"
+
+#: src/Datum.cc:39
+msgid "March"
+msgstr "Marzo"
+
+#: src/Datum.cc:40
+msgid "April"
+msgstr "Abril"
+
+#: src/Datum.cc:41 src/Datum.cc:54
+msgid "May"
+msgstr "May"
+
+#: src/Datum.cc:42
+msgid "June"
+msgstr "Junio"
+
+#: src/Datum.cc:43
+msgid "July"
+msgstr "Julio"
+
+#: src/Datum.cc:44
+msgid "August"
+msgstr "Agosto"
+
+#: src/Datum.cc:45
+msgid "September"
+msgstr "Septiembre"
+
+#: src/Datum.cc:46
+msgid "October"
+msgstr "Octubre"
+
+#: src/Datum.cc:47
+msgid "November"
+msgstr "Noviembre"
+
+#: src/Datum.cc:48
+msgid "December"
+msgstr "Diciembre"
+
+#: src/Datum.cc:50
+msgid "Jan"
+msgstr "Ene"
+
+#: src/Datum.cc:51
+msgid "Feb"
+msgstr "Feb"
+
+#: src/Datum.cc:52
+msgid "Mar"
+msgstr "Mar"
+
+#: src/Datum.cc:53
+msgid "Apr"
+msgstr "Abr"
+
+#: src/Datum.cc:55
+msgid "Jun"
+msgstr "Jun"
+
+#: src/Datum.cc:56
+msgid "Jul"
+msgstr "Jul"
+
+#: src/Datum.cc:57
+msgid "Aug"
+msgstr "Ago"
+
+#: src/Datum.cc:58
+msgid "Sep"
+msgstr "Sep"
+
+#: src/Datum.cc:59
+msgid "Oct"
+msgstr "Oct"
+
+#: src/Datum.cc:60
+msgid "Nov"
+msgstr "Nov"
+
+#: src/Datum.cc:61
+msgid "Dec"
+msgstr "Dic"
+
+#: src/create_parse.cc:114
+msgid "true"
+msgstr ""
+
+#: src/create_parse.cc:114
+msgid "false"
+msgstr ""

@@ -1,0 +1,102 @@
+// $Id: Transaction.pgcc,v 1.10 2004/04/29 08:38:47 christof Exp $
+/*  libcommonc++: ManuProC's main OO library
+ *  Copyright (C) 1998-2000 Adolf Petig GmbH & Co. KG, written by Christof Petig
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+#include <ManuProCConfig.h>
+#ifndef MPC_SQLITE
+#include <Misc/Transaction.h>
+#include <algorithm>
+exec sql include sqlca;
+#include <cassert>
+
+std::list<std::string> Transaction::open_connections;
+
+#define GARNIX
+// for ecpg 7.1
+
+#define USE_SPEED_HACK 
+  // this can get confused (if you use dbdefault)
+
+Transaction::Transaction(const std::string &_connection,bool open_now) throw(SQLerror)
+	: owner(false), connection(_connection)
+{  if (open_now) open(connection);
+}
+
+void Transaction::open(const std::string &_connection) throw(SQLerror)
+{  assert(!owner); // crash and burn on recursion!
+   if (!_connection.empty()) connection=_connection;
+
+#ifdef USE_SPEED_HACK
+   if (std::find(open_connections.begin(),open_connections.end(),connection)!=
+   		open_connections.end())
+   {  owner=commit_vs_rollback=false;
+      return;
+   }
+#endif
+
+   if (!connection.empty()) 
+   {  exec sql begin declare section;
+      const char *conn=connection.c_str(GARNIX);
+      exec sql end declare section;
+
+      exec sql at :conn begin work;
+   }
+   else exec sql begin work;
+#ifdef ECPG_WARNING_IN_TRANSACTION
+   SQLerror::test(__FILELINE__"Transaction::open",ECPG_WARNING_IN_TRANSACTION);
+#else
+   SQLerror::test(__FILELINE__"Transaction::open",ECPG_NOTICE_IN_TRANSACTION);
+#endif
+   open_connections.push_back(connection);
+   
+#ifdef USE_SPEED_HACK   
+   assert(!sqlca.sqlcode);
+#endif
+   owner=!sqlca.sqlcode;
+   commit_vs_rollback=false;
+}
+
+void Transaction::close() throw(SQLerror)
+{  if (owner)
+   {  if (!connection.empty()) 
+      {  exec sql begin declare section;
+         const char *conn;
+         exec sql end declare section;
+         conn=connection.c_str();
+
+         if (commit_vs_rollback) exec sql at :conn commit work;
+         else exec sql at :conn rollback work;
+      }
+      else 
+      {  if (commit_vs_rollback) exec sql commit work;
+         else exec sql rollback work;
+      }
+#ifdef USE_SPEED_HACK
+      open_connections.remove(connection);
+#endif
+      owner=false;
+      SQLerror::test(__FILELINE__"Transaction::close");
+   }
+}
+
+Transaction::~Transaction()
+{  if (owner) 
+      try { close(); }
+      catch (SQLerror &e) { std::cerr << e << '\n'; }
+}
+#endif
