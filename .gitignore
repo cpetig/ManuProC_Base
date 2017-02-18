@@ -1,1 +1,8 @@
-_MTN
+
+.cproject/
+.cvsignore/
+.mt-attrs/
+.project/
+_MTN/
+*~
+*.o
