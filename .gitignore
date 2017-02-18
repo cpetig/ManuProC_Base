@@ -1,8 +1,8 @@
 
-.cproject/
-.cvsignore/
-.mt-attrs/
-.project/
+.cproject
+.cvsignore
+.mt-attrs
+.project
 _MTN/
 *~
 *.o
