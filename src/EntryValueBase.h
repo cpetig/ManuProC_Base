@@ -31,7 +31,7 @@ class EntryValueBase : public HandleContent
 public:
  static LIBMPC_BASE_API const int int_NaN=-1;
 #ifndef _MSC_VER
- static LIBMPC_BASE_API const double double_NaN=-1;
+ static LIBMPC_BASE_API constexpr double double_NaN=-1;
 #else
  static LIBMPC_BASE_API const double double_NaN;
 #endif
