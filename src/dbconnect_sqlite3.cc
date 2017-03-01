@@ -268,7 +268,7 @@ void resultsSQ_params::fetch()
 		{
 			std::cerr << "RESULT: ";
 			for (unsigned i=0;i<sqlite3_column_count(step.stmt);++i)
-				printf("%s, ", sqlite3_column_text(step.stmt,i));
+				std::cout << sqlite3_column_text(step.stmt,i);
 			std::cerr << '\n';
 		}
 	}
