@@ -66,8 +66,8 @@ void Global_Settings::database_save(int userid,const std::string& program,
      if (userid==global_id)
      {
       // due to missing exception on update in sqlite
-      Query q("select true from global_settings where userid is null and program=? and name=?");
-      q << program << name;
+//      Query q("select true from global_settings where userid is null and program=? and name=?");
+//      q << program << name;
       
       qp= new Query("update global_settings set wert=? where userid is null and program=? and name=?");
        (*qp) << wert << program << name;
@@ -75,8 +75,8 @@ void Global_Settings::database_save(int userid,const std::string& program,
      else
      {
       // due to missing exception on update in sqlite
-      Query q("select true from global_settings where userid=? and program=? and name=?");
-      q << userid << program << name;      
+//      Query q("select true from global_settings where userid=? and program=? and name=?");
+//      q << userid << program << name;      
      
       qp = new Query("update global_settings set wert=? where userid=? and program=? and name=?");
        (*qp) << wert << userid << program << name;
@@ -84,10 +84,13 @@ void Global_Settings::database_save(int userid,const std::string& program,
   }
   catch(SQLerror &e)
   {
-   Query("insert into global_settings "
+   if(e.Code()==100)
+    {
+     Query("insert into global_settings "
   	       "(userid,program,name,wert) values (?,?,?,?)")
   	       << Query::NullIf(userid,global_id) << program << name << wert;
-   SQLerror::test(__FILELINE__);
+     SQLerror::test(__FILELINE__);
+    }
    e.print(__FILELINE__);
   }
   
