@@ -30,15 +30,9 @@ std::string Global_Settings::database_load(int userid,const std::string& program
    // not efficient but more efficient than doing the query
    if (userid==global_id)
      throw SQLerror(std::string(),100,std::string());
-   Query("select wert from global_settings "
-#ifdef MPC_SQLITE
- 	"where userid=? and program=? and name=?"
-#else
- 	"where (userid,program,name)=(?,?,?)"
-#endif
- 	)
-   << userid << program << name
-   >> wert;
+   Query("select wert from global_settings where userid=? and program=? and name=?")
+    << userid << program << name
+    >> wert;
  } catch (SQLerror &e)
  {
    if (e.Code()!=100)
@@ -68,34 +62,33 @@ void Global_Settings::database_save(int userid,const std::string& program,
 
    try
    {
+     
      if (userid==global_id)
-     { 
-      qp= new Query("update global_settings set wert=? "
-   	                "where userid is null and program=? and name=?");
+     {
+      // due to missing exception on update in sqlite
+      Query q("select true from global_settings where userid is null and program=? and name=?");
+      q << program << name;
+      
+      qp= new Query("update global_settings set wert=? where userid is null and program=? and name=?");
        (*qp) << wert << program << name;
      }
      else
      {
-       qp = new Query("update global_settings set wert=? "
-  #ifdef MPC_SQLITE
-   	"where userid=? and program=? and name=?"
-  #else
-  	"where (userid,program,name)=(?,?,?)"
-  #endif
-  	   );
+      // due to missing exception on update in sqlite
+      Query q("select true from global_settings where userid=? and program=? and name=?");
+      q << userid << program << name;      
+     
+      qp = new Query("update global_settings set wert=? where userid=? and program=? and name=?");
        (*qp) << wert << userid << program << name;
      }
   }
   catch(SQLerror &e)
   {
-    if (e.Code()==100)
-    {  
-      Query("insert into global_settings "
+   Query("insert into global_settings "
   	       "(userid,program,name,wert) values (?,?,?,?)")
   	       << Query::NullIf(userid,global_id) << program << name << wert;
-      SQLerror::test(__FILELINE__);
-    }
-    e.print(__FILELINE__);
+   SQLerror::test(__FILELINE__);
+   e.print(__FILELINE__);
   }
   
   delete qp;
