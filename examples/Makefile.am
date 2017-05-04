@@ -24,7 +24,7 @@ endif
 
 EXTRA_PROGRAMS=FetchIStream test_pgsql_conv testHandles testKW fixedpoint \
 	Zeitpunkt mvc trace rexml tagstream tag_speed algorithm extra_cols \
-	interval Query datetest Query2
+	interval Query datetest Query2 Query_test
 
 test_pgsql_conv_SOURCES=test_pgsql_conv.cc
 testHandles_SOURCES=testHandles.cc
@@ -42,6 +42,7 @@ algorithm_SOURCES=algorithm.cc
 extra_cols_SOURCES=extra_cols.cc
 interval_SOURCES=interval.cc
 Query_SOURCES=Query.cc
+Query_test_SOURCES=Query_test.cc
 datetest_SOURCES=datetest.cc
 
 tagstream.res: tagstream$(EXEEXT)
