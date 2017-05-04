@@ -188,6 +188,7 @@ struct resultsSQ : ManuProC::Query_result_base
 			}
 			std::cerr << '\n';
 		}
+		conn->last_code=0;
 		return &rowres;
 	}
 	virtual void AddParameter(const std::string &s, ManuProC::Oid type) {}
