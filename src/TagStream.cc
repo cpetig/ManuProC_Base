@@ -47,6 +47,16 @@ static void iso2utf8(std::string &s)
    }
 }
 
+bool TagStream::isUnbalanced() const
+{
+   return !unbalancedTag.empty();
+} 
+
+std::string TagStream::getUnbalancedTag() const
+{
+   return unbalancedTag;
+}
+
 void TagStream::utf82iso(std::string &s)
 {  for (unsigned i = 0; i+1<s.size() ; ++i)
    {  unsigned char x=s[i];
@@ -141,7 +151,7 @@ TagStream::TagStream(const char *str)
 
 TagStream::TagStream() 
 	: Tag(std::string()), read_again(), pointer(), end_pointer(), is(), 
-	  ifs(), iss(), encoding(host_encoding), recode_load_vfunc(), recode_save_vfunc() 
+	  ifs(), iss(), encoding(host_encoding), recode_load_vfunc(), recode_save_vfunc()
 {}
  
 void TagStream::setEncoding(const std::string &s)
@@ -178,7 +188,7 @@ void TagStream::load_project_file(Tag *top)
 {  setEncoding(host_encoding);
    if (end_pointer>3 && buffer[0]==char(0xef) && buffer[1]==char(0xbb) && buffer[2]==char(0xbf))
       set_pointer(buffer+3);
-   while (good() && next_tag(top));
+   while (good() && next_tag(top) && !isUnbalanced());
 }
 
 bool TagStream::good()
@@ -323,7 +333,7 @@ char *TagStream::next_tag(Tag *parent)
          }         
          continue; // outer
       }
-      if (tag[1]=='-' && tag[2]=='-')
+      if (tag[1]=='!' && tag[2]=='-' && tag[3]=='-')
       {  char *endcomment=find(tag+3,'-');
          while (endcomment && endcomment[1]!='-' && endcomment[2]!='>')
             endcomment=find(endcomment+1,'-');
@@ -418,6 +428,7 @@ char *TagStream::next_tag(Tag *parent)
          if (endtype!=newtag->Type())
          {  std::cerr << "tag <" << newtag->Type() << "> ended with </" 
          		<< endtype << ">\n";
+            unbalancedTag=newtag->Type()+" vs. "+endtype;
          }
          set_pointer(endtagend+1);
        }
