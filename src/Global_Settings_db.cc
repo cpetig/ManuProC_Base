@@ -73,8 +73,9 @@ void Global_Settings::database_save(int userid,const std::string& program,
       qp = new Query("update global_settings set wert=? where userid=? and program=? and name=?");
        (*qp) << wert << userid << program << name;
      }
-     if(qp->LinesAffected()<1)
-        throw(SQLerror("Global_Settings::database_save",100,"No lines for update"));
+     if(qp->getDBType()==ManuProC::Connection::C_SQLite)
+      if(qp->LinesAffected()<1)
+       throw(SQLerror("Global_Settings::database_save",100,"No lines for update"));
   }
   catch(SQLerror &e)
   {

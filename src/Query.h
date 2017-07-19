@@ -270,6 +270,7 @@ public:
 
 	void Check100() const throw(SQLerror);
 	int last_insert_rowid() const;
+	ManuProC::Connection::CType_t getDBType() const { return backend->Type(); }
 
 	// please migrate to the functions above
 	static __deprecated int Code(); // SQLCA.sqlcode
