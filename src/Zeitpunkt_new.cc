@@ -83,7 +83,7 @@ long Zeitpunkt_new::diff(const Zeitpunkt_new &b, precision destprec) const throw
          return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000+(microsecond-b.microsecond)/1000;
       case microseconds:
          return ((((datum-b.datum)*24+hour-b.hour)*60+minute-b.minute+(b.minutes_from_gmt-minutes_from_gmt))*60+second-b.second)*1000000+microsecond-b.microsecond;
-      default: assert(0);
+      default: assert(0); abort();
    }
 }
 
@@ -293,7 +293,7 @@ Query::Row &operator>>(Query::Row &is, Zeitpunkt_new &v)
 }
 
 template<>
-const Oid Query::NullIf_s<Zeitpunkt_new>::postgres_type=TIMESTAMPTZOID;
+const Query_types::Oid Query::NullIf_s<Zeitpunkt_new>::postgres_type=TIMESTAMPTZOID;
 
 ArgumentList &operator<<(ArgumentList &q, const Zeitpunkt_new &v)
 {  if (!v.valid()) return q << Query::null_s(Query::NullIf_s<Zeitpunkt_new>::postgres_type);

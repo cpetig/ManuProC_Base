@@ -29,12 +29,23 @@ class EntryValueBase : public HandleContent
 // opaque Data Type which is accessible as an int value or as a string
 {
 public:
- static LIBMPC_BASE_API const int int_NaN=-1;
-#ifndef _MSC_VER
- static LIBMPC_BASE_API constexpr double double_NaN=-1;
-#else
- static LIBMPC_BASE_API const double double_NaN;
-#endif
+
+static LIBMPC_BASE_API const int int_NaN=-1;
+ // this requires c++11 but I no longer see this as a restriction
+ // especially seeing the utterly complex way with c++98 on MinGW
+ #if __cplusplus < 201103L
+
+	#ifndef _MSC_VER
+	static LIBMPC_BASE_API const double double_NaN=-1;
+	#else
+	static LIBMPC_BASE_API const double double_NaN;
+	#endif
+
+ #else
+ static constexpr double double_NaN=-1.0;
+ #endif
+
+
  virtual operator const std::string() const { return getStrVal(); }
  virtual const std::string getStrVal() const { return std::string(); }
  virtual bool operator==(const EntryValueBase &v) const;

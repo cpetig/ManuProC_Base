@@ -15,7 +15,7 @@ AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
 if DATABASE
-DB_PRGS=FetchIStream Query
+DB_PRGS=FetchIStream Query Query2
 B_SRCES=FetchIStream.cc
 else
 DB_PRGS=
@@ -24,7 +24,7 @@ endif
 
 EXTRA_PROGRAMS=FetchIStream test_pgsql_conv testHandles testKW fixedpoint \
 	Zeitpunkt mvc trace rexml tagstream tag_speed algorithm extra_cols \
-	interval Query datetest
+	interval Query datetest Query2 Query_test
 
 test_pgsql_conv_SOURCES=test_pgsql_conv.cc
 testHandles_SOURCES=testHandles.cc
@@ -32,6 +32,7 @@ testKW_SOURCES=testKW.cc
 fixedpoint_SOURCES=fixedpoint.cc
 Zeitpunkt_SOURCES=Zeitpunkt.cc
 trace_SOURCES=trace.cc
+Query2_SOURCES=Query2.cc
 FetchIStream_SOURCES=$(B_SRCES)
 mvc_SOURCES=mvc.cc
 rexml_SOURCES=rexml.cc
@@ -41,6 +42,7 @@ algorithm_SOURCES=algorithm.cc
 extra_cols_SOURCES=extra_cols.cc
 interval_SOURCES=interval.cc
 Query_SOURCES=Query.cc
+Query_test_SOURCES=Query_test.cc
 datetest_SOURCES=datetest.cc
 
 tagstream.res: tagstream$(EXEEXT)

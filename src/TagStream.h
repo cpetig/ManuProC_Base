@@ -32,6 +32,7 @@ class TagStream : public Tag
 	char buffer[GB_BUFFER_SIZE];
 	bool read_again;
 	bool own_toxml;
+	std::string unbalancedTag;
 	int pointer,end_pointer;
 
 	std::istream *is;
@@ -95,6 +96,8 @@ public:
 	{  try { getContent()=c; } catch (std::exception) { push_back(c); } }
 	
 	bool good();
+	bool isUnbalanced() const;
+	std::string getUnbalancedTag() const;
 	
 	// writing Tags to a file
 	void setFileName(const std::string &s)

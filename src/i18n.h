@@ -1,12 +1,13 @@
 /* this file contains the necessary defines to use gettext in your program */
 
+#include <config.h>
 
 #if defined(WIN32) && !defined(__MINGW32__)
 #       pragma warning( disable : 4290 )
 #	pragma once
 #	include <ManuProCConfig.h>
 #else
-#	include "config.h"
+#	include <ManuProCConfig.h>
 #endif
 
 #ifdef ENABLE_NLS

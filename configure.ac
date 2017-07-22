@@ -1,7 +1,7 @@
 # $Id: configure.in,v 1.39 2006/08/03 11:18:28 christof Exp $
 
 AC_PREREQ(2.50)
-AC_INIT(ManuProC_Base,0.8.0, [manuproc-developer-de@berlios.de])
+AC_INIT(ManuProC_Base,0.8.1, [manuproc-developer-de@berlios.de])
 AC_CONFIG_AUX_DIR(.)
 
 MPC_BASE_MAJOR_VERSION=`echo $PACKAGE_VERSION | sed -e 's/^\(.*\)\..*\..*$/\1/'`
@@ -81,17 +81,10 @@ then
 fi
 AC_SUBST(SIGC_MAJOR)
 
-AC_ARG_ENABLE(sqlite, [  --enable-sqlite	prefer SQLite over PostgreSQL],
-	[prefer_sqlite=0 
-         block_sqlite=0
-         if test "$enableval" = "no" 
-         then block_sqlite=1
-         else prefer_sqlite=1
-         fi],
-	[prefer_sqlite=0 ; block_sqlite=0 ])
+dnl block_sqlite=0
 
-if test $prefer_sqlite -eq 0
-then
+dnl if test $prefer_sqlite -eq 0
+dnl then
  if test "${with_postgresdir}" != "no"
  then
   ECPG=`which ecpg`
@@ -129,7 +122,7 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
    AC_MSG_RESULT($ac_no_descriptor_lvalue)
    CXXFLAGS="$tmp_CXXFLAGS"
    LDFLAGS="$tmp_LDFLAGS"
-   LIBS="tmp_LIBS"
+   LIBS="$tmp_LIBS"
 
    AC_MSG_CHECKING(for standard database name)
    DEFAULT_DB="$USER"
@@ -142,34 +135,37 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
    DATABASE_TYPE="_pg"
   fi
  fi
-fi
+dnl fi
 
-if test -z "$ECPG_INCLUDES"
-then
- AC_COMPILE_IFELSE([#include <sqlite3.h>],[prefer_sqlite=1],[])
-fi
+dnl if test -z "$ECPG_INCLUDES"
+dnl then
+AC_MSG_CHECKING(for sqlite3)
+AC_COMPILE_IFELSE([#include <sqlite3.h>],[has_sqlite=1],[has_sqlite=0])
+AC_MSG_RESULT($has_sqlite)
+dnl fi
 
-if test "$prefer_sqlite" -eq 1 -a "$block_sqlite" -eq 0
+if test "$has_sqlite" -eq 1 
 then
   AC_DEFINE(MPC_SQLITE, 1, [Define to 1 if you want to use the SQLite backend])
-dnl dann brauchst du aber das !!! CP  
-#  PETIG_CHECK_POSTGRES
-  ECPG_LIBS=-lsqlite3
+  ECPG_LIBS="${ECPG_LIBS} -lsqlite3"
   AC_SUBST(ECPG_LIBS)
-  ECPG="/bin/touch --"
+  if test -z "${ECPG}" ; then ECPG="/bin/touch --" ; fi
   AC_SUBST(ECPG)
-  ECPG_INCLUDES=""
-  ECPG_LDFLAGS=""
+  ECPG_INCLUDES="${ECPG_INCLUDES}"
+  ECPG_LDFLAGS="${ECPG_LDFLAGS}"
   AC_SUBST(ECPG_INCLUDES)
   ECPG_CFLAGS="$ECPG_INCLUDES"
   AC_SUBST(ECPG_CFLAGS)
   AC_SUBST(ECPG_LDFLAGS)
-  DATABASE_TYPE="_sqlite3"
+  DATABASE_TYPE="${DATABASE_TYPE}_sqlite3"
+  if test -z "${DEFAULT_DB}"
+  then
    AC_MSG_CHECKING(for standard SQLite database name)
    DEFAULT_DB="$USER"
    AC_DEFINE_UNQUOTED(DEFAULT_DB, "$DEFAULT_DB" )
    AC_DEFINE_UNQUOTED(DEFAULT_DBHOST, "$DEFAULT_DBHOST" )
    AC_MSG_RESULT($DEFAULT_DB)
+  fi
 fi
 
 AC_MSG_CHECKING(for handle debug code)
