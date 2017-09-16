@@ -29,6 +29,7 @@
 #include <Misc/Query.h>
 #endif
 #include <iostream>
+#include <stdlib.h>
 
 Zeitpunkt_new &Zeitpunkt_new::Precision(precision p)
 { prec=p;

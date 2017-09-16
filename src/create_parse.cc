@@ -19,6 +19,7 @@
 
 #include <ManuProCConfig.h>
 #include <Misc/create_parse.h>
+#include <Misc/i18n.h>
 #include <iostream>
 #include <locale.h>
 #include <cstring>
