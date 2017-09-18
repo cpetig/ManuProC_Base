@@ -1,0 +1,13 @@
+/BaseObjects
+/Makefile
+/Makefile.in
+/ManuProCConfig.h
+/Misc
+/Query.cc
+/SQLerror_postgres.cc
+/Transaction.cc
+/dbconnect.cc
+/libManuProC_Base.la
+/libManuProC_Base.rc
+/ostream
+/stamp-h2
