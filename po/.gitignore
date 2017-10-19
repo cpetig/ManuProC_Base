@@ -12,3 +12,4 @@
 /remove-potcdate.sed
 /remove-potcdate.sin
 /stamp-po
+/Makefile.in.in
