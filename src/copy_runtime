@@ -6,12 +6,12 @@ mkdir -p ../../runtime_ManuProC_Base/$PLATFORM
 
 cp .libs/libManuProC_Base.a ../../runtime_ManuProC_Base/$PLATFORM
 
-CHG=`mtn ls changed | wc -l`
+CHG=`git diff HEAD --name-only | wc -l`
 if [ $CHG -ne 0 ]
 then
   echo "not tracked" > ../../runtime_ManuProC_Base/stampfile
 else
-  echo `mtn automate get_base_revision_id` > ../../runtime_ManuProC_Base/stampfile
+  echo `git rev-parse HEAD` > ../../runtime_ManuProC_Base/stampfile
 fi
     
 
