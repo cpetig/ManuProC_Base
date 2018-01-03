@@ -81,10 +81,6 @@ then
 fi
 AC_SUBST(SIGC_MAJOR)
 
-dnl block_sqlite=0
-
-dnl if test $prefer_sqlite -eq 0
-dnl then
  if test "${with_postgresdir}" != "no"
  then
   ECPG=`which ecpg`
@@ -135,16 +131,24 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
    DATABASE_TYPE="_pg"
   fi
  fi
-dnl fi
 
-dnl if test -z "$ECPG_INCLUDES"
-dnl then
+if test -z "$ECPG_INCLUDES"
+then
 AC_MSG_CHECKING(for sqlite3)
 AC_COMPILE_IFELSE([#include <sqlite3.h>],[has_sqlite=1],[has_sqlite=0])
 AC_MSG_RESULT($has_sqlite)
-dnl fi
+fi
 
-if test "$has_sqlite" -eq 1 
+
+AC_MSG_CHECKING(check if SQLite is explicitely disabled)
+AC_ARG_ENABLE(sqlite,[  --disable-sqlite       Disable SQLite support], use_sqlite="$enableval", use_sqlite="yes")
+if test "$use_sqlite" != "yes" ; then
+        AC_MSG_RESULT([yes])
+else
+        AC_MSG_RESULT([no])
+fi
+
+if test "$use_sqlite" != "no" 
 then
   AC_DEFINE(MPC_SQLITE, 1, [Define to 1 if you want to use the SQLite backend])
   ECPG_LIBS="${ECPG_LIBS} -lsqlite3"
