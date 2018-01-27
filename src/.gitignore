@@ -11,3 +11,5 @@
 /libManuProC_Base.rc
 /ostream
 /stamp-h2
+*.def
+/DEADJOE

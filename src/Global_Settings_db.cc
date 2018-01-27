@@ -23,69 +23,57 @@
 
 const int Global_Settings::global_id; // this id is for setting and requesting the default value for all users
 
-std::string Global_Settings::database_load(int userid,const std::string& program,const std::string& name)
-{std::string wert;
- try
- {
-   // not efficient but more efficient than doing the query
-   if (userid==global_id)
-     throw SQLerror(std::string(),100,std::string());
-   Query("select wert from global_settings where userid=? and program=? and name=?")
-    << userid << program << name
-    >> wert;
- } catch (SQLerror &e)
- {
-   if (e.Code()!=100)
-   {
+std::string Global_Settings::database_load(int userid, const std::string& program, const std::string& name)
+{
+  std::string wert;
+  try
+  {
+    Query("select wert from global_settings where coalesce(userid,0)=? and program=? and name=?")
+      << (userid==global_id ? 0 : userid) << program << name >> wert;
+  } 
+  catch (SQLerror &e)
+  {
      e.print(__FILELINE__);
-   }
-   else try
-   {
-     Query("select wert from global_settings where userid is null and program=? and name=?")
-	 << program << name
-	 >> wert;
-   }
-   catch (SQLerror &f)
-   {
-     e.print(__FILELINE__,100);
-   }
- }
- return wert;
+  }
+
+  return wert;
 }
 
 
-void Global_Settings::database_save(int userid,const std::string& program,
-                             const std::string& name,const std::string& wert)
-{  // saves one query in comparison to Global_Settings().set_Wert
-   //  ... the select ...
-   Query *qp = NULL;
+void Global_Settings::database_save(int userid, const std::string& program, const std::string& name, const std::string& wert)
+{
+  Query *qp = new Query("update global_settings set wert=? where coalesce(userid,0)=? and program=? and name=?");
+         
+  // for pq LinesAffected is without function, we must detect the affected lines by dummy fetch
+  if(qp->getDBType()==ManuProC::Connection::C_PostgreSQL)
+  {
+    delete qp;
+    qp = new Query("update global_settings set wert=? where coalesce(userid,0)=? "
+                   "and program=? and name=? returning userid"); 
+  }
 
-   try
-   {
-     
-     if (userid==global_id)
-     {
-      qp= new Query("update global_settings set wert=? where userid is null and program=? and name=?");
-       (*qp) << wert << program << name;
-     }
-     else
-     {
-      qp = new Query("update global_settings set wert=? where userid=? and program=? and name=?");
-       (*qp) << wert << userid << program << name;
-     }
-     if(qp->getDBType()==ManuProC::Connection::C_SQLite)
-      if(qp->LinesAffected()<1)
-       throw(SQLerror("Global_Settings::database_save",100,"No lines for update"));
+  try
+  {
+    (*qp) << wert << (userid==global_id ? 0 : userid) << program << name;
+
+    if(qp->getDBType()==ManuProC::Connection::C_PostgreSQL)
+    {
+      Query::Row fi=qp->Fetch();
+      if(!fi.good()) // PQ insert
+      {
+        Query("insert into global_settings (userid,program,name,wert) values (?,?,?,?)")
+           << (userid==global_id ? 0 : userid) << program << name << wert;
+      }
+    }
+    else if(qp->LinesAffected()<1) // SQLite insert
+    {
+      Query("insert into global_settings (userid,program,name,wert) values (?,?,?,?)")
+           << (userid==global_id ? 0 : userid) << program << name << wert;
+    }
   }
   catch(SQLerror &e)
   {
-   if(e.Code()==100)
-    {
-     Query("insert into global_settings "
-  	       "(userid,program,name,wert) values (?,?,?,?)")
-  	       << Query::NullIf(userid,global_id) << program << name << wert;
-    }
-   e.print(__FILELINE__);
+    e.print(__FILELINE__);
   }
   
   delete qp;
