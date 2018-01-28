@@ -58,8 +58,12 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c) th
 	}
 }
 
+static void remove_prepared_from_connection(connectionPQ const* conn);
+
 void connectionPQ::disconnect() throw()
 {
+	if (Query::debugging.on) std::cerr << "PostgreSQL: disconnect\n";
+	remove_prepared_from_connection(this);
 	PQfinish(connection);
 	connection=NULL;
 }
@@ -167,12 +171,18 @@ void resultsPQ::execute()
 	{
 		if (prep)
 		{
-			printf("Executing prepared %s (%d)\n", prep->name.c_str(), psize);
+			printf("Executing prepared %s (", prep->name.c_str());
 		}
 		else
 		{
-			printf("Executing %s (%d)\n", query.c_str(), psize);
+			printf("Executing %s (", query.c_str());
 		}
+		for (unsigned i=0;i<psize;++i)
+		{
+			if (!values[i]) printf("NULL,");
+			else printf("%s,", values[i]);
+		}
+		printf(")\n");
 	}
 	if (prep)
 		res= PQexecPrepared(conn->connection, prep->name.c_str(), prep->numparam, values, lengths, formats, 0);
@@ -222,6 +232,16 @@ ManuProC::Query_result_row* resultsPQ::Fetch()
 	{
 		conn->last_error=100;
 		return 0;
+	}
+	if (Query::debugging.on)
+	{
+		printf("PostgreSQL Result ");
+		for (unsigned i=0;i<PQnfields(res);++i)
+		{
+			if (PQgetisnull(res, next_row, i)) printf("NULL,");
+			else printf("%s,", PQgetvalue(res, next_row, i));
+		}
+		printf("\n");
 	}
 	rowres.res=res;
 	rowres.row=next_row;
@@ -326,9 +346,18 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 
 std::map<std::string,PQ_Prepared_Statement*> prepared_stmts;
 
+static void remove_prepared_from_connection(connectionPQ const* conn)
+{
+	for (std::map<std::string,PQ_Prepared_Statement*>::iterator i= prepared_stmts.begin(); i!= prepared_stmts.end(); ++i)
+	{
+		if (i->second->conn==conn)
+			i->second->conn=NULL;
+	}
+}
+
 PQ_Prepared_Statement::~PQ_Prepared_Statement()
 {
-	if (!name.empty())
+	if (!name.empty() && conn)
 	{
 		std::string cmd= "DEALLOCATE "+name;
 		conn->execute(cmd.c_str());
