@@ -164,7 +164,16 @@ void resultsPQ::execute()
 		types[i]= parameters[i].type;
 	}
 	if (Query::debugging.on)
-		printf("Executing %s (%d)\n", query.c_str(), psize);
+	{
+		if (prep)
+		{
+			printf("Executing prepared %s (%d)\n", prep->name.c_str(), psize);
+		}
+		else
+		{
+			printf("Executing %s (%d)\n", query.c_str(), psize);
+		}
+	}
 	if (prep)
 		res= PQexecPrepared(conn->connection, prep->name.c_str(), prep->numparam, values, lengths, formats, 0);
 	else
@@ -336,6 +345,8 @@ ManuProC::Query_result_base* PQ_Prepared_Statement::execute() throw(SQLerror)
 	obj->prep= this;
 	obj->missing_params= numparam;
 	obj->parameters.clear();
+	if (!obj->missing_params)
+		obj->execute();
 //	if (obj.res)
 //	{
 //		PQclear(obj.res);
@@ -344,9 +355,17 @@ ManuProC::Query_result_base* PQ_Prepared_Statement::execute() throw(SQLerror)
 	return obj;
 }
 
+static unsigned preparation_index=0;
+
 ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)
 {
-	if (!name) name="";
+	std::string stringcontainer;
+	if (!name)
+	{
+		++preparation_index;
+		stringcontainer="Prep"+itos(preparation_index);
+		name=stringcontainer.c_str();
+	}
 	std::map<std::string,PQ_Prepared_Statement*>::iterator i= prepared_stmts.find(name);
 	if (i!=prepared_stmts.end()) delete i->second;
 	PQ_Prepared_Statement*& res= prepared_stmts[name];
@@ -371,6 +390,10 @@ ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char 
 		throw(SQLerror(q,stat,msg));
 	}
 	PQclear(res2);
+	if (Query::debugging.on)
+	{
+		printf("Prepared %s for %s\n", name, q);
+	}
 	res= new PQ_Prepared_Statement;
 	res->conn=this;
 	res->name=name;

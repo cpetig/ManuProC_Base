@@ -498,9 +498,22 @@ void Query::Execute() throw(SQLerror)
 {
 	// pass all parameters
 	if(!backend)
-          Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));	  
-	  
-	if (params.empty() && portal_name.empty())
+          Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));
+
+	if (prepare)
+	{
+		implementation_specific= prepare->prep->execute();
+		if(!implementation_specific)
+		     Query_Row::mythrow(SQLerror(__FILELINE__,-1,"executing prepared statement failed"));
+		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
+		{
+			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
+			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
+		}
+		error= backend->LastError();
+		lines= implementation_specific->LinesAffected();
+	}
+	else if (params.empty() && portal_name.empty())
 	{
 		implementation_specific= backend->execute2(query.c_str());
 		error= backend->LastError();
@@ -513,7 +526,7 @@ void Query::Execute() throw(SQLerror)
 		if (portal_name.empty()) implementation_specific= backend->execute_param(query.c_str(), params.size());
 		else implementation_specific= backend->open_cursor(portal_name.c_str(), query.c_str(), params.size());
 		if(!implementation_specific)
-                  Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));		
+                  Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));
 		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
 		{
 			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
@@ -531,7 +544,7 @@ void Query::Fetch(Query_Row &is)
 }
 
 Query::Query(const std::string &command)
-: /*eof(true), line(), result(),*/ query(command), num_params(),
+: /*eof(true), line(), result(),*/ query(command), num_params(), prepare(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
 	char const *p=query.c_str();
@@ -543,7 +556,7 @@ Query::Query(const std::string &command)
 }
 
 Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
-: query(command), num_params(),
+: query(command), num_params(), prepare(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(conn), implementation_specific()
 {
 	implementation_specific= backend->execute2(command.c_str());
@@ -557,8 +570,11 @@ Query::~Query()
 
 Query::Query(PreparedQuery &pq)
 : query(pq.command), num_params(pq.no_arguments), error(ECPG_TOO_FEW_ARGUMENTS),
-  	  lines(), backend(pq.connection), implementation_specific(pq.prep->execute())
+  	  lines(), backend(pq.connection), prepare(&pq), implementation_specific()
+//	  implementation_specific(pq.prep->execute())
 {
+	params.setNeededParams(num_params);
+	Execute_if_complete();
 }
 
 // this will work for now, but we really should implement cursors later on:
@@ -566,7 +582,7 @@ Query::Query(PreparedQuery &pq)
 //   fetch 1 from portal
 //   close portal
 Query::Query(std::string const& portal, std::string const& command)
-: query(command), num_params(), portal_name(portal),
+: query(command), num_params(), portal_name(portal), prepare(),
 		error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
 	char const *p=query.c_str();
@@ -630,12 +646,16 @@ Query_Row::Query_Row(Fake const& val)
 PreparedQuery::PreparedQuery(std::string const& cmd)
   : prep(), command(cmd), connection(ManuProC::get_database())
 {
-	ArgumentList al;
+//	ArgumentList al;
 	unsigned num_params=0;
 	char const* p= command.c_str();
 	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
 	// TODO: how to specify the type of parameters?
 	prep= connection->prepare(0, cmd.c_str(), num_params,0);
+	if (prep)
+	{
+		no_arguments= num_params;
+	}
 }
 
 PreparedQuery::~PreparedQuery()
