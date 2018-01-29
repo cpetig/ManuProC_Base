@@ -119,17 +119,21 @@ struct resultsPQ : ManuProC::Query_result_base
 	unsigned missing_params;
 	std::string query;
 	std::vector<PQparam> parameters;
+	unsigned lines;
 
-	virtual unsigned LinesAffected() const throw() { return PQntuples(res); }
+	// lines returned (or lines affected if none returned)
+	virtual unsigned LinesAffected() const throw() { return lines; }
 	virtual ManuProC::Query_result_row* Fetch();
 	virtual void AddParameter(const std::string &s, ManuProC::Oid type);
 	virtual void AddNull(ManuProC::Oid type=0);
 //	   virtual void AddParameter(long integer, Oid type)=0;
 //	   virtual void AddParameter(double fl, Oid type)=0;
 	virtual bool complete() const throw() { return !missing_params; }
+	// on postgreSQL this one returns an Oid!
+	virtual int last_insert_rowid() const { return PQoidValue(res); }
 	void execute();
 
-	resultsPQ() : conn(), res(), next_row(), prep(), missing_params() {}
+	resultsPQ() : conn(), res(), next_row(), prep(), missing_params(), lines() {}
 	~resultsPQ() { if (res) PQclear(res); }
 };
 
@@ -207,6 +211,18 @@ void resultsPQ::execute()
 		throw(SQLerror(prep? prep->name : query,stat,msg));
 	}
 	conn->last_error= PQresultStatus(res) == PGRES_TUPLES_OK ? 0 : 100;
+	if (PQresultStatus(res) == PGRES_TUPLES_OK) lines= PQntuples(res);
+	else
+	{
+		char const *ntup = PQcmdTuples(res);
+		if (ntup) lines= atoi(ntup);
+		else lines=0;
+	}
+	if (Query::debugging.on)
+	{
+		if (PQresultStatus(res) == PGRES_TUPLES_OK) printf("Query returned %d lines\n", lines);
+		else printf("Query modified %d rows (%s)\n", lines, PQcmdTuples(res));
+	}
 	next_row=0;
 }
 
@@ -335,10 +351,22 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 		if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
 		throw(SQLerror(q,stat,msg));
 	}
-	if (Query::debugging.on) std::cerr << "Returned " << PQntuples(res) << " lines with " << PQnfields(res) << " columns\n";
+//	if (Query::debugging.on) std::cerr << "Returned " << PQntuples(res) << " lines with " << PQnfields(res) << " columns\n";
 	resultsPQ* res2= new resultsPQ;
 	res2->res= res;
 	res2->conn= this;
+	if (PQresultStatus(res) == PGRES_TUPLES_OK) res2->lines= PQntuples(res);
+	else
+	{
+		char const *ntup = PQcmdTuples(res);
+		if (ntup) res2->lines= atoi(ntup);
+		else res2->lines=0;
+	}
+	if (Query::debugging.on)
+	{
+		if (PQresultStatus(res) == PGRES_TUPLES_OK) printf("Query returned %d lines with %d columns\n", res2->lines, PQnfields(res));
+		else printf("Query modified %d rows (%s)\n", res2->lines, PQcmdTuples(res));
+	}
 	last_error=0;
 	return res2;
 //	PQclear(res);
