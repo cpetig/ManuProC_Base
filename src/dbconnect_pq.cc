@@ -179,18 +179,18 @@ void resultsPQ::execute()
 	{
 		if (prep)
 		{
-			printf("Executing prepared %s (", prep->name.c_str());
+			fprintf(stderr,"Executing prepared %s (", prep->name.c_str());
 		}
 		else
 		{
-			printf("Executing %s (", query.c_str());
+			fprintf(stderr,"Executing %s (", query.c_str());
 		}
 		for (unsigned i=0;i<psize;++i)
 		{
-			if (!values[i]) printf("NULL,");
-			else printf("%s,", values[i]);
+			if (!values[i]) fprintf(stderr,"NULL,");
+			else fprintf(stderr,"%s,", values[i]);
 		}
-		printf(")\n");
+		fprintf(stderr,")\n");
 	}
 	if (prep)
 		res= PQexecPrepared(conn->connection, prep->name.c_str(), prep->numparam, values, lengths, formats, 0);
@@ -224,8 +224,8 @@ void resultsPQ::execute()
 	}
 	if (Query::debugging.on)
 	{
-		if (PQresultStatus(res) == PGRES_TUPLES_OK) printf("Query returned %d lines\n", lines);
-		else printf("Query modified %d rows (%s)\n", lines, PQcmdTuples(res));
+		if (PQresultStatus(res) == PGRES_TUPLES_OK) fprintf(stderr,"Query returned %d lines\n", lines);
+		else fprintf(stderr,"Query modified %d rows (%s)\n", lines, PQcmdTuples(res));
 	}
 	next_row=0;
 }
@@ -255,13 +255,13 @@ ManuProC::Query_result_row* resultsPQ::Fetch()
 	}
 	if (Query::debugging.on)
 	{
-		printf("PostgreSQL Result ");
+		fprintf(stderr,"PostgreSQL Result ");
 		for (unsigned i=0;i<PQnfields(res);++i)
 		{
-			if (PQgetisnull(res, next_row, i)) printf("NULL,");
-			else printf("%s,", PQgetvalue(res, next_row, i));
+			if (PQgetisnull(res, next_row, i)) fprintf(stderr,"NULL,");
+			else fprintf(stderr,"%s,", PQgetvalue(res, next_row, i));
 		}
-		printf("\n");
+		fprintf(stderr,"\n");
 	}
 	rowres.res=res;
 	rowres.row=next_row;
@@ -368,8 +368,8 @@ ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerro
 	}
 	if (Query::debugging.on)
 	{
-		if (PQresultStatus(res) == PGRES_TUPLES_OK) printf("Query returned %d lines with %d columns\n", res2->lines, PQnfields(res));
-		else printf("Query modified %d rows (%s)\n", res2->lines, PQcmdTuples(res));
+		if (PQresultStatus(res) == PGRES_TUPLES_OK) fprintf(stderr,"Query returned %d lines with %d columns\n", res2->lines, PQnfields(res));
+		else fprintf(stderr,"Query modified %d rows (%s)\n", res2->lines, PQcmdTuples(res));
 	}
 	last_error=0;
 	return res2;
@@ -405,7 +405,7 @@ bool PQ_Prepared_Statement::check_connection(ManuProC::Connection_base const& cb
 	if (!conn)
 	{
 		conn= dynamic_cast<connectionPQ*>(const_cast<ManuProC::Connection_base*>(&cb));
-		printf("Prepared statement across connections, restoring");
+		fprintf(stderr,"Prepared statement across connections, restoring\n");
 		PGresult *res2= PQprepare(conn->connection, name.c_str(), query.c_str(), parameters.size(), parameters.data());
 		if (!res2)
 		{
@@ -424,7 +424,7 @@ bool PQ_Prepared_Statement::check_connection(ManuProC::Connection_base const& cb
 		PQclear(res2);
 		if (Query::debugging.on)
 		{
-			printf("Re-Prepared %s for %s\n", name, query);
+			fprintf(stderr,"Re-Prepared %s for %s\n", name.c_str(), query.c_str());
 		}
 		return true;
 	}
@@ -486,7 +486,7 @@ ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char 
 	PQclear(res2);
 	if (Query::debugging.on)
 	{
-		printf("Prepared %s for %s\n", name, q);
+		fprintf(stderr,"Prepared %s for %s\n", name, q);
 	}
 	res= new PQ_Prepared_Statement;
 	res->conn=this;

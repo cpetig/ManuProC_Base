@@ -552,19 +552,23 @@ Query::Query(const std::string &command)
 	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
 	// old C++99 style of constructor delegation
-	this->~Query();
-	new (this) Query(ManuProC::get_database(), command);
+	construct_from_string();
 }
 #endif
 
-Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
-: query(command), num_params(), prepare(),
-	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(conn), implementation_specific()
+void Query::construct_from_string()
 {
 	char const *p=query.c_str();
 	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
 	params.setNeededParams(num_params);
 	Execute_if_complete();
+}
+
+Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
+: query(command), num_params(), prepare(),
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(conn), implementation_specific()
+{
+	construct_from_string();
 }
 
 Query::~Query()
@@ -582,23 +586,24 @@ Query::Query(PreparedQuery &pq)
 	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
 	// old C++99 style of constructor delegation
-	this->~Query();
-	new (this) Query(ManuProC::get_database(), pq);
+    construct_from_prepared();
 }
 #endif
+
+void Query::construct_from_prepared()
+{
+	// check for connection across reconnects
+	prepare->prep->check_connection(*backend);
+	params.setNeededParams(num_params);
+	Execute_if_complete();
+}
 
 Query::Query(Handle<ManuProC::Connection_base> const& conn, PreparedQuery &pq)
 : query(pq.command), num_params(pq.no_arguments), error(ECPG_TOO_FEW_ARGUMENTS),
   	  lines(), backend(conn), prepare(&pq), implementation_specific()
 //	  implementation_specific(pq.prep->execute())
 {
-	// check for connection across reconnects
-	if (pq.prep->check_connection(*(ManuProC::get_database())))
-	{
-	   backend=ManuProC::get_database();
-	}
-	params.setNeededParams(num_params);
-	Execute_if_complete();
+	construct_from_prepared();
 }
 
 // this will work for now, but we really should implement cursors later on:

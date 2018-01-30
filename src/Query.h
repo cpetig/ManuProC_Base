@@ -333,6 +333,10 @@ public:
 	   ~debug_environment();
 	};
 	static debug_environment debugging;
+
+private:
+	void construct_from_string();
+	void construct_from_prepared();
 };
 
 class PreparedQuery
