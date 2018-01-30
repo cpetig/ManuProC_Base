@@ -2,7 +2,7 @@
 /*  libcommonc++: ManuProC's main OO library
  *  Copyright (C) 2001-2005 Adolf Petig GmbH & Co. KG
  *  		written by Christof Petig
- *  Copyright (C) 2006-2010 Christof Petig
+ *  Copyright (C) 2006-2018 Christof Petig
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -458,9 +458,9 @@ bool Query_Row::good() const
 }
 
 void Query::ThrowOnBad(const char *where) const
-{  if (!implementation_specific || !backend)
+{  if (error!=0 && error!=100)
    {  SQLerror::test(__FUNCTION__);
-      Query_Row::mythrow(SQLerror(__FUNCTION__,-1,"unspecific bad result"));
+      Query_Row::mythrow(SQLerror(__FUNCTION__,error,"unspecific bad result"));
    }
 }
 
@@ -533,6 +533,8 @@ void Query::Execute() throw(SQLerror)
 			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
 		}
 		error= backend->LastError();
+		// a cursor declaration won't return tuples, fix this
+		if (!portal_name.empty() && error==100) error=0;
 		lines= implementation_specific->LinesAffected();
 	}
 }
@@ -540,6 +542,7 @@ void Query::Execute() throw(SQLerror)
 void Query::Fetch(Query_Row &is)
 {
 	is.impl= implementation_specific->Fetch();
+	if (!is.impl) error= 100;
 	is.naechstesFeld=0;
 }
 
@@ -633,7 +636,8 @@ bool Query::already_run() const
 
 bool Query::good() const
 {
-	return !backend->LastError();
+	return !error;
+//			backend->LastError();
 }
 
 int Query::last_insert_rowid() const
