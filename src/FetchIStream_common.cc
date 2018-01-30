@@ -544,22 +544,27 @@ void Query::Fetch(Query_Row &is)
 }
 
 Query::Query(const std::string &command)
-: /*eof(true), line(), result(),*/ query(command), num_params(), prepare(),
+#if 0 // c++11 +
+: Query(ManuProC::get_database(), command)
+{}
+#else
+: query(command), num_params(), prepare(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
 {
-	char const *p=query.c_str();
-	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
-	params.setNeededParams(num_params);
-	Execute_if_complete();
-
-//	implementation_specific= backend->execute2(command.c_str());
+	// old C++99 style of constructor delegation
+	this->~Query();
+	new (this) Query(ManuProC::get_database(), command);
 }
+#endif
 
 Query::Query(Handle<ManuProC::Connection_base> const& conn, const std::string &command)
 : query(command), num_params(), prepare(),
 	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(conn), implementation_specific()
 {
-	implementation_specific= backend->execute2(command.c_str());
+	char const *p=query.c_str();
+	while ((p=ArgumentList::next_insert(p))) { ++num_params; ++p; }
+	params.setNeededParams(num_params);
+	Execute_if_complete();
 }
 
 Query::~Query()
@@ -569,10 +574,29 @@ Query::~Query()
 }
 
 Query::Query(PreparedQuery &pq)
+#if 0 // c++11 +
+: Query(ManuProC::get_database(), pq)
+{}
+#else
+: query(pq.command), num_params(pq.no_arguments), prepare(&pq),
+	error(ECPG_TOO_FEW_ARGUMENTS), lines(), backend(ManuProC::get_database()), implementation_specific()
+{
+	// old C++99 style of constructor delegation
+	this->~Query();
+	new (this) Query(ManuProC::get_database(), pq);
+}
+#endif
+
+Query::Query(Handle<ManuProC::Connection_base> const& conn, PreparedQuery &pq)
 : query(pq.command), num_params(pq.no_arguments), error(ECPG_TOO_FEW_ARGUMENTS),
-  	  lines(), backend(pq.connection), prepare(&pq), implementation_specific()
+  	  lines(), backend(conn), prepare(&pq), implementation_specific()
 //	  implementation_specific(pq.prep->execute())
 {
+	// check for connection across reconnects
+	if (pq.prep->check_connection(*(ManuProC::get_database())))
+	{
+	   backend=ManuProC::get_database();
+	}
 	params.setNeededParams(num_params);
 	Execute_if_complete();
 }

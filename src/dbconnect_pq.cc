@@ -143,10 +143,14 @@ struct PQ_Prepared_Statement : ManuProC::Prepared_Statement_base
 	unsigned numparam;
 	connectionPQ *conn;
 //	resultsPQ obj;
+	// necessary across connections
+	std::string query;
+	std::vector<::Oid> parameters;
 
     // execution is delayed until last parameter is passed
 	virtual ManuProC::Query_result_base* execute() throw(SQLerror);
 	virtual ~PQ_Prepared_Statement();
+	virtual bool check_connection(ManuProC::Connection_base const& cb);
 };
 
 void resultsPQ::execute()
@@ -395,6 +399,39 @@ PQ_Prepared_Statement::~PQ_Prepared_Statement()
 		prepared_stmts.erase(i);
 }
 
+bool PQ_Prepared_Statement::check_connection(ManuProC::Connection_base const& cb)
+{
+#if 1 // re-preparing prepared query in new connection
+	if (!conn)
+	{
+		conn= dynamic_cast<connectionPQ*>(const_cast<ManuProC::Connection_base*>(&cb));
+		printf("Prepared statement across connections, restoring");
+		PGresult *res2= PQprepare(conn->connection, name.c_str(), query.c_str(), parameters.size(), parameters.data());
+		if (!res2)
+		{
+			if (Query::debugging.on) std::cerr << "PQprepare failed: " << name << '\n';
+			throw(SQLerror(query,1,"server error"));
+		}
+		if (PQresultStatus(res2) != PGRES_COMMAND_OK)
+		{
+			std::string msg= PQresultErrorMessage(res2);
+			unsigned stat=PQresultStatus(res2);
+			PQclear(res2);
+			conn->last_error=stat;
+			if (Query::debugging.on) std::cerr << "Error: " << stat << '\t' << msg << '\n';
+			throw(SQLerror(query,stat,msg));
+		}
+		PQclear(res2);
+		if (Query::debugging.on)
+		{
+			printf("Re-Prepared %s for %s\n", name, query);
+		}
+		return true;
+	}
+#endif
+	return false;
+}
+
 ManuProC::Query_result_base* PQ_Prepared_Statement::execute() throw(SQLerror)
 {
 	resultsPQ* obj = new resultsPQ;
@@ -455,6 +492,8 @@ ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char 
 	res->conn=this;
 	res->name=name;
 	res->numparam=numparam;
+	res->query= q;
+	res->parameters= std::vector<::Oid>(types2, types2+numparam);
 	return res;
 }
 

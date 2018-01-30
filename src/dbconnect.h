@@ -55,7 +55,7 @@ public:
 #if 0 //def MPC_SQLITE
 	extern sqlite3 *db_connection;
 #endif
-   //class Connection_base;
+   class Connection_base;
    class Connection // connect options
    {
    public:
@@ -132,6 +132,8 @@ public:
 	   // execution is delayed until last parameter is passed
 	   virtual Query_result_base* execute() throw(SQLerror)=0;
 	   virtual ~Prepared_Statement_base() {}
+	   /// check prepared statement against this connection (might re-prepare), true indicates new connection
+	   virtual bool check_connection(Connection_base const&) {}
    };
 
    class Connection_base : public HandleContent // actual connection object
