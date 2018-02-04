@@ -133,7 +133,7 @@ public:
 	   virtual Query_result_base* execute() throw(SQLerror)=0;
 	   virtual ~Prepared_Statement_base() {}
 	   /// check prepared statement against this connection (might re-prepare), true indicates new connection
-	   virtual bool check_connection(Connection_base const&) {}
+	   virtual bool check_connection(Connection_base const&) { return true; }
    };
 
    class Connection_base : public HandleContent // actual connection object
