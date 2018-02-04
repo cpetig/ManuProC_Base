@@ -20,6 +20,7 @@
 
 #include "Ausgabe_neu.h"
 #include <iostream>
+#include <sstream>
 #include <cassert>
 #include <cstring>
 #include <cstdlib>
@@ -256,8 +257,6 @@ std::string string2TeX(const std::string s, int flags) throw()
    return ret;
 }
 
-#include <strstream>
-
 const std::string FormatiereEmptyInt(long Zahl)
 {
   if(Zahl==0) return std::string();
@@ -272,11 +271,11 @@ const std::string Formatiere(unsigned long Zahl,
                 unsigned int Ziellaenge,
                 const char *TausenderTrennzeichen,
                 const char *Komma,char fuehrendesZeichen)
-{  std::ostrstream os;
+{  std::ostringstream os;
    Formatiere(os,Zahl,Nachkommastellen,Ziellaenge,TausenderTrennzeichen,Komma,fuehrendesZeichen) 
    	<< char(0);
    const std::string res(os.str());
-   os.freeze(0);
+   //os.freeze(0); not needed with stringstream
    return res;
 }
 
@@ -285,11 +284,11 @@ const std::string Formatiere(unsigned long long Zahl,
                 unsigned int Ziellaenge,
                 const char *TausenderTrennzeichen,
                 const char *Komma,char fuehrendesZeichen)
-{  std::ostrstream os;
+{  std::ostringstream os;
    Formatiere(os,Zahl,Nachkommastellen,Ziellaenge,TausenderTrennzeichen,Komma,fuehrendesZeichen) 
    	<< char(0);
    const std::string res(os.str());
-   os.freeze(0);
+   //os.freeze(0); not needed with stringstream
    return res;
 }
 

@@ -20,9 +20,10 @@
 
 #include <cstdio>
 #include <Misc/itos.h>
-#include <strstream>
+#include <sstream>
 #include <cstring>
 #include <cstdlib>
+#include <locale.h>
 
 #ifdef __MINGW32__
 //extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
@@ -63,24 +64,22 @@ std::string utos(unsigned int i)
  return(buffer);
 }
 
-#include <locale.h>
-
 std::string dtos(double i)
 {
  char *oldlocale;
  oldlocale = strdup(setlocale(LC_NUMERIC, NULL));
  setlocale(LC_NUMERIC, "C");
 
- char buffer[100];
-// snprintf(buffer,sizeof buffer,"%lf",i);
- std::ostrstream o(buffer,sizeof buffer);
+ std::ostringstream o;
  o << i << char(0);
  o.flush();
+
+ std::string res(o.str());
 
  setlocale(LC_NUMERIC, oldlocale);
  free(oldlocale);
 
- return(buffer);
+ return(res);
 }
 
 std::string ulltos(unsigned long long i)
