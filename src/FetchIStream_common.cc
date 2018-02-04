@@ -200,6 +200,7 @@ const char *ArgumentList::next_insert(const char *text)
     return (*ptr == '\0') ? 0 : ptr;
 }
 
+#if 0
 Query_types::Oid ArgumentList::type_of(const_iterator const& which) const
 { return types[which-begin()];
 }
