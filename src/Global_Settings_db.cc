@@ -28,7 +28,7 @@ std::string Global_Settings::database_load(int userid, const std::string& progra
   std::string wert;
   try
   {
-    Query("select wert from global_settings where coalesce(userid,0)=? and program=? and name=?")
+    Query("select wert from global_settings where coalesce(userid,0)=? and program=? and name=? limit 1")
       << (userid==global_id ? 0 : userid) << program << name >> wert;
   } 
   catch (SQLerror &e)
