@@ -21,6 +21,7 @@
 #include <Misc/Query.h>
 #include <string.h>
 #include <Misc/itos.h>
+#include <pg_type.h>
 
 struct connectionPQ : ManuProC::Connection_base
 {
@@ -118,6 +119,7 @@ struct rowPQ : ManuProC::Query_result_row
 
 struct PQ_Prepared_Statement;
 
+#if 0
 struct PQparam
 {
 	std::string s;
@@ -126,6 +128,7 @@ struct PQparam
 	PQparam(std::string const& a, ManuProC::Oid t=0) : s(a), type(t), null() {}
 	PQparam(ManuProC::Oid t=0) : type(t), null(true) {}
 };
+#endif
 
 struct resultsPQ : ManuProC::Query_result_base
 {
@@ -136,16 +139,13 @@ struct resultsPQ : ManuProC::Query_result_base
 	PQ_Prepared_Statement *prep;
 	unsigned missing_params;
 	std::string query;
-	std::vector<PQparam> parameters;
+	std::vector<ManuProC::ArgumentEntry> parameters;
 	unsigned lines;
 
 	// lines returned (or lines affected if none returned)
 	virtual unsigned LinesAffected() const throw() { return lines; }
 	virtual ManuProC::Query_result_row* Fetch();
-	virtual void AddParameter(const std::string &s, ManuProC::Oid type);
-	virtual void AddNull(ManuProC::Oid type=0);
-//	   virtual void AddParameter(long integer, Oid type)=0;
-//	   virtual void AddParameter(double fl, Oid type)=0;
+	virtual void AddParameter(ManuProC::ArgumentEntry const& a);
 	virtual bool complete() const throw() { return !missing_params; }
 	// on postgreSQL this one returns an Oid!
 	virtual int last_insert_rowid() const { return PQoidValue(res); }
@@ -178,20 +178,39 @@ void resultsPQ::execute()
 	int lengths[psize];
 	int formats[psize];
 	::Oid types[psize];
+	std::string storage[psize];
 	memset(formats,0,psize*sizeof(*formats));
 	for (unsigned i=0;i<psize;++i)
 	{
-		if (parameters[i].null)
+		if (parameters[i].get_null())
 		{
 			values[i]=0;
 			lengths[i]=0;
 		}
-		else
+		else if (parameters[i].get_type()==INT8OID || parameters[i].get_type()==INT4OID)
 		{
-			values[i]= parameters[i].s.data();
-			lengths[i]= parameters[i].s.size();
+			storage[i] = ulltos(parameters[i].get_int());
+			values[i]= storage[i].data();
+			lengths[i]= storage[i].size();
 		}
-		types[i]= parameters[i].type;
+		else if (parameters[i].get_type()==FLOAT4OID)
+		{
+			storage[i] = dtos(parameters[i].get_float());
+			values[i]= storage[i].data();
+			lengths[i]= storage[i].size();
+		}
+		else if (parameters[i].get_type()==BOOLOID)
+		{
+			storage[i] = itos(parameters[i].get_int());
+			values[i]= storage[i].data();
+			lengths[i]= storage[i].size();
+		}
+		else if (parameters[i].get_type()==TEXTOID || !parameters[i].get_string().empty())
+		{
+			values[i]= parameters[i].get_string().data();
+			lengths[i]= parameters[i].get_string().size();
+		}
+		types[i]= parameters[i].get_type();
 	}
 	if (Query::debugging.on)
 	{
@@ -248,18 +267,10 @@ void resultsPQ::execute()
 	next_row=0;
 }
 
-void resultsPQ::AddParameter(const std::string &s, ManuProC::Oid type)
+void resultsPQ::AddParameter(ManuProC::ArgumentEntry const& a)
 {
 	if (!missing_params) throw SQLerror(query,2,"too many parameters");
-	parameters.push_back(PQparam(s,type));
-	--missing_params;
-	if (!missing_params) execute();
-}
-
-void resultsPQ::AddNull(ManuProC::Oid type)
-{
-	if (!missing_params) throw SQLerror(query,2,"too many parameters");
-	parameters.push_back(PQparam(type));
+	parameters.push_back(a);
 	--missing_params;
 	if (!missing_params) execute();
 }

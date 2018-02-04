@@ -32,7 +32,7 @@
 struct sqlite3;
 #endif
 #include <vector>
-
+#include <stdint.h>
 
 #define POSTGRESQL_PORT	5432
 
@@ -50,6 +50,41 @@ public:
  AuthError(const std::string &m) throw() :msg(m) {}
  const std::string Msg() const { return msg; }
 
+};
+
+typedef unsigned long Oid;
+
+struct null_s
+{ ManuProC::Oid type;
+  null_s(ManuProC::Oid t) : type(t) {}
+};
+
+class ArgumentEntry
+{
+	typedef ManuProC::Oid Oid;
+	Oid type;
+	bool null;
+	std::string s;
+	int64_t i;
+	double f;
+
+public:
+	ArgumentEntry() : type(), null(true), s(), i(), f() {}
+	ArgumentEntry(std::string const &s2, Oid o) : type(o), null(), s(s2), i(), f() {}
+	ArgumentEntry(null_s const& n) : type(n.type), null(true), s(), i(), f() {}
+
+	ArgumentEntry(std::string const &s);
+	ArgumentEntry(int64_t a);
+	ArgumentEntry(int32_t a);
+	ArgumentEntry(double f);
+	ArgumentEntry(bool b);
+	ArgumentEntry(char const *s);
+
+	Oid get_type() const { return type; }
+	bool get_null() const { return null; }
+	std::string const& get_string() const { return s; }
+	int64_t get_int() const { return i; }
+	double get_float() const { return f; }
 };
 
 #if 0 //def MPC_SQLITE
@@ -101,8 +136,6 @@ public:
     //std::string get_dbname(Connection_base&);
    };
 
-   typedef unsigned long Oid;
-
    struct Query_result_row
    {
 	   virtual unsigned columns() const throw()=0;
@@ -119,10 +152,7 @@ public:
 	   virtual ~Query_result_base() {}
 	   virtual unsigned LinesAffected() const throw()=0;
 	   virtual Query_result_row* Fetch()=0;
-	   virtual void AddParameter(const std::string &s, Oid type)=0;
-	   virtual void AddNull(Oid type=0)=0;
-//	   virtual void AddParameter(long integer, Oid type)=0;
-//	   virtual void AddParameter(double fl, Oid type)=0;
+	   virtual void AddParameter(ManuProC::ArgumentEntry const& a)=0;
 	   virtual bool complete() const throw()=0;
 	   virtual int last_insert_rowid() const { return -1; }
    };

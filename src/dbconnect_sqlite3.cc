@@ -23,6 +23,7 @@
 #include <sqlite3.h>
 #include <Misc/Query.h>
 #include <string.h>
+#include <pg_type.h> // for OIDs
 
 struct sqliteConnection : ManuProC::Connection_base
 {
@@ -124,20 +125,27 @@ struct rowSQ_step : ManuProC::Query_result_row
 	rowSQ_step() : stmt() {}
 };
 
+#if 0
 struct SQparam
 {
 	std::string s;
 	bool null;
-	SQparam(std::string const& a) : s(a), null() {}
-	SQparam() : null(true) {}
+	ManuProC::Oid type;
+	int64_t i;
+	float f;
+	SQparam(std::string const& a) : s(a), null(), type(TEXTOID), i(), f() {}
+	SQparam(int64_t a) : s(a), null(), type(INT8OID), i(a), f() {}
+	SQparam(float a) : s(a), null(), type(FLOAT4OID), i(), f(a) {}
+	SQparam() : null(true), type(), type(FLOAT4OID), i(), f() {}
 };
+#endif
 
 struct resultsSQ_params : ManuProC::Query_result_base
 {
 	sqliteConnection *conn;
 	std::string query;
 	unsigned missing_params;
-	std::vector<SQparam> parameters;
+	std::vector<ManuProC::ArgumentEntry> parameters;
 	bool ready;
 	rowSQ_step step;
 	unsigned lines;
@@ -151,10 +159,7 @@ struct resultsSQ_params : ManuProC::Query_result_base
 		ready= false; // fetch again on next call
 		return &step;
 	}
-	virtual void AddParameter(const std::string &s, ManuProC::Oid type);
-	virtual void AddNull(ManuProC::Oid type);
-//	   virtual void AddParameter(long integer, Oid type)=0;
-//	   virtual void AddParameter(double fl, Oid type)=0;
+	virtual void AddParameter(ManuProC::ArgumentEntry const& a);
 	virtual bool complete() const throw() { return !missing_params; }
 	virtual int last_insert_rowid() const
 	{
@@ -207,8 +212,8 @@ struct resultsSQ : ManuProC::Query_result_base
 		conn->last_code=0;
 		return &rowres;
 	}
-	virtual void AddParameter(const std::string &s, ManuProC::Oid type) {}
-	virtual void AddNull(ManuProC::Oid type) {}
+	virtual void AddParameter(ManuProC::ArgumentEntry const& a) {}
+//	virtual void AddNull(ManuProC::Oid type) {}
 //	   virtual void AddParameter(long integer, Oid type)=0;
 //	   virtual void AddParameter(double fl, Oid type)=0;
 	virtual bool complete() const throw() { return true; }
@@ -225,18 +230,10 @@ struct resultsSQ : ManuProC::Query_result_base
 	}
 };
 
-void resultsSQ_params::AddParameter(const std::string &s, ManuProC::Oid type)
+void resultsSQ_params::AddParameter(ManuProC::ArgumentEntry const& a)
 {
 	if (!missing_params) throw SQLerror(query,2,"too many parameters");
-	parameters.push_back(SQparam(s));
-	--missing_params;
-	if (!missing_params) execute();
-}
-
-void resultsSQ_params::AddNull(ManuProC::Oid type)
-{
-	if (!missing_params) throw SQLerror(query,2,"too many parameters");
-	parameters.push_back(SQparam());
+	parameters.push_back(a);
 	--missing_params;
 	if (!missing_params) execute();
 }
@@ -259,6 +256,10 @@ void resultsSQ_params::fetch()
 			conn->last_code=0;
 		    lines= sqlite3_changes(conn->db_connection);
 		    ready= true;
+			if (Query::debugging.on)
+			{
+				std::cerr << "changed lines: " << lines << '\n';
+			}
 		}
 		else
 		{
@@ -301,8 +302,13 @@ void resultsSQ_params::execute()
 	assert(sqlite3_bind_parameter_count(step.stmt)==psize);
 	for (unsigned i=0;i<psize;++i)
 	{
-		if (parameters[i].null) sqlite3_bind_null(step.stmt,i+1);
-		else sqlite3_bind_text(step.stmt, i+1, parameters[i].s.data(), parameters[i].s.size(), 0);
+		if (parameters[i].get_null()) sqlite3_bind_null(step.stmt,i+1);
+		else if (parameters[i].get_type()==BOOLOID) sqlite3_bind_int(step.stmt,i+1,parameters[i].get_int());
+		else if (parameters[i].get_type()==INT4OID) sqlite3_bind_int(step.stmt,i+1,parameters[i].get_int());
+		else if (parameters[i].get_type()==INT8OID) sqlite3_bind_int64(step.stmt,i+1,parameters[i].get_int());
+		else if (parameters[i].get_type()==FLOAT4OID) sqlite3_bind_double(step.stmt,i+1,parameters[i].get_float());
+		else if (parameters[i].get_type()==TEXTOID) sqlite3_bind_text(step.stmt, i+1, parameters[i].get_string().data(), parameters[i].get_string().size(), 0);
+		else fprintf(stderr, "Unknown parameter type %d\n", parameters[i].get_type());
 	}
 	if (Query::debugging.on)
 	{
@@ -310,8 +316,12 @@ void resultsSQ_params::execute()
 		std::cerr << "PARAM: ";
 		for (unsigned i=0;i<psize;++i)
 		{
-			if (parameters[i].null) std::cerr << "NULL, ";
-			else std::cerr << parameters[i].s.c_str() << ", ";
+			if (parameters[i].get_null()) std::cerr << "NULL, ";
+			else if (parameters[i].get_type()==BOOLOID) std::cerr << (parameters[i].get_int() ? "true, " : "false, ");
+			else if (parameters[i].get_type()==INT4OID) std::cerr << parameters[i].get_int() << ", ";
+			else if (parameters[i].get_type()==INT8OID) std::cerr << parameters[i].get_int() << ", ";
+			else if (parameters[i].get_type()==FLOAT4OID) std::cerr << parameters[i].get_float() << ", ";
+			else if (parameters[i].get_type()==TEXTOID) std::cerr << parameters[i].get_string() << ", ";
 		}
 		std::cerr << '\n';
 	}

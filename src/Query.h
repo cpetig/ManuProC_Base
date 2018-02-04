@@ -134,6 +134,7 @@ public:
 
 struct Query_types
 {	typedef ManuProC::Oid Oid;
+	typedef ManuProC::null_s null_s;
 	template <class T>
 	 struct NullIf_s
 	{	T data;
@@ -142,48 +143,48 @@ struct Query_types
 
 		template <class U> NullIf_s(const T &a,const U &b) : data(a), null(a==b) {}
 	};
-	struct null_s
-	{ Oid type;
-	  null_s(Oid t) : type(t) {}
-	};
-	typedef struct null_s null_s_t;
+	typedef null_s null_s_t;
 	template <class T> static null_s_t null()
 	{ return null_s_t(NullIf_s<T>::postgres_type);
 	}
 	typedef Query_Row::check_eol check_eol;
 };
 
+namespace ManuProC {
+
+}
+
 class ArgumentList
 {
 public:
 	typedef ManuProC::Oid Oid;
-	typedef std::vector<std::string>::const_iterator const_iterator;
+	typedef std::vector<ManuProC::ArgumentEntry>::const_iterator const_iterator;
 private:
 	unsigned params_needed;
-        std::vector<Oid> types;
-	std::vector<std::string> params;
-	std::vector<bool> binary;
-	std::vector<bool> null;
+    std::vector<ManuProC::ArgumentEntry> params;
 public:
 	ArgumentList() : params_needed(unsigned(-1)) {}
 	void setNeededParams(unsigned i)
 	{  params_needed=i; }
 	bool complete() const { return !params_needed; }
 	unsigned HowManyNeededParams() const { return params_needed; }
-	std::vector<Oid> const& getTypes() const { return types; }
+//	std::vector<Oid> const& getTypes() const { return types; }
 	const_iterator begin() const { return params.begin(); }
 	const_iterator end() const { return params.end(); }
 	bool empty() const { return params.empty(); }
 	size_t size() const { return params.size(); }
+#if 0
 	Oid type_of(const_iterator const& which) const;
 	bool is_null(const_iterator const& which) const;
 	bool is_binary(const_iterator const& which) const;
 	std::string const& get_string(const_iterator const& which) const;
+#endif
 
 	//-------------------- parameters ------------------
 	// must be already quoted for plain SQL inclusion
-	__deprecated ArgumentList &add_argument(const std::string &s);
+//	__deprecated ArgumentList &add_argument(const std::string &s);
 	ArgumentList &add_argument(const std::string &s, Oid type);
+	ArgumentList &add_argument(ManuProC::ArgumentEntry const&s);
 
 	ArgumentList &operator<<(const std::string &str);
 	ArgumentList &operator<<(int i)

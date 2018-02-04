@@ -217,6 +217,26 @@ std::string const& ArgumentList::get_string(const_iterator const& which) const
 {
 	return params[which-begin()];
 }
+#endif
+
+ManuProC::ArgumentEntry::ArgumentEntry(std::string const &s2)
+	: type(TEXTOID), null(), s(s2), i(), f()
+{}
+ManuProC::ArgumentEntry::ArgumentEntry(int64_t a)
+	: type(INT8OID), null(), s(), i(a), f()
+{}
+ManuProC::ArgumentEntry::ArgumentEntry(int32_t a)
+	: type(INT4OID), null(), s(), i(a), f()
+{}
+ManuProC::ArgumentEntry::ArgumentEntry(double f2)
+	: type(FLOAT4OID), null(), s(), i(), f(f2)
+{}
+ManuProC::ArgumentEntry::ArgumentEntry(bool b)
+	: type(BOOLOID), null(), s(), i(b), f()
+{}
+ManuProC::ArgumentEntry::ArgumentEntry(char const* s2)
+	: type(TEXTOID), null(), s(s2), i(), f()
+{}
 
 static bool needs_quotes(Query_types::Oid type)
 { switch (type)
@@ -306,15 +326,7 @@ Query &Query::add_argument(const std::string &s, Oid type)
 ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 { if (complete())
       Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
-#if 1 //def USE_PARAMETERS
-  params.push_back(std::string());
-#else
-  params.push_back("NULL");
-#endif
-
-  types.push_back(n.type);
-  null.push_back(true);
-  binary.push_back(false);
+  params.push_back(ManuProC::ArgumentEntry(n));
   --params_needed;
   return *this;
 }
@@ -322,10 +334,16 @@ ArgumentList &ArgumentList::operator<<(Query_types::null_s n)
 ArgumentList &ArgumentList::add_argument(const std::string &x, Oid type)
 {  if (complete())
       Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
-   params.push_back(x);
-   types.push_back(type);
-   null.push_back(false);
-   binary.push_back(false);
+   ManuProC::ArgumentEntry e(x, type);
+   params.push_back(e);
+  --params_needed;
+   return *this;
+}
+
+ArgumentList &ArgumentList::add_argument(ManuProC::ArgumentEntry const& e)
+{  if (complete())
+      Query_Row::mythrow(SQLerror(std::string(),ECPG_TOO_MANY_ARGUMENTS,"too many arguments"));
+   params.push_back(e);
   --params_needed;
    return *this;
 }
@@ -369,35 +387,32 @@ template<>
 const Query_types::Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
 
 ArgumentList &ArgumentList::operator<<(long i)
-{ return add_argument(itos(i),INT4OID);
+{ return add_argument(ManuProC::ArgumentEntry(i));
 }
 template<> const Query_types::Oid Query::NullIf_s<long>::postgres_type=INT4OID;
 template<> const Query_types::Oid Query::NullIf_s<int>::postgres_type=INT4OID;
 
 ArgumentList &ArgumentList::operator<<(unsigned long i)
-{  return add_argument(ulltos(i),INT4OID);
+{  return add_argument(ManuProC::ArgumentEntry((int64_t)i));
 }
 template<> const Query_types::Oid Query::NullIf_s<unsigned long>::postgres_type=INT4OID;
 template<> const Query_types::Oid Query::NullIf_s<unsigned int>::postgres_type=INT4OID;
 
+// the API can't handle unsigned 64bit, only unsigned 63bit ...
 ArgumentList &ArgumentList::operator<<(unsigned long long i)
-{  return add_argument(ulltos(i),INT8OID);
+{  return add_argument(ManuProC::ArgumentEntry((int64_t)i));
 }
 template<> const Query_types::Oid Query::NullIf_s<unsigned long long>::postgres_type=INT8OID;
 
 ArgumentList &ArgumentList::operator<<(double i)
-{  return add_argument(dtos(i),FLOAT4OID);
+{  return add_argument(ManuProC::ArgumentEntry(i));
 }
 template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
 template<> const Query_types::Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
 
 ArgumentList &ArgumentList::operator<<(bool i)
 {
-#ifdef MPC_SQLITE
-  return add_argument(itos(i),INT4OID); // sqlite uses 0,1 for booleans
-#else
-  return add_argument(btos(i),BOOLOID);
-#endif
+  return add_argument(ManuProC::ArgumentEntry(i));
 }
 template<> const Query_types::Oid Query::NullIf_s<bool>::postgres_type=BOOLOID;
 
@@ -424,8 +439,7 @@ template<> const Query_types::Oid Query::NullIf_s<char>::postgres_type=CHAROID;
 
 ArgumentList &ArgumentList::operator<<(const ArgumentList &list)
 {  for (const_iterator i=list.begin();i!=list.end();++i)
-   { if (list.is_null(i)) *this << Query_types::null_s(list.type_of(i));
-     else add_argument(*i,list.type_of(i));
+   { add_argument(*i);
    }
    return *this;
 }
@@ -508,8 +522,7 @@ void Query::Execute() throw(SQLerror)
 		     Query_Row::mythrow(SQLerror(__FILELINE__,-1,"executing prepared statement failed"));
 		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
 		{
-			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
-			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
+			implementation_specific->AddParameter(*i);
 		}
 		error= backend->LastError();
 		lines= implementation_specific->LinesAffected();
@@ -530,8 +543,7 @@ void Query::Execute() throw(SQLerror)
                   Query_Row::mythrow(SQLerror(__FILELINE__,-1,"no valid connection"));
 		for (ArgumentList::const_iterator i=params.begin();i!=params.end();++i)
 		{
-			if (params.is_null(i)) implementation_specific->AddNull(params.type_of(i));
-			else implementation_specific->AddParameter(params.get_string(i),params.type_of(i));
+			implementation_specific->AddParameter(*i);
 		}
 		error= backend->LastError();
 		// a cursor declaration won't return tuples, fix this
