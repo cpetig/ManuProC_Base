@@ -43,8 +43,8 @@
 
 #define ECPG_TOO_MANY_ARGUMENTS         -201
 #define ECPG_TOO_FEW_ARGUMENTS          -202
-#define ECPG_MISSING_INDICATOR          -209
-#define ECPG_DATA_NOT_ARRAY             -211
+#define ECPG_MISSING_INDICATOR          -213  // in sync with ecpgerrno.h
+#define ECPG_DATA_NOT_ARRAY             -215  // in sync with ecpgerrno.h
 #define ECPG_UNKNOWN_DESCRIPTOR         -240
 #define ECPG_INVALID_DESCRIPTOR_INDEX   -241
 #endif
@@ -459,7 +459,7 @@ bool Query_Row::good() const
 
 void Query::ThrowOnBad(const char *where) const
 {  if (error!=0 && error!=100)
-   {  SQLerror::test(__FUNCTION__);
+   {  
       Query_Row::mythrow(SQLerror(__FUNCTION__,error,"unspecific bad result"));
    }
 }
