@@ -163,7 +163,7 @@ struct PQ_Prepared_Statement : ManuProC::Prepared_Statement_base
 //	resultsPQ obj;
 	// necessary across connections
 	std::string query;
-	std::vector<::Oid> parameters;
+	std::vector< ::Oid> parameters;
 
     // execution is delayed until last parameter is passed
 	virtual ManuProC::Query_result_base* execute() throw(SQLerror);
@@ -511,7 +511,7 @@ ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char 
 	res->name=name;
 	res->numparam=numparam;
 	res->query= q;
-	res->parameters= std::vector<::Oid>(types2, types2+numparam);
+	res->parameters= std::vector< ::Oid>(types2, types2+numparam);
 	return res;
 }
 
