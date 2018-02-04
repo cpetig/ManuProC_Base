@@ -360,8 +360,15 @@ ManuProC::Query_result_base* sqliteConnection::execute_param(char const* q, unsi
 	res2->query= q;
 
 	int error= sqlite3_prepare_v2(db_connection, q, -1, &res2->step.stmt, 0);
-	if (error!=SQLITE_OK) throw SQLerror(q,error,"execute_param");
-
+	if (error!=SQLITE_OK)
+	{
+		if (Query::debugging.on)
+			std::cerr << "sqlite3_prepare_v2: error " << error << " for " << q << " with " << num << " params\n"
+			<< "  " << sqlite3_errmsg(db_connection) << '\n';
+		throw SQLerror(q,error,"execute_param");
+	}
+	if (Query::debugging.on)
+		std::cerr << "sqlite3_prepare_v2: " << q << " with " << num << " params\n";
 	last_code=0;
 	return res2;
 }
