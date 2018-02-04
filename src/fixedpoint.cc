@@ -20,7 +20,6 @@
 
 #include "fixedpoint.h"
 #include <Misc/Ausgabe_neu.h>
-#define _GNU_SOURCE
 #include <math.h>
 #include <cassert>
 #include <stdexcept>
