@@ -308,7 +308,7 @@ void resultsSQ_params::execute()
 		else if (parameters[i].get_type()==INT8OID) sqlite3_bind_int64(step.stmt,i+1,parameters[i].get_int());
 		else if (parameters[i].get_type()==FLOAT4OID) sqlite3_bind_double(step.stmt,i+1,parameters[i].get_float());
 		else if (parameters[i].get_type()==TEXTOID) sqlite3_bind_text(step.stmt, i+1, parameters[i].get_string().data(), parameters[i].get_string().size(), 0);
-		else fprintf(stderr, "Unknown parameter type %d\n", parameters[i].get_type());
+		else std::cerr << "Unknown parameter type " << parameters[i].get_type() << std::endl;
 	}
 	if (Query::debugging.on)
 	{
