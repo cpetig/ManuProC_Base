@@ -387,7 +387,7 @@ template<>
 const Query_types::Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
 
 ArgumentList &ArgumentList::operator<<(long i)
-{ return add_argument(ManuProC::ArgumentEntry(i));
+{ return add_argument(ManuProC::ArgumentEntry((int64_t)i));
 }
 template<> const Query_types::Oid Query::NullIf_s<long>::postgres_type=INT4OID;
 template<> const Query_types::Oid Query::NullIf_s<int>::postgres_type=INT4OID;
