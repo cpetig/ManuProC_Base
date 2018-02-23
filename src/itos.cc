@@ -71,7 +71,7 @@ std::string dtos(double i)
  setlocale(LC_NUMERIC, "C");
 
  std::ostringstream o;
- o << i << char(0);
+ o << i;
  o.flush();
 
  std::string res(o.str());

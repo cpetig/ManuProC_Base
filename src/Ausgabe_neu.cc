@@ -272,10 +272,8 @@ const std::string Formatiere(unsigned long Zahl,
                 const char *TausenderTrennzeichen,
                 const char *Komma,char fuehrendesZeichen)
 {  std::ostringstream os;
-   Formatiere(os,Zahl,Nachkommastellen,Ziellaenge,TausenderTrennzeichen,Komma,fuehrendesZeichen) 
-   	<< char(0);
+   Formatiere(os,Zahl,Nachkommastellen,Ziellaenge,TausenderTrennzeichen,Komma,fuehrendesZeichen);
    const std::string res(os.str());
-   //os.freeze(0); not needed with stringstream
    return res;
 }
 
@@ -285,10 +283,8 @@ const std::string Formatiere(unsigned long long Zahl,
                 const char *TausenderTrennzeichen,
                 const char *Komma,char fuehrendesZeichen)
 {  std::ostringstream os;
-   Formatiere(os,Zahl,Nachkommastellen,Ziellaenge,TausenderTrennzeichen,Komma,fuehrendesZeichen) 
-   	<< char(0);
+   Formatiere(os,Zahl,Nachkommastellen,Ziellaenge,TausenderTrennzeichen,Komma,fuehrendesZeichen);
    const std::string res(os.str());
-   //os.freeze(0); not needed with stringstream
    return res;
 }
 
