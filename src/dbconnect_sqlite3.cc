@@ -302,13 +302,42 @@ void resultsSQ_params::execute()
 	assert(sqlite3_bind_parameter_count(step.stmt)==psize);
 	for (unsigned i=0;i<psize;++i)
 	{
-		if (parameters[i].get_null()) sqlite3_bind_null(step.stmt,i+1);
-		else if (parameters[i].get_type()==BOOLOID) sqlite3_bind_int(step.stmt,i+1,parameters[i].get_int());
-		else if (parameters[i].get_type()==INT4OID) sqlite3_bind_int(step.stmt,i+1,parameters[i].get_int());
-		else if (parameters[i].get_type()==INT8OID) sqlite3_bind_int64(step.stmt,i+1,parameters[i].get_int());
-		else if (parameters[i].get_type()==FLOAT4OID) sqlite3_bind_double(step.stmt,i+1,parameters[i].get_float());
-		else if (parameters[i].get_type()==TEXTOID) sqlite3_bind_text(step.stmt, i+1, parameters[i].get_string().data(), parameters[i].get_string().size(), 0);
-		else std::cerr << "Unknown parameter type " << parameters[i].get_type() << std::endl;
+		if (parameters[i].get_null()) 
+			{
+				sqlite3_bind_null(step.stmt,i+1);
+			}
+		else
+		{
+			switch(parameters[i].get_type())
+			{
+				case BOOLOID:
+				case INT4OID:
+					sqlite3_bind_int(step.stmt,i+1,parameters[i].get_int());
+				break;
+
+				case INT8OID:
+					sqlite3_bind_int64(step.stmt,i+1,parameters[i].get_int());
+				break;
+
+				case FLOAT4OID:
+					sqlite3_bind_double(step.stmt,i+1,parameters[i].get_float());
+				break;
+
+				case TEXTOID:
+				case DATEOID:
+				case TIMEOID:
+				case TIMESTAMPOID:
+				case TIMESTAMPTZOID:
+				case INTERVALOID:
+				case TIMETZOID:
+					sqlite3_bind_text(step.stmt, i+1, parameters[i].get_string().data(), parameters[i].get_string().size(), 0);
+				break;
+
+				default:
+					std::cerr << "Unknown parameter type " << parameters[i].get_type() << std::endl;
+				break;
+			}
+		}	
 	}
 	if (Query::debugging.on)
 	{
@@ -316,12 +345,42 @@ void resultsSQ_params::execute()
 		std::cerr << "PARAM: ";
 		for (unsigned i=0;i<psize;++i)
 		{
-			if (parameters[i].get_null()) std::cerr << "NULL, ";
-			else if (parameters[i].get_type()==BOOLOID) std::cerr << (parameters[i].get_int() ? "true, " : "false, ");
-			else if (parameters[i].get_type()==INT4OID) std::cerr << parameters[i].get_int() << ", ";
-			else if (parameters[i].get_type()==INT8OID) std::cerr << parameters[i].get_int() << ", ";
-			else if (parameters[i].get_type()==FLOAT4OID) std::cerr << parameters[i].get_float() << ", ";
-			else if (parameters[i].get_type()==TEXTOID) std::cerr << parameters[i].get_string() << ", ";
+			if (parameters[i].get_null()) 
+				{
+					std::cerr << "NULL, ";
+				}
+			else
+			{
+				switch(parameters[i].get_type())
+				{
+					case BOOLOID:
+						std::cerr << (parameters[i].get_int() ? "true, " : "false, ");
+					break;
+
+					case INT4OID:
+					case INT8OID:
+						std::cerr << parameters[i].get_int() << ", ";
+					break;
+
+					case FLOAT4OID:
+						std::cerr << parameters[i].get_float() << ", ";
+					break;
+
+					case TEXTOID:
+					case DATEOID:
+					case TIMEOID:
+					case TIMESTAMPOID:
+					case TIMESTAMPTZOID:
+					case INTERVALOID:
+					case TIMETZOID:
+						std::cerr << parameters[i].get_string() << ", ";
+					break;
+
+					default:
+						std::cerr << "Unknown parameter type " << parameters[i].get_type() << std::endl;
+					break;
+				}
+			}
 		}
 		std::cerr << '\n';
 	}

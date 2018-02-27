@@ -1,7 +1,7 @@
 # $Id: configure.in,v 1.39 2006/08/03 11:18:28 christof Exp $
 
 AC_PREREQ(2.50)
-AC_INIT(ManuProC_Base,1.0.1, [manuproc-developer-de@berlios.de])
+AC_INIT(ManuProC_Base,1.0.2, [manuproc-developer-de@berlios.de])
 AC_CONFIG_AUX_DIR(.)
 
 MPC_BASE_MAJOR_VERSION=`echo $PACKAGE_VERSION | sed -e 's/^\(.*\)\..*\..*$/\1/'`
