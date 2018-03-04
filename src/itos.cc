@@ -89,6 +89,13 @@ std::string ulltos(unsigned long long i)
  return(buffer);
 }
 
+std::string lltos(int64_t i)
+{
+ char buffer[100];
+ snprintf(buffer,sizeof buffer,"%lld",i);
+ return(buffer);
+}
+
 std::string btos(bool b)
 {
  if(b) return "true";

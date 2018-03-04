@@ -187,9 +187,15 @@ void resultsPQ::execute()
 			values[i]=0;
 			lengths[i]=0;
 		}
-		else if (parameters[i].get_type()==INT8OID || parameters[i].get_type()==INT4OID)
+		else if (parameters[i].get_type()==INT4OID)
 		{
-			storage[i] = ulltos(parameters[i].get_int());
+			storage[i] = itos((int32_t)(parameters[i].get_int()));
+			values[i]= storage[i].data();
+			lengths[i]= storage[i].size();
+		}
+		else if (parameters[i].get_type()==INT8OID)
+		{
+			storage[i] = lltos(parameters[i].get_int());
 			values[i]= storage[i].data();
 			lengths[i]= storage[i].size();
 		}
