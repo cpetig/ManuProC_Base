@@ -1,0 +1,10 @@
+#!/bin/sh
+for i in `cat LINGUAS`
+do
+  rm ${i}.mo
+  make ${i}.mo
+#  mkdir -p /opt/jacek/stw_installer/share/locale/${i}/LC_MESSAGES 
+  sudo mkdir -p /usr/local/share/locale/${i}/LC_MESSAGES
+#  cp ${i}.mo /opt/jacek/stw_installer/share/locale/${i}/LC_MESSAGES/ManuProC_Base.mo
+  sudo cp ${i}.mo /usr/local/share/locale/${i}/LC_MESSAGES/ManuProC_Base.mo
+done
