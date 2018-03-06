@@ -18,7 +18,7 @@
  */
 
 #include <ManuProCConfig.h>
-#ifdef MPC_SQLITE
+#if 1 // def MPC_SQLITE  (now also used for pgSQL)
 #include <Misc/Transaction.h>
 #include <Misc/Query.h>
 #include <algorithm>

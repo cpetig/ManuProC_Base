@@ -21,11 +21,13 @@
 #ifndef AUX_ITOS_H
 #define AUX_ITOS_H
 #include <string>
+#include <stdint.h>
 std::string utos(unsigned int i);
 std::string itos(int i);
 std::string itos0p(int i, int c=0,bool show_plus=false);
 std::string itos0pad(int i, int p);
 std::string dtos(double i);
 std::string ulltos(unsigned long long i);
+std::string lltos(int64_t i);
 std::string btos(bool b);
 #endif

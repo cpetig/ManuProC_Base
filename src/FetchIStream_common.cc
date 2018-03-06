@@ -387,13 +387,21 @@ template<>
 const Query_types::Oid Query::NullIf_s<char const*>::postgres_type=TEXTOID;
 
 ArgumentList &ArgumentList::operator<<(long i)
-{ return add_argument(ManuProC::ArgumentEntry((int64_t)i));
+{
+  if (sizeof(i)==sizeof(int32_t))
+	return add_argument(ManuProC::ArgumentEntry((int32_t)i));
+  else
+	return add_argument(ManuProC::ArgumentEntry((int64_t)i));
 }
 template<> const Query_types::Oid Query::NullIf_s<long>::postgres_type=INT4OID;
 template<> const Query_types::Oid Query::NullIf_s<int>::postgres_type=INT4OID;
 
 ArgumentList &ArgumentList::operator<<(unsigned long i)
-{  return add_argument(ManuProC::ArgumentEntry((int64_t)i));
+{
+  if (sizeof(i)==sizeof(uint32_t)) // desperate attempt, I hope we don't use 32 bit numbers
+	return add_argument(ManuProC::ArgumentEntry((int32_t)i));
+  else
+	return add_argument(ManuProC::ArgumentEntry((int64_t)i));
 }
 template<> const Query_types::Oid Query::NullIf_s<unsigned long>::postgres_type=INT4OID;
 template<> const Query_types::Oid Query::NullIf_s<unsigned int>::postgres_type=INT4OID;
