@@ -101,6 +101,7 @@ public:
     std::string dbase;
     std::string user;
     std::string name;
+    std::string password;
     int port;
     CType_t type;
 
@@ -116,12 +117,13 @@ public:
     const std::string Dbase() const { return dbase; }
     const std::string User() const { return user; }
     const std::string Name() const { return name; }
-    const std::string Pass() const throw(AuthError);
+    const char* Password() const;
     int Port() const { return port; }
     CType_t Type() const { return type; }
     void setHost(const std::string &h) { if(!h.empty()) host=h; }
     void setDbase(const std::string &d) { if(!d.empty()) dbase=d; }
     void setUser(const std::string &u) { user=u; }
+    void setPassword(const std::string &p) { password=p; }    
     void setName(const std::string &n) { name=n; }
     void setPort(const int p) { port=p;}
     void setType(CType_t t) { type=t; }

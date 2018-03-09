@@ -49,10 +49,11 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c) th
 	const char *pghost= c.Host().c_str();
 	const char *dbName= c.Dbase().c_str();
 	const char *login= c.User().c_str();
+	const char *password= c.Password();
 
 	if (Query::debugging.on) std::cerr << "CONNECT: " << pghost << ':' << pgport << '\t' << dbName << '\n';
 
-	PGconn * conn= PQsetdbLogin(pghost, pgport, 0, 0, dbName, login, 0);
+	PGconn * conn= PQsetdbLogin(pghost, pgport, 0, 0, dbName, login, password);
 
 	if (conn && PQstatus(conn) != CONNECTION_OK)
 	{

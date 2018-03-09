@@ -21,8 +21,6 @@
 #include <ManuProCConfig.h>
 #include <Misc/dbconnect.h>
 #include <cassert>
-//#include <cstring>
-//#include <unistd.h>
 #include <cstdlib>
 #include <Misc/Global_Settings.h>
 
@@ -97,25 +95,11 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect(const Connection &c) throw
 	return res;
 }
 
-//#include <iostream>
-//#include <fstream>
-
-const std::string ManuProC::Connection::Pass() const throw(AuthError)
+const char* ManuProC::Connection::Password() const
 {
-// not nedeed at the time
-
-/* char buf[80];
- buf[0]=0;
-
-  ifstream passfile (".remote_access");
-  if (! passfile.is_open())
-    { throw AuthError(".remote_access not found"); }
-  if(!passfile.eof())
-    passfile.getline(buf,sizeof buf);
-
-  passfile.close();
-*/
-  return std::string();
+	if(password.empty())
+	  return 0;
+	return password.c_str();	
 }
 
 void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
