@@ -81,9 +81,11 @@ bool ManuProC::IsAdministrator()
 // on Windows return the first 4 bytes of the md5 sum of "domain\user"
 int getuid_ManuProC()
 {
-  if (uid_override!=-1) return uid_override;
-  std::string md5sum= md5(ManuProC::GetUserName());
-  uid_override= *(int*)md5sum.data();
+  if (uid_override!=-1) 
+    return uid_override;
+    
+  // XP seems to have provided a trailing \0 for UserName when using the A variant
+  uid_override = *(int*)md5(ManuProC::GetUserNameA()+std::string(1,'\0')).data();
   return uid_override;
 }
 
