@@ -229,7 +229,7 @@ ManuProC::ArgumentEntry::ArgumentEntry(int32_t a)
 	: type(INT4OID), null(), s(), i(a), f()
 {}
 ManuProC::ArgumentEntry::ArgumentEntry(double f2)
-	: type(FLOAT4OID), null(), s(), i(), f(f2)
+	: type(FLOAT8OID), null(), s(), i(), f(f2)
 {}
 ManuProC::ArgumentEntry::ArgumentEntry(bool b)
 	: type(BOOLOID), null(), s(), i(b), f()
@@ -415,7 +415,7 @@ template<> const Query_types::Oid Query::NullIf_s<unsigned long long>::postgres_
 ArgumentList &ArgumentList::operator<<(double i)
 {  return add_argument(ManuProC::ArgumentEntry(i));
 }
-template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
+template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT8OID;
 template<> const Query_types::Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
 
 ArgumentList &ArgumentList::operator<<(bool i)

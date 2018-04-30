@@ -206,6 +206,12 @@ void resultsPQ::execute()
 			values[i]= storage[i].data();
 			lengths[i]= storage[i].size();
 		}
+		else if (parameters[i].get_type()==FLOAT8OID)
+		{
+			storage[i] = dtos(parameters[i].get_float());
+			values[i]= storage[i].data();
+			lengths[i]= storage[i].size();
+		}
 		else if (parameters[i].get_type()==BOOLOID)
 		{
 			storage[i] = itos(parameters[i].get_int());
