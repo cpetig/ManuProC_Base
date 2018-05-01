@@ -1,4 +1,3 @@
-# $Id: configure.in,v 1.39 2006/08/03 11:18:28 christof Exp $
 
 AC_PREREQ(2.50)
 AC_INIT(ManuProC_Base,1.0.4, [manuproc-developer-de@berlios.de])
@@ -30,9 +29,9 @@ dnl *************************************************
 
 GETTEXT_PACKAGE=ManuProC_Base
 AC_SUBST(GETTEXT_PACKAGE)
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
-		[the gettext domain])
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[the gettext domain])
 
+AM_GNU_GETTEXT_VERSION([0.19.7])
 if test x$mingw = xtrue ; then
   AM_GLIB_GNU_GETTEXT([])
 else
@@ -44,11 +43,9 @@ if test -z "${DATADIRNAME}"
 then DATADIRNAME=share
 fi
 if test "x${prefix}" = "xNONE"; then
-  AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${ac_default_prefix}/${DATADIRNAME}/locale",
-		[the location of locale files])
+  AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${ac_default_prefix}/${DATADIRNAME}/locale",[the location of locale files])
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${prefix}/${DATADIRNAME}/locale",
-		[the location of locale files])
+  AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "${prefix}/${DATADIRNAME}/locale",[the location of locale files])
 fi
 
 AC_LANG_CPLUSPLUS
@@ -95,20 +92,21 @@ AC_SUBST(SIGC_MAJOR)
    CXXFLAGS="$CXXFLAGS $ECPG_INCLUDES"
    LIBS="$LIBS $ECPG_LIBS"
    LDFLAGS="$LDFLAGS $ECPG_LDFLAGS"
-   AC_COMPILE_IFELSE([
-#include <ecpgtype.h>
-#include <ecpglib.h>
-int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
-	],[AC_DEFINE(OLD_ECPG, 1, [Define to 1 if you use ecpg 2.9.])
-		AC_MSG_RESULT([old (-2.9.0)])],
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+[
+	#include <ecpgtype.h>
+	#include <ecpglib.h>
+	int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }])],
+[AC_DEFINE(OLD_ECPG, 1, [Define to 1 if you use ecpg 2.9.])
+	AC_MSG_RESULT([old (-2.9.0)])],
 	[AC_MSG_RESULT([new (3.0.0+)])])
     if test ! -e NoQueryParams
     then
       AC_MSG_CHECKING(for PQprepare)
-      AC_COMPILE_IFELSE([
+      AC_COMPILE_IFELSE([AC_LANG_SOURCE([
       #include <libpq-fe.h>
       int main() {  PQprepare((PGconn*)NULL,"name","select true",0,NULL); }
-            ],[AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.])
+            ])],[AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.])
                     AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
     fi
 
@@ -123,8 +121,8 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
    AC_MSG_CHECKING(for standard database name)
    DEFAULT_DB="$USER"
    DEFAULT_DBHOST="localhost"
-   AC_DEFINE_UNQUOTED(DEFAULT_DB, "$DEFAULT_DB" )
-   AC_DEFINE_UNQUOTED(DEFAULT_DBHOST, "$DEFAULT_DBHOST" )
+   AC_DEFINE_UNQUOTED([DEFAULT_DB], ["$DEFAULT_DB"], [default db name])
+   AC_DEFINE_UNQUOTED([DEFAULT_DBHOST], ["$DEFAULT_DBHOST"], [default db host])
    AC_MSG_RESULT($DEFAULT_DB@$DEFAULT_DBHOST)
 
    LIBS="$LIBS $ECPG_LIBS"
@@ -134,8 +132,8 @@ int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }
 
 if test -z "$ECPG_INCLUDES"
 then
-AC_MSG_CHECKING(for sqlite3)
-AC_COMPILE_IFELSE([#include <sqlite3.h>],[has_sqlite=1],[has_sqlite=0])
+AC_MSG_CHECKING([for sqlite3])
+AC_COMPILE_IFELSE( [AC_LANG_SOURCE ([[#include <sqlite3.h>]])] , [has_sqlite=1], [has_sqlite=0] )
 AC_MSG_RESULT($has_sqlite)
 fi
 
@@ -166,8 +164,8 @@ then
   then
    AC_MSG_CHECKING(for standard SQLite database name)
    DEFAULT_DB="$USER"
-   AC_DEFINE_UNQUOTED(DEFAULT_DB, "$DEFAULT_DB" )
-   AC_DEFINE_UNQUOTED(DEFAULT_DBHOST, "$DEFAULT_DBHOST" )
+   AC_DEFINE_UNQUOTED([DEFAULT_DB], ["$DEFAULT_DB"], [default db name] )
+   AC_DEFINE_UNQUOTED([DEFAULT_DBHOST], ["$DEFAULT_DBHOST"], [default db host] )
    AC_MSG_RESULT($DEFAULT_DB)
   fi
 fi

@@ -64,4 +64,4 @@ fi
 autoheader$AC_POSTFIX
 automake$AM_POSTFIX --add-missing --copy --gnu
 autoconf$AC_POSTFIX
-./configure $* && $MAKE
+./configure $* && $MAKE -j4
