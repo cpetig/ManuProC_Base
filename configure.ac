@@ -18,6 +18,9 @@ AC_PREFIX_DEFAULT(/usr/local)
 AC_PROG_CXX
 AM_PROG_LIBTOOL
 
+# add for legacy reasons.
+AM_PROG_CC_C_O
+
 if echo __MINGW32__ | $CPP - - | fgrep -q __MINGW32__
 then mingw=false
 else mingw=true 
