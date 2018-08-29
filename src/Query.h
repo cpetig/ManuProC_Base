@@ -247,9 +247,7 @@ public:
 	typedef SQLerror Error;
 
 	// you can exchange this via std::swap
-	Query() : /*eof(true), line(), result(),*/ num_params(), error(), lines(),
-	    prepare()
-        { params.setNeededParams(0); }
+	Query();
     void swap(Query &b);
 
 	Query(const std::string &command);

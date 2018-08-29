@@ -567,6 +567,15 @@ void Query::Fetch(Query_Row &is)
 	is.naechstesFeld=0;
 }
 
+//------------------------------------------------------------------------------------------
+
+Query::Query() : num_params(), error(), lines(), prepare(), backend(ManuProC::get_database()), implementation_specific()
+{ 
+  params.setNeededParams(0); 
+}
+
+//------------------------------------------------------------------------------------------
+
 Query::Query(const std::string &command)
 #if 0 // c++11 +
 : Query(ManuProC::get_database(), command)
