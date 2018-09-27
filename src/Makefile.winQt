@@ -1,0 +1,157 @@
+# makefile for QtCreator. Used as external imported project
+
+MINGWBASE=i686-w64-mingw32
+MINGW_PREFIX=$(MINGWBASE)
+
+FTDI_BASE=$(DEPENDENCIES_DIR_STW)\FTDI\ftdi_2
+FTDI_INCL=$(FTDI_BASE)\include
+FTDI_LIB=$(FTDI_BASE)\lib
+
+INTL_BASE=$(DEPENDENCIES_DIR_STW)\intl
+INTL_INCL=$(INTL_BASE)\include
+INTL_LIB=$(INTL_BASE)\lib
+
+ECPG_BASE=$(DEPENDENCIES_DIR_STW)\PostgreSQL\ecpg
+ECPG_INCL=$(ECPG_BASE)\include
+ECPG_LIB=$(ECPG_BASE)\lib
+
+PQ_BASE=$(DEPENDENCIES_DIR_STW)\PostgreSQL\pq
+PQ_INCL=$(PQ_BASE)\include
+PQ_LIB=$(PQ_BASE)\lib
+
+PG_BASE=$(DEPENDENCIES_DIR_STW)\PostgreSQL
+PG_INCL=$(PG_BASE)\include
+PG_LIB=$(PG_BASE)\lib
+
+SQL3_BASE=$(DEPENDENCIES_DIR_STW)\SQLite3
+SQL3_INCL=$(SQL3_BASE)\include
+SQL3_LIB=$(SQL3_BASE)\lib
+
+SIGCPP_BASE=$(DEPENDENCIES_DIR_STW)\sigc++-2.0
+SIGCPP_INCL=$(SIGCPP_BASE)
+SIGCPP_LIB=$(SIGCPP_BASE)\lib
+
+PROTOKOLL_BASE="..\..\protokoll"
+LIBSERIAL_BASE="..\..\libserial"
+MISC_INCL=".\Misc"
+
+
+WIN_LDFLAGS = -no-undefined -export-symbols
+DLL_LDADD = -lsigc-2.0 -lecpg -lpgtypes -lpq -lcrypt -lsqlite3 -lintl -ladvapi32 -lsecur32
+WIN_CXXFLAGS = -std=gnu++11
+PLATFORM = -DWIN32
+
+AM_CXXFLAGS =  -I. -I/usr/include/postgresql -I/usr/i586-mingw32msvc/include/sigc++-2.0 -I/usr/i586-mingw32msvc/lib/sigc++-2.0/include   -DlibManuProC_Base_COMPILATION $(WIN_CXXFLAGS)
+lib_LTLIBRARIES = libManuProC_Base.la
+libManuProC_Base_la_LIBADD = $(DLL_LDADD)
+AM_LDFLAGS = $(WIN_LDFLAGS)
+
+DB_SRCES = SQLerror_postgres.cc Transaction.cc Query.cc \
+	Event.cc Global_Settings_db.cc dbconnect_shared.cc \
+	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc \
+	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc dbconnect_sqlite3.cc \
+	SQLerror_base.cc
+
+libManuProC_Base_SOURCES = Ausgabe_neu.cc Datum.cc IOerror.cc \
+		postgres_conversion.cc Zeitpunkt_new.cc \
+		Zeitpunkt_new_ostr.cc \
+		Zeitpunkt_new_write.cc string0.c mystring.cc \
+		auto_conversion.cc \
+		exception.cc itos.cc \
+		time_t_ostr.cc EntryValueBase.cc Handles.cc \
+		EntryValueIntString.cc EntryValueIntGermanString.cc \
+		EntryValueDatum.cc $(DB_SRCES) Trace.cc \
+		germanstring.cc TagStream.cc Tag.cc EntryValueTimeStamp.cc \
+		Global_Settings.cc EntryValueSort.cc create_parse.cc \
+		TS_base64.cc $(DLL_DEF) Interval.cc fixedpoint.cc \
+		ManuProcEntity.cc EntryValue_easy.cc EntryValueDouble.cc \
+		i18n.cc Datum_i18n.cc fixedpoint_null.cc \
+		DllObject_caller.cc DllObject_dll.cc win32_utf8.cc \
+		getuid.cc md5/md5string.cc md5/md5.c
+
+libManuproC_Base_OBJECTS :=  $(libManuProC_Base_SOURCES:.cc=.o)
+
+EXTRA_DIST = SQLerror_postgres.pgcc Transaction.pgcc Query.pgcc
+
+BUILT_SOURCES = ${EXTRA_DIST:.pgcc=.cc}
+
+noinst_HEADERS = Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
+	IOerror.h Kalenderwoche.h Pointer.h Postgres.h Rundungsmacros.h \
+	SQLerror.h SQLerror_postgres.h Transaction.h Zeitpunkt_new.h \
+	dbconnect.h exception.h fixedpoint.h itos.h \
+	safemap.h string0.h mystring.h \
+	c++ostream.h mystream.h FetchIStream.h ctime_assert.h \
+	EntryValueBase.h EntryValueIntString.h EntryValueEmptyInt.h \
+	EntryValueDatum.h EmptyInt_4TeX.h Long.h Model.h \
+	germanstring.h TagStream.h Tag.h recodestream.h \
+	callbackbuf.h TraceNV.h EntryValueTimeStamp.h \
+	Event.h bitmask.h Global_Settings.h algorithm.h \
+	ManuProcEintrag.h ManuProcEntity.h ManuProcVorgang.h	
+	
+CFLAGS_WIN=-g -O0 -Wall ${PLATFORM} -I. -I.. \
+	-I$(PROTOKOLL_BASE) \
+	-I$(MISC_INCL) \
+	-mms-bitfields
+	
+CPPFLAGS_WIN=-g -O0 -Wall -std=c++11 ${PLATFORM} -I. -I.. \
+	-I$(PROTOKOLL_BASE) \
+	-I$(MISC_INCL) \
+	-I$(INTL_INCL).\
+	-I$(FTDI_INCL) \
+	-I$(ECPG_INCL) \
+	-I$(PQ_INCL) \
+	-I$(PG_INCL) \
+	-I$(SQL3_INCL) \
+	-I$(SIGCPP_INCL) \
+	-I$(SIGCPP_LIB)\sigc++-2.0\include
+	
+CC_WIN=$(MINGW_PREFIX)-gcc
+LIBS_WIN=-lftdi_win -lwinmm -lhid -lsetupapi 
+LIBSERIAL=libserial.a 
+LIBFTDI=-lftdi -lusb
+
+all: $(BUILT_SOURCES) config_files dependencies.d libManuProC_Base.a
+
+libManuProC_Base.a: $(libManuproC_Base_OBJECTS)
+	$(MINGW_PREFIX)-gcc-ar rcuvs $@ $^
+	$(MINGW_PREFIX)-gcc-ranlib $@
+
+
+libserial_linux_multi_onlyserial.o: libserial_linux_multi.c
+	$(CC) $(CFLAGS) -c -o $@ $^ 
+#-DSERIAL_ONLY	
+ 
+
+libManuProC_Base_res.o: libManuProC_Base.rc
+	windres $^ $@
+
+%.cc: %.pgcc ; mk_ecpg.bat $*.cc $<
+
+ls_write$(EXEEXT): ls_write.o libserial.a
+	$(CC) -o $@ $^ $(LIBFTDI)
+
+	
+%.o: %.c
+	$(MINGW_PREFIX)-gcc $(CPPFLAGS_WIN) $(CFLAGS_WIN) -c -o $@ $<
+
+%.o: %.cc
+	$(MINGW_PREFIX)-g++ $(CPPFLAGS_WIN) $(CFLAGS_WIN) -c -o $@ $<
+
+dependencies.d:
+	$(CC_WIN) -MM ${CPPFLAGS} *.cc *.c > dependencies.d
+
+FORCE:
+
+-include dependencies.d
+ 
+.PHONY: config_files clean package_revision.c
+
+clean:
+	del *.o *.a *~
+
+package_revision.c:
+	win32script.bat
+
+config_files:
+	copy ..\config_winQt.h ..\config.h
+	copy ManuProCConfig_winQt.h  ManuProCConfig.h
