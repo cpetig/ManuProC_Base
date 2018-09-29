@@ -1,7 +1,7 @@
 # makefile for QtCreator. Used as external imported project
 
 MINGWBASE=i686-w64-mingw32
-MINGW_PREFIX=$(MINGWBASE)
+MINGW_PREFIX=$(MINGWBASE)-
 
 FTDI_BASE=$(DEPENDENCIES_DIR_STW)\FTDI\ftdi_2
 FTDI_INCL=$(FTDI_BASE)\include
@@ -38,7 +38,6 @@ MISC_INCL=".\Misc"
 
 WIN_LDFLAGS = -no-undefined -export-symbols
 DLL_LDADD = -lsigc-2.0 -lecpg -lpgtypes -lpq -lcrypt -lsqlite3 -lintl -ladvapi32 -lsecur32
-WIN_CXXFLAGS = -std=gnu++11
 PLATFORM = -DWIN32
 
 AM_CXXFLAGS =  -I. -I/usr/include/postgresql -I/usr/i586-mingw32msvc/include/sigc++-2.0 -I/usr/i586-mingw32msvc/lib/sigc++-2.0/include   -DlibManuProC_Base_COMPILATION $(WIN_CXXFLAGS)
@@ -52,7 +51,7 @@ DB_SRCES = SQLerror_postgres.cc Transaction.cc Query.cc \
 	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc dbconnect_sqlite3.cc \
 	SQLerror_base.cc
 
-libManuProC_Base_SOURCES = Ausgabe_neu.cc Datum.cc IOerror.cc \
+libManuProC_Base_CCSRC = Ausgabe_neu.cc Datum.cc IOerror.cc \
 		postgres_conversion.cc Zeitpunkt_new.cc \
 		Zeitpunkt_new_ostr.cc \
 		Zeitpunkt_new_write.cc string0.c mystring.cc \
@@ -63,13 +62,16 @@ libManuProC_Base_SOURCES = Ausgabe_neu.cc Datum.cc IOerror.cc \
 		EntryValueDatum.cc $(DB_SRCES) Trace.cc \
 		germanstring.cc TagStream.cc Tag.cc EntryValueTimeStamp.cc \
 		Global_Settings.cc EntryValueSort.cc create_parse.cc \
-		TS_base64.cc $(DLL_DEF) Interval.cc fixedpoint.cc \
+		TS_base64.cc Interval.cc fixedpoint.cc \
 		ManuProcEntity.cc EntryValue_easy.cc EntryValueDouble.cc \
 		i18n.cc Datum_i18n.cc fixedpoint_null.cc \
 		DllObject_caller.cc DllObject_dll.cc win32_utf8.cc \
-		getuid.cc md5/md5string.cc md5/md5.c
+		getuid.cc md5/md5string.cc
 
-libManuproC_Base_OBJECTS :=  $(libManuProC_Base_SOURCES:.cc=.o)
+libManuProC_Base_CSRC = md5/md5.c
+
+
+libManuproC_Base_OBJECTS := ${libManuProC_Base_CCSRC:.cc=.o} ${libManuProC_Base_CSRC:.c=.o}
 
 EXTRA_DIST = SQLerror_postgres.pgcc Transaction.pgcc Query.pgcc
 
@@ -93,7 +95,7 @@ CFLAGS_WIN=-g -O0 -Wall ${PLATFORM} -I. -I.. \
 	-I$(MISC_INCL) \
 	-mms-bitfields
 	
-CPPFLAGS_WIN=-g -O0 -Wall -std=c++11 ${PLATFORM} -I. -I.. \
+CPPFLAGS_WIN=-g -O0 -Wall -std=gnu++11 ${PLATFORM} -I. -I.. \
 	-I$(PROTOKOLL_BASE) \
 	-I$(MISC_INCL) \
 	-I$(INTL_INCL).\
@@ -113,8 +115,8 @@ LIBFTDI=-lftdi -lusb
 all: $(BUILT_SOURCES) config_files dependencies.d libManuProC_Base.a
 
 libManuProC_Base.a: $(libManuproC_Base_OBJECTS)
-	$(MINGW_PREFIX)-gcc-ar rcuvs $@ $^
-	$(MINGW_PREFIX)-gcc-ranlib $@
+	$(MINGW_PREFIX)gcc-ar rcuvs $@ $^
+	$(MINGW_PREFIX)gcc-ranlib $@
 
 
 libserial_linux_multi_onlyserial.o: libserial_linux_multi.c
@@ -132,10 +134,10 @@ ls_write$(EXEEXT): ls_write.o libserial.a
 
 	
 %.o: %.c
-	$(MINGW_PREFIX)-gcc $(CPPFLAGS_WIN) $(CFLAGS_WIN) -c -o $@ $<
+	$(MINGW_PREFIX)gcc $(CFLAGS_WIN) -c -o $@ $<
 
 %.o: %.cc
-	$(MINGW_PREFIX)-g++ $(CPPFLAGS_WIN) $(CFLAGS_WIN) -c -o $@ $<
+	$(MINGW_PREFIX)g++ $(CPPFLAGS_WIN) $(CFLAGS_WIN) -c -o $@ $<
 
 dependencies.d:
 	$(CC_WIN) -MM ${CPPFLAGS} *.cc *.c > dependencies.d
@@ -144,13 +146,10 @@ FORCE:
 
 -include dependencies.d
  
-.PHONY: config_files clean package_revision.c
+.PHONY: config_files clean
 
 clean:
-	del *.o *.a *~
-
-package_revision.c:
-	win32script.bat
+	del *.o *.a md5\*.o *~
 
 config_files:
 	copy ..\config_winQt.h ..\config.h
