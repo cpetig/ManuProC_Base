@@ -1,5 +1,11 @@
 # makefile for QtCreator. Used as external imported project
 
+VERSION = 1.0.5
+PACKAGE = manuproc_base
+PACKAGE_NAME = ManuProC_Base
+PACKAGE_STRING = ManuProC_Base $(VERSION)
+PACKAGE_VERSION = $(VERSION)
+
 MINGWBASE=i686-w64-mingw32
 MINGW_PREFIX=$(MINGWBASE)-
 
