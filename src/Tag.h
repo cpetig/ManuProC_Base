@@ -63,7 +63,7 @@ public:
 	{  return sub_specifications.back(); }
 	std::list<Tag>::size_type size() const throw()
 	{  return sub_specifications.size(); }
-	void reserve(std::list<Tag>::size_type n) throw()
+	void reserve(std::list<Tag>::size_type) throw()
 	{  } // return sub_specifications.reserve(n); }
 	iterator begin() throw()
 	{  return sub_specifications.begin(); }
