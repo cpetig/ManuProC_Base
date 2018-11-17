@@ -146,7 +146,7 @@ public:
 	   // Oid?
 //	   virtual double number(unsigned col) const=0;
 //	   virtual long integer(unsigned col) const=0;
-	   virtual char const* getFieldName(unsigned col) const { return "?"; }
+	   virtual char const* getFieldName(unsigned) const { return "?"; }
    };
 
    struct Query_result_base
