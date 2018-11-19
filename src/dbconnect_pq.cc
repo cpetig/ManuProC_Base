@@ -434,7 +434,9 @@ PQ_Prepared_Statement::~PQ_Prepared_Statement()
 	if (!name.empty() && conn)
 	{
 		std::string cmd= "DEALLOCATE "+name;
-		conn->execute(cmd.c_str());
+		try { conn->execute(cmd.c_str()); }
+		catch (SQLerror const &e) // perhaps we closed the transaction, so this is no longer valid
+		{ }
 	}
 	std::map<std::string,PQ_Prepared_Statement*>::iterator i= prepared_stmts.find(name);
 	if (i!=prepared_stmts.end())

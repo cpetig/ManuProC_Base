@@ -707,7 +707,7 @@ Query_Row::Query_Row(Fake const& val)
 }
 
 PreparedQuery::PreparedQuery(std::string const& cmd)
-  : prep(), command(cmd), connection(ManuProC::get_database())
+  : prep(), command(cmd), connection(ManuProC::get_database()), no_arguments()
 {
 //	ArgumentList al;
 	unsigned num_params=0;
@@ -724,4 +724,30 @@ PreparedQuery::PreparedQuery(std::string const& cmd)
 PreparedQuery::~PreparedQuery()
 {
 	if (prep) delete prep;
+}
+
+PreparedQuery::PreparedQuery(PreparedQuery const& b)
+  : prep(), command(b.command), connection(ManuProC::get_database()), no_arguments(b.no_arguments)
+{
+}
+
+void PreparedQuery::operator=(PreparedQuery const& b)
+{
+	if (prep) delete prep;
+	prep=0;
+	command=b.command;
+	connection=ManuProC::get_database();
+	no_arguments= b.no_arguments;
+}
+
+// no destructor - so copying is easy
+void Query_Row::operator=(Query_Row const&b)
+{
+	impl = b.impl;
+	naechstesFeld = b.naechstesFeld;
+}
+
+// no destructor - so copying is easy
+Query_Row::Query_Row(Query_Row const& b) : naechstesFeld(b.naechstesFeld), impl(b.impl)
+{
 }
