@@ -21,23 +21,4 @@
 
 #include <BaseObjects/ManuProcEintrag.h>
 
-#if 0
-bool ManuProcEntity::Valid(ID i) //const
-{
-   if(i==none_id) return false;
-   return true;
-}
-#endif
-
-#if __GNUC__ <3 || (__GNUC__==3 && __GNUC_MINOR__<4)
-const ManuProcEntity<>::ID ManuProcEntity<>::none_id;
-#elif (__GNUC__==4 && __GNUC_MINOR__>=2)
-// I give up with newer compilers, perhaps this is a bug?
-extern "C" const long _ZN14ManuProcEntityIlE7none_idE=-1;
-extern "C" const long _ZN14ManuProcEntityIN8ManuProC12DynamicEnums13Kundengruppen6enum_tEE7none_idE=-1;
-#else
-template<> const ManuProcEntity<>::ID ManuProcEntity<>::none_id;
-#endif
-
-
 const ManuProcEintrag::ID ManuProcEintrag::none_znr;
