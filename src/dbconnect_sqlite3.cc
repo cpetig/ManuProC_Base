@@ -364,6 +364,7 @@ void resultsSQ_params::execute()
 					break;
 
 					case FLOAT4OID:
+					case FLOAT8OID:
 						std::cerr << parameters[i].get_float() << ", ";
 					break;
 

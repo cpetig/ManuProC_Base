@@ -11,8 +11,7 @@ else
 WIN_LDFLAGS=
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=
-WIN_CXXFLAGS=
-#-std=gnu++11
+WIN_CXXFLAGS=-std=gnu++11
 PLATFORM=linux
 endif
 

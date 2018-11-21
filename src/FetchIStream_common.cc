@@ -514,6 +514,10 @@ void Query_Row::ThrowIfNotEmpty(const char *where)
 
 int Query_Row::getIndicator() const
 {
+  if(!impl)
+  {
+    Query_Row::mythrow(SQLerror(__FUNCTION__,100,"probably no lines selected"));
+  }
 	return impl->indicator(naechstesFeld);
 }
 
