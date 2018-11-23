@@ -1,1 +1,4 @@
 /googletest
+/gtest_main.a
+/labordb
+/mpc_base_sqlite_unittest
