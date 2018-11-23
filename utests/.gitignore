@@ -2,3 +2,8 @@
 /gtest_main.a
 /labordb
 /mpc_base_sqlite_unittest
+/MPC_UnitTests.config
+/MPC_UnitTests.creator
+/MPC_UnitTests.creator.user
+/MPC_UnitTests.files
+/MPC_UnitTests.includes
