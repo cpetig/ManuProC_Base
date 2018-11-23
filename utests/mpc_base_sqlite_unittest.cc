@@ -15,6 +15,7 @@ class mpcBaseSqliteFixture : public testing::Test {
   // should define it if you need to initialize the variables.
   // Otherwise, this can be skipped.
   virtual void SetUp() {
+    queryTest.m_conn.setDbase("test.db");
     ManuProC::dbconnect(queryTest.m_conn);
     std::cout << "Test DB connectd\n";
   }
@@ -42,6 +43,15 @@ TEST_F(mpcBaseSqliteFixture, DefaultConstructor) {
   // You can access data in the test fixture here.
   Query q;
   EXPECT_EQ(ManuProC::Connection::C_SQLite, q.getDBType());
+}
+
+TEST_F(mpcBaseSqliteFixture, FloatCompare) {
+  // You can access data in the test fixture here.
+  float f=0.123;
+  int id(0);
+
+  Query("select id from types where data=?") << f >> id;
+  EXPECT_EQ(1, id);
 }
 
 
