@@ -72,17 +72,33 @@ TEST_F(mpcBaseSqliteFixture, NoSelctedLines)
   Query("insert into types (id,data) values (1,NULL)");
 
 
-  Query::Row r;
-
-
   Query q("select data from types where id=?");
 
   q << 0;
 
   try
   {
-    r >> Query::Row::MapNull(f);
+    q >> Query::Row::MapNull(f);
     EXPECT_EQ(0.0,f);
+  }
+  catch(SQLerror& e)
+  {
+    EXPECT_EQ(100,e.Code());
+  }
+
+  Query q2("select data from types where id=?");
+
+  q2 << 0;
+
+  try
+  {
+    Query::Row r;
+    q2 >> r;
+    if (r.good())
+    {
+      r >> Query::Row::MapNull(f);
+      EXPECT_EQ(0.0,f);
+    }
   }
   catch(SQLerror& e)
   {
