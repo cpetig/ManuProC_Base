@@ -46,12 +46,12 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 # House-keeping build targets.
 
-all : clean $(TESTS) run_tests
+all : clean $(TESTS)
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
 
-run_tests : 
+run : 
 	./$(TESTS)
 
 .PHONY: all

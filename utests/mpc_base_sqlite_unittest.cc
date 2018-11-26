@@ -6,10 +6,23 @@
 
 namespace {
 
+std::string testDB("test.db");
+
 // To use a test fixture, derive a class from testing::Test.
 class mpcBaseSqliteFixture : public testing::Test {
  protected:  // You should make the members protected s.t. they can be
              // accessed from sub-classes.
+
+
+  mpcBaseSqliteFixture()
+  {
+    std::string cmd="rm ";
+    cmd += testDB;
+    system(cmd.c_str());
+    SetUp();
+    Query("create table types (id integer, data real)");
+    TearDown();
+  }
 
   // virtual void SetUp() will be called before each test is run.  You
   // should define it if you need to initialize the variables.
