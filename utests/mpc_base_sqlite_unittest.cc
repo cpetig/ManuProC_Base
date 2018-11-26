@@ -32,7 +32,7 @@ class mpcBaseSqliteFixture : public testing::Test {
     queryTest.m_conn.setType(queryTest.m_dbType);
     queryTest.m_conn.setDbase("test.db");
     ManuProC::dbconnect(queryTest.m_conn);
-    std::cout << "Test DB connected\n";
+    //std::cout << "Test DB connected\n";
   }
 
   // virtual void TearDown() will be called after each test is run.
@@ -41,7 +41,7 @@ class mpcBaseSqliteFixture : public testing::Test {
   //
   virtual void TearDown() {
     ManuProC::dbdisconnect();
-    std::cout << "Test DB disconnected\n";
+    //std::cout << "Test DB disconnected\n";
   }
 
 
