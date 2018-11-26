@@ -1,6 +1,6 @@
 
 AC_PREREQ(2.50)
-AC_INIT(ManuProC_Base,1.0.5, [manuproc-developer-de@berlios.de])
+AC_INIT(ManuProC_Base,1.1.0, [manuproc-developer-de@berlios.de])
 AC_CONFIG_AUX_DIR(.)
 
 MPC_BASE_MAJOR_VERSION=`echo $PACKAGE_VERSION | sed -e 's/^\(.*\)\..*\..*$/\1/'`
