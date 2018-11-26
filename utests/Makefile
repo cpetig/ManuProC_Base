@@ -46,7 +46,14 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 # House-keeping build targets.
 
-all : clean $(TESTS)
+ifneq ($(wildcard ./googletest),) 
+all: clean build 
+else 
+all: clean
+endif 
+
+
+build : $(TESTS)
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
