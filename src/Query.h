@@ -78,7 +78,7 @@ public:
 
 	int getIndicator() const;
 	std::string getFieldName() const;
-	bool good() const; // noch Spalten verfügbar
+	bool good() const; // more columns available
 
 	Query_Row &operator>>(std::string &str);
 	Query_Row &operator>>(int &i);
@@ -130,6 +130,9 @@ public:
 	}
 
 	void ThrowIfNotEmpty(const char *where);
+public:
+	void operator=(Query_Row const&);
+	Query_Row(Query_Row const&);
 };
 
 struct Query_types
@@ -149,10 +152,6 @@ struct Query_types
 	}
 	typedef Query_Row::check_eol check_eol;
 };
-
-namespace ManuProC {
-
-}
 
 class ArgumentList
 {
@@ -247,9 +246,7 @@ public:
 	typedef SQLerror Error;
 
 	// you can exchange this via std::swap
-	Query() : /*eof(true), line(), result(),*/ num_params(), error(), lines(),
-	    prepare()
-        { params.setNeededParams(0); }
+	Query();
     void swap(Query &b);
 
 	Query(const std::string &command);
@@ -354,6 +351,8 @@ public:
         ~PreparedQuery();
         std::string const& Command() const { return command; }
         bool ready() const;
+        PreparedQuery(PreparedQuery const& pq);
+        void operator=(PreparedQuery const& pq);
 };
 
 // we use the embedded Query_Row but that's ok,

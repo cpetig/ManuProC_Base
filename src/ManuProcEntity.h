@@ -35,16 +35,14 @@ protected:
  ID entityid;
  
 public:
- static const ID none_id = static_cast<ID>(-1);
+ static constexpr ID none_id = static_cast<ID>(-1);
  ManuProcEntity() : entityid(none_id) {}
  ManuProcEntity(const ID i) : entityid(i) {}
  virtual ID Id() const = 0;
  virtual void setId(ID _id) { entityid=_id;}
  virtual ~ManuProcEntity() {}
  
-// static bool Valid(ID) ;//const; // wenn die Klassen von *this abgeleitet werden
-                            // soll das 'statis' verschwinden
-   static bool Valid(ID i) {
+ static bool Valid(ID i) {
       if(i==none_id) return false;
       return true;
       }
@@ -52,8 +50,5 @@ public:
  std::string strId() const { return itos0pad(entityid,6);}
 
 };
-
-//template <>
-// const ManuProcEntity<>::ID ManuProcEntity<>::none_id = ManuProcEntity<>::ID(-1);
 
 #endif

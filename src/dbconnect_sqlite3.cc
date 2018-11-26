@@ -320,6 +320,7 @@ void resultsSQ_params::execute()
 				break;
 
 				case FLOAT4OID:
+				case FLOAT8OID:
 					sqlite3_bind_double(step.stmt,i+1,parameters[i].get_float());
 				break;
 
@@ -363,6 +364,7 @@ void resultsSQ_params::execute()
 					break;
 
 					case FLOAT4OID:
+					case FLOAT8OID:
 						std::cerr << parameters[i].get_float() << ", ";
 					break;
 

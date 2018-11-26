@@ -229,7 +229,7 @@ ManuProC::ArgumentEntry::ArgumentEntry(int32_t a)
 	: type(INT4OID), null(), s(), i(a), f()
 {}
 ManuProC::ArgumentEntry::ArgumentEntry(double f2)
-	: type(FLOAT4OID), null(), s(), i(), f(f2)
+	: type(FLOAT8OID), null(), s(), i(), f(f2)
 {}
 ManuProC::ArgumentEntry::ArgumentEntry(bool b)
 	: type(BOOLOID), null(), s(), i(b), f()
@@ -415,7 +415,7 @@ template<> const Query_types::Oid Query::NullIf_s<unsigned long long>::postgres_
 ArgumentList &ArgumentList::operator<<(double i)
 {  return add_argument(ManuProC::ArgumentEntry(i));
 }
-template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT4OID;
+template<> const Query_types::Oid Query::NullIf_s<double>::postgres_type=FLOAT8OID;
 template<> const Query_types::Oid Query::NullIf_s<float>::postgres_type=FLOAT4OID;
 
 ArgumentList &ArgumentList::operator<<(bool i)
@@ -514,6 +514,10 @@ void Query_Row::ThrowIfNotEmpty(const char *where)
 
 int Query_Row::getIndicator() const
 {
+  if(!impl)
+  {
+    Query_Row::mythrow(SQLerror(__FUNCTION__,100,"probably no lines selected"));
+  }
 	return impl->indicator(naechstesFeld);
 }
 
@@ -566,6 +570,15 @@ void Query::Fetch(Query_Row &is)
 	if (!is.impl) error= 100;
 	is.naechstesFeld=0;
 }
+
+//------------------------------------------------------------------------------------------
+
+Query::Query() : num_params(), error(), lines(), prepare(), backend(ManuProC::get_database()), implementation_specific()
+{ 
+  params.setNeededParams(0); 
+}
+
+//------------------------------------------------------------------------------------------
 
 Query::Query(const std::string &command)
 #if 0 // c++11 +
@@ -698,7 +711,7 @@ Query_Row::Query_Row(Fake const& val)
 }
 
 PreparedQuery::PreparedQuery(std::string const& cmd)
-  : prep(), command(cmd), connection(ManuProC::get_database())
+  : prep(), command(cmd), connection(ManuProC::get_database()), no_arguments()
 {
 //	ArgumentList al;
 	unsigned num_params=0;
@@ -715,4 +728,30 @@ PreparedQuery::PreparedQuery(std::string const& cmd)
 PreparedQuery::~PreparedQuery()
 {
 	if (prep) delete prep;
+}
+
+PreparedQuery::PreparedQuery(PreparedQuery const& b)
+  : prep(), command(b.command), connection(ManuProC::get_database()), no_arguments(b.no_arguments)
+{
+}
+
+void PreparedQuery::operator=(PreparedQuery const& b)
+{
+	if (prep) delete prep;
+	prep=0;
+	command=b.command;
+	connection=ManuProC::get_database();
+	no_arguments= b.no_arguments;
+}
+
+// no destructor - so copying is easy
+void Query_Row::operator=(Query_Row const&b)
+{
+	impl = b.impl;
+	naechstesFeld = b.naechstesFeld;
+}
+
+// no destructor - so copying is easy
+Query_Row::Query_Row(Query_Row const& b) : naechstesFeld(b.naechstesFeld), impl(b.impl)
+{
 }

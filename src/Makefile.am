@@ -11,8 +11,7 @@ else
 WIN_LDFLAGS=
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@
 DLL_DEF=
-WIN_CXXFLAGS=
-#-std=gnu++11
+WIN_CXXFLAGS=-std=gnu++11
 PLATFORM=linux
 endif
 
@@ -72,7 +71,7 @@ libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
 
 EXTRA_DIST=SQLerror_postgres.pgcc Transaction.pgcc Query.pgcc
 
-BUILT_SOURCES=Misc ostream ${EXTRA_DIST:.pgcc=.cc} $(DLL_DEF) copy_libs
+BUILT_SOURCES=Misc ostream $(DLL_DEF)
 
 noinst_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 	IOerror.h Kalenderwoche.h Pointer.h Postgres.h Rundungsmacros.h \
@@ -89,9 +88,7 @@ noinst_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
 
 CLEANFILES= *~ $(BUILT_SOURCES)
 
-
-# copy to runtime branch
-copy_libs:
+install:
 	./copy_runtime $(PLATFORM)
 
 # create compatibility links
