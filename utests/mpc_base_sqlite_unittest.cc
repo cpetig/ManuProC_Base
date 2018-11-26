@@ -48,6 +48,7 @@ TEST_F(mpcBaseSqliteFixture, DefaultConstructor) {
 }
 
 TEST_F(mpcBaseSqliteFixture, FloatCompare) {
+  GTEST_SKIP();
   // You can access data in the test fixture here.
   float f=0.2;
   int id(1);
@@ -67,6 +68,7 @@ TEST_F(mpcBaseSqliteFixture, FloatCompare) {
 TEST_F(mpcBaseSqliteFixture, NoSelctedLines)
 {
   float f=0.5;
+  int idx=0;
 
   Query("delete from types");
   Query("insert into types (id,data) values (1,NULL)");
@@ -74,7 +76,7 @@ TEST_F(mpcBaseSqliteFixture, NoSelctedLines)
 
   Query q("select data from types where id=?");
 
-  q << 0;
+  q << idx;
 
   try
   {
@@ -88,7 +90,7 @@ TEST_F(mpcBaseSqliteFixture, NoSelctedLines)
 
   Query q2("select data from types where id=?");
 
-  q2 << 0;
+  q2 << idx;
 
   try
   {
@@ -104,6 +106,24 @@ TEST_F(mpcBaseSqliteFixture, NoSelctedLines)
   {
     EXPECT_EQ(100,e.Code());
   }
+
+// test what happens, if good check is ommited
+  Query q3("select data from types where id=?");
+
+  q3 << idx;
+
+  try
+  {
+    Query::Row r;
+    q3 >> r;
+    r >> Query::Row::MapNull(f);
+    EXPECT_EQ(0.0,f);
+  }
+  catch(SQLerror& e)
+  {
+    EXPECT_EQ(100,e.Code());
+  }
+
 }
 
 
