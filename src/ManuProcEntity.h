@@ -35,7 +35,13 @@ protected:
  ID entityid;
  
 public:
+
+#if !defined(__MINGW32__)
  static constexpr ID none_id = static_cast<ID>(-1);
+#else
+ static const ID none_id = static_cast<ID>(-1);
+#endif
+
  ManuProcEntity() : entityid(none_id) {}
  ManuProcEntity(const ID i) : entityid(i) {}
  virtual ID Id() const = 0;
