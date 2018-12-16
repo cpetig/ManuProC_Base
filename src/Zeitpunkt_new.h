@@ -28,11 +28,17 @@
 #include <iosfwd>
 #include <time.h>
 
+namespace ManuProC
+{
+class Zeitpunkt_new;
+};
+
 //: Zeitpunkt an einem Tag
 // möglicherweise von Datum ableiten?
 // Dann würde allerdings manches komplizierter werden !!!
 class Zeitpunkt_new
-{public:
+{
+ public:
    class Days
    {	int payload;
     public:
