@@ -45,6 +45,6 @@ cH_EntryValue EntryValue_easy::create(nil const&)
 
 cH_EntryValue EntryValue_easy::create(cH_EntryValue const& a) { return a; }
 
-template <> EntryValue_easy::nil ManuProC::parse<EntryValue_easy::nil>(const std::string &value) throw(std::out_of_range)
+template <> EntryValue_easy::nil ManuProC::parse<EntryValue_easy::nil>(const std::string &value)
 { return EntryValue_easy::nil();
 }

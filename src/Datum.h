@@ -86,52 +86,52 @@ public:
 	};
 
 	/// aus Tag, Monat, Jahr erzeugen (expandyear lässt 2stelliges Jahr zu)
-	Datum(int t, int m, int j,bool expandyear=true) throw(Datumsfehler);
+	Datum(int t, int m, int j,bool expandyear=true);
 
 	Datum() throw() : woche(),woche_jahrdiff(),quart(),
 	tag(),monat(),jahr()
 	{} /* initialize as invalid */
 
 	/** Datum aus const char * erzeugen, Format erraten */
-	Datum(const char *datum) throw(Datumsfehler,Formatfehler) :
+	Datum(const char *datum) :
 		woche(),woche_jahrdiff(),quart()
 	{  this->from_auto(datum);  }
 	/// Datum aus time_t (time(3)) erzeugen
 	explicit Datum(time_t t) throw();
 
-	Datum(const Kalenderwoche &kw) throw(Datumsfehler);
+	Datum(const Kalenderwoche &kw);
 
 	/// heutiges Datum
 	static Datum today() throw();
 	static Datum Infinity() throw();
 
 	/// in Menschenlesbare Form bringen (NOT THREAD SAFE!)
-	const char *c_str() const throw(Datumsfehler);
-	const char *c_str_filled() const throw(Datumsfehler);
+	const char *c_str() const;
+	const char *c_str_filled() const;
 
-        const std::string Short() const throw(Datumsfehler);
+        const std::string Short() const;
 	/// in Postgres Repräsentation wandeln
-	void write_postgres(char *b,unsigned int sz) const throw(Datumsfehler);
-   std::string to_iso() const throw(Datumsfehler);
-   std::string ISO() const throw(Datumsfehler);
+	void write_postgres(char *b,unsigned int sz) const;
+   std::string to_iso() const;
+   std::string ISO() const;
    std::string postgres_null_if_invalid() const;
 	/// in Europäisches Format wandeln
-	void write_euro(char *b,unsigned int sz) const throw(Datumsfehler);
-	void write_i18n(char *b,unsigned int sz) const throw(Datumsfehler);
-	std::string write_euro() const throw(Datumsfehler);
+	void write_euro(char *b,unsigned int sz) const;
+	void write_i18n(char *b,unsigned int sz) const;
+	std::string write_euro() const;
 	// for later i18n
-	std::string to_locale() const throw(Datumsfehler)
+	std::string to_locale() const
 	{ return write_euro(); }
 	/// Gültigkeit testen
-	void teste() const throw(Datumsfehler);
+	void teste() const;
 	/// Datumsformat automatisch raten
-        void from_auto(const char *datum,const char **endptr=0) throw(Datumsfehler,Formatfehler);
+        void from_auto(const char *datum,const char **endptr=0);
 	/// Datum aus Postgres DATE oder TIMESTAMP erzeugen
-        void from_postgres(const char *postgres_timestamp) throw(Datumsfehler,Formatfehler)
+        void from_postgres(const char *postgres_timestamp)
         {  from_auto(postgres_timestamp); }
-        static Datum from_access(char const* f) throw(Datumsfehler,Formatfehler);
+        static Datum from_access(char const* f);
         /// Datum aus Menschenlesbarer Form erzeugen
-        void from_c_str(const char *s) throw(Datumsfehler,Formatfehler)
+        void from_c_str(const char *s)
         {  from_auto(s); }
 
         /// zwei Daten sind gleich?
@@ -140,19 +140,19 @@ public:
         bool operator!=(const Datum &b) const throw()
         {  return !(*this==b);  }
         /// erstes Datum vor dem zweiten?
-        bool operator<(const Datum &b) const throw(Datumsfehler);
+        bool operator<(const Datum &b) const;
         bool operator!() const { return !valid(); }
         /** morgen
             noch nicht implementiert */
         Datum &operator++();
         Datum operator++(int);
-        Datum operator+(unsigned int) const throw(Datumsfehler);
-        Datum operator+(Months const& m) const throw(Datumsfehler);
-        Datum operator-(unsigned int) const throw(Datumsfehler);
+        Datum operator+(unsigned int) const;
+        Datum operator+(Months const& m) const;
+        Datum operator-(unsigned int) const;
         // Schaltet auf das gleiche Datum aber in anderem Jahr
-        Datum AddJahr(int) const throw(Datumsfehler);
+        Datum AddJahr(int) const;
         // gibt als Datum 1. Januar dieses Jahres
-        Datum TruncJahr() const throw(Datumsfehler);
+        Datum TruncJahr() const;
         Datum &operator+=(unsigned int tage)
         {  return *this=*this+tage;
         }
@@ -162,7 +162,7 @@ public:
         Datum operator--(int);
 
         /// Differenz in Tagen
-        int operator-(const Datum &b) const throw(Datumsfehler);
+        int operator-(const Datum &b) const;
 
 	/** führende Leerzeichen berlesen, dann Dezimalziffern in ulong wandeln
 	    bis zu einer bestimmten Länge */
@@ -184,17 +184,17 @@ public:
 	{  return Schaltjahr(jahr)?366:365; }
 
 	/// Der [1..366]. Tag im Jahr
-	int Julian() const throw(Datumsfehler);
+	int Julian() const;
 	/** Tage seit 1.1.1900
             <br>(1.1.1 waere möglich gewesen,
 	    aber: Kalenderreformationen sind ein Kreuz) */
-	int Internal() const throw(Datumsfehler);
+	int Internal() const;
 	/** Integer representation YYYYMMDD */
-	int IntRepresentation() const throw(Datumsfehler);
+	int IntRepresentation() const;
 	/// Kalenderwoche
-	Kalenderwoche KW() const throw(Datumsfehler);
+	Kalenderwoche KW() const;
 	/// Wochentag: 0=Montag 6=Sonntag
-	int Wochentag() const throw(Datumsfehler);
+	int Wochentag() const;
 
 	/**member access */
 	int Tag() const { return tag; }

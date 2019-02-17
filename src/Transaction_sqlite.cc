@@ -34,17 +34,17 @@ bool operator==(Handle<ManuProC::Connection_base>::ContentType const& a, Handle<
 	return &a==&b;
 }
 
-Transaction::Transaction(Handle<ManuProC::Connection_base> const& con,bool open_now) throw(SQLerror)
+Transaction::Transaction(Handle<ManuProC::Connection_base> const& con,bool open_now)
 	: owner(false), connection(con)
 { if (open_now) open(connection);
 }
 
-Transaction::Transaction(const std::string &_connection,bool open_now) throw(SQLerror)
+Transaction::Transaction(const std::string &_connection,bool open_now)
 	: owner(false), connection(ManuProC::get_database(_connection))
 { if (open_now) open(connection);
 }
 
-void Transaction::open(Handle<ManuProC::Connection_base> const&con) throw(SQLerror)
+void Transaction::open(Handle<ManuProC::Connection_base> const&con)
 {  assert(!owner); // crash and burn on recursion!
    if (!!con) connection=con;
 
@@ -63,14 +63,14 @@ void Transaction::open(Handle<ManuProC::Connection_base> const&con) throw(SQLerr
    commit_vs_rollback=false;
 }
 
-void Transaction::open(const std::string &_connection) throw(SQLerror)
+void Transaction::open(const std::string &_connection)
 {
 	if (!_connection.empty())
 		open(ManuProC::get_database(_connection));
 	else open(Handle<ManuProC::Connection_base>());
 }
 
-void Transaction::open_exclusive(Handle<ManuProC::Connection_base> const&con) throw(SQLerror)
+void Transaction::open_exclusive(Handle<ManuProC::Connection_base> const&con)
 {  assert(!owner); // crash and burn on recursion!
    if (!!con) connection=con;
 
@@ -91,14 +91,14 @@ void Transaction::open_exclusive(Handle<ManuProC::Connection_base> const&con) th
    commit_vs_rollback=false;
 }
 
-void Transaction::open_exclusive(const std::string &_connection) throw(SQLerror)
+void Transaction::open_exclusive(const std::string &_connection)
 {
 	if (!_connection.empty())
 		open_exclusive(ManuProC::get_database(_connection));
 	else open_exclusive(Handle<ManuProC::Connection_base>());
 }
 
-void Transaction::close() throw(SQLerror)
+void Transaction::close()
 {  if (owner)
    {  assert(!!connection);
       if (commit_vs_rollback) connection->execute("commit transaction");

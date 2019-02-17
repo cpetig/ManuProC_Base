@@ -23,13 +23,13 @@
 #include <Misc/string0.h>
 #include <i18n.h>
 
-void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)
+void ManuProC::Datum::write_i18n(char *buf,unsigned int size) const
 {	teste();
 	snprintf0(buf,size,"%d %s %04d",tag,dgettext(GETTEXT_PACKAGE, month_abbrev[monat-1]),jahr);
 }
 
 // not thread safe (at least)
-const char *ManuProC::Datum::c_str() const throw(ManuProC::Datumsfehler)
+const char *ManuProC::Datum::c_str() const
 {	static char ret[32]; // russian will use a large amount of bytes ;-)
 	write_i18n(ret,sizeof ret);
 	return ret;

@@ -30,10 +30,10 @@ class Kalenderwoche
 		virtual const char* what() const throw() { return "Kalenderwoche::error"; }
 	};
 
- 	Kalenderwoche(int _yyyyww) throw(error) : yyyyww(_yyyyww)
+ 	Kalenderwoche(int _yyyyww) : yyyyww(_yyyyww)
  	{ check(); }
  	// fixes 2 digit years
- 	Kalenderwoche(int week,int year) throw(error)
+ 	Kalenderwoche(int week,int year)
  	{ if (year<1900) year+=1900;
  	  if (year<1970) year+=100;
  	  yyyyww=year*100+week;
@@ -45,7 +45,7 @@ class Kalenderwoche
  	operator int() const throw() { return yyyyww; }
  	bool valid() const throw()
  	{ return Jahr()<=2100 && Jahr()>=1970 && Woche()>=1 && Woche()<=53; }
- 	void check() const throw(error) 
+ 	void check() const 
  		{ 
  			if (!valid()) 
  				throw error(); 

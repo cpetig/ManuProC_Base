@@ -33,17 +33,17 @@ class Transaction
 
 	static std::list<Handle<ManuProC::Connection_base> > open_connections;
 public:
-	Transaction(const std::string &connection=std::string(),bool open_now=true) throw(SQLerror);
-	Transaction(Handle<ManuProC::Connection_base> const&, bool open_now=true) throw(SQLerror);
-//	Transaction(bool open_now) throw(SQLerror); // old ctor
+	Transaction(const std::string &connection=std::string(),bool open_now=true);
+	Transaction(Handle<ManuProC::Connection_base> const&, bool open_now=true);
+//	Transaction(bool open_now); // old ctor
 	// attention: if you specify no connection its last value is used
 	//            e.g. by last open or ctor
 	// I feel this is the most intuitive behaviour
-	void open(const std::string &connection=std::string()) throw(SQLerror);
-	void open_exclusive(const std::string &connection=std::string()) throw(SQLerror);
-	void open(Handle<ManuProC::Connection_base> const&) throw(SQLerror);
-	void open_exclusive(Handle<ManuProC::Connection_base> const&) throw(SQLerror);
-	void close() throw(SQLerror);
+	void open(const std::string &connection=std::string());
+	void open_exclusive(const std::string &connection=std::string());
+	void open(Handle<ManuProC::Connection_base> const&);
+	void open_exclusive(Handle<ManuProC::Connection_base> const&);
+	void close();
 	void commit_on_close(bool val=true)
 	{  commit_vs_rollback=val; }
 	void rollback_on_close(bool val=true)

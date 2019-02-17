@@ -33,16 +33,16 @@ struct connectionPQ : ManuProC::Connection_base
 
 	virtual void disconnect() throw();
 	virtual std::string const& Name() const throw() { return name; }
-	virtual void execute(char const*) throw(SQLerror);
+	virtual void execute(char const*);
 	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_PostgreSQL; }
-	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
+	virtual ManuProC::Query_result_base* execute2(char const*);
 	virtual int LastError() const throw() { return last_error; }
-	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror);
-	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror);
-	virtual ManuProC::Query_result_base* open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror);
+	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num);
+	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types);
+	virtual ManuProC::Query_result_base* open_cursor(char const* name, char const* q, unsigned num);
 };
 
-Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c)
 {
 	char pgport[20];
 	snprintf(pgport,sizeof pgport, "%d", c.Port());
@@ -88,7 +88,7 @@ void connectionPQ::disconnect() throw()
 	connection=NULL;
 }
 
-void connectionPQ::execute(char const* q) throw(SQLerror)
+void connectionPQ::execute(char const* q)
 {
 	if (Query::debugging.on) std::cerr << "QUERY: " << q << '\n';
 	PGresult* res= PQexec(connection, q);
@@ -167,7 +167,7 @@ struct PQ_Prepared_Statement : ManuProC::Prepared_Statement_base
 	std::vector< ::Oid> parameters;
 
     // execution is delayed until last parameter is passed
-	virtual ManuProC::Query_result_base* execute() throw(SQLerror);
+	virtual ManuProC::Query_result_base* execute();
 	virtual ~PQ_Prepared_Statement();
 	virtual bool check_connection(ManuProC::Connection_base const& cb);
 };
@@ -360,7 +360,7 @@ static char const* convert_parameters(std::string& parameter_style, char const* 
 }
 
 // this doesn't execute directly
-ManuProC::Query_result_base* connectionPQ::execute_param(char const* q, unsigned num) throw(SQLerror)
+ManuProC::Query_result_base* connectionPQ::execute_param(char const* q, unsigned num)
 {
 	if (!num) return execute2(q);
 	std::string parameter_style;
@@ -374,7 +374,7 @@ ManuProC::Query_result_base* connectionPQ::execute_param(char const* q, unsigned
 	return res2;
 }
 
-ManuProC::Query_result_base* connectionPQ::execute2(char const* q) throw(SQLerror)
+ManuProC::Query_result_base* connectionPQ::execute2(char const* q)
 {
 	if (Query::debugging.on) std::cerr << "QUERY: " << q << '\n';
 	PGresult* res= PQexec(connection, q);
@@ -476,7 +476,7 @@ bool PQ_Prepared_Statement::check_connection(ManuProC::Connection_base const& cb
 	return false;
 }
 
-ManuProC::Query_result_base* PQ_Prepared_Statement::execute() throw(SQLerror)
+ManuProC::Query_result_base* PQ_Prepared_Statement::execute()
 {
 	resultsPQ* obj = new resultsPQ;
 	obj->conn= conn;
@@ -495,7 +495,7 @@ ManuProC::Query_result_base* PQ_Prepared_Statement::execute() throw(SQLerror)
 
 static unsigned preparation_index=0;
 
-ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)
+ManuProC::Prepared_Statement_base* connectionPQ::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types)
 {
 	std::string stringcontainer;
 	if (!name)
@@ -566,7 +566,7 @@ ManuProC::Query_result_row* PQ_Cursor::Fetch()
 	return resultsPQ::Fetch();
 }
 
-ManuProC::Query_result_base* connectionPQ::open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror)
+ManuProC::Query_result_base* connectionPQ::open_cursor(char const* name, char const* q, unsigned num)
 {
 	std::string parameter_style;
 	q= convert_parameters(parameter_style, q);

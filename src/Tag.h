@@ -39,7 +39,7 @@ class Tag {
 public: // nice to have for custom parsing
     	typedef std::list<Tag>::difference_type difference_type;
     	template <class T>
-    	 static T parse_value(const std::string &val) throw(std::out_of_range);
+    	 static T parse_value(const std::string &val);
     	template <class T>
     	 static T parse_value_def(const std::string &val, const T &def);
     	template <class T>
@@ -105,7 +105,7 @@ public:
 	const_attiterator attfind(const std::string &name) const;
 	
 	template <class T>
-	 T getAttr(const std::string &name) const throw(std::out_of_range);
+	 T getAttr(const std::string &name) const;
 	template <class T>
 	 T getAttr_def(const std::string &name, const T &def=T()) const throw();
 	bool hasAttr(const std::string &name) const throw();
@@ -203,12 +203,12 @@ public:
 template <> std::string Tag::create_value<int>(const int &val);
 template <> std::string Tag::create_value<double>(const double &val);
 template <> std::string Tag::create_value<bool>(const bool &val);
-template <> int Tag::parse_value<int>(const std::string &value) throw(std::out_of_range);
-template <> bool Tag::parse_value<bool>(const std::string &value) throw(std::out_of_range);
-template <> long Tag::parse_value<long>(const std::string &value) throw(std::out_of_range);
-template <> double Tag::parse_value<double>(const std::string &value) throw(std::out_of_range);
-template <> float Tag::parse_value<float>(const std::string &value) throw(std::out_of_range);
-template <> std::string Tag::parse_value<std::string>(const std::string &value) throw(std::out_of_range);
+template <> int Tag::parse_value<int>(const std::string &value);
+template <> bool Tag::parse_value<bool>(const std::string &value);
+template <> long Tag::parse_value<long>(const std::string &value);
+template <> double Tag::parse_value<double>(const std::string &value);
+template <> float Tag::parse_value<float>(const std::string &value);
+template <> std::string Tag::parse_value<std::string>(const std::string &value);
 #endif 
 template <>
  inline void Tag::setAttr<std::string>(const std::string &name, std::string const& val)
@@ -231,7 +231,7 @@ template <class T>
 }
 
 template <class T>
- T Tag::getAttr(const std::string &name) const throw(std::out_of_range)
+ T Tag::getAttr(const std::string &name) const
 {  const_attiterator t=attfind(name);
    if (t==attend()) throw std::out_of_range(name);
    return parse_value<T>(t->second);

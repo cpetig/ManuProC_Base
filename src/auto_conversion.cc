@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <cstring>
 
-void ManuProC::Datum::from_auto(const char *datum,const char **endptr) throw(Datumsfehler,Formatfehler)
+void ManuProC::Datum::from_auto(const char *datum,const char **endptr)
 {   
   while(isspace(*datum)) ++datum; 
   if (!*datum) 

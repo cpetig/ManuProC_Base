@@ -83,14 +83,14 @@ bool Tag::hasTag(const std::string &typ) const throw()
 }
 
 template <>
-int Tag::parse_value<int>(const std::string &value) throw(std::out_of_range)
+int Tag::parse_value<int>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    // 2do: check
    return atoi(value.c_str());
 }
 
 template <>
-bool Tag::parse_value<bool>(const std::string &value) throw(std::out_of_range)
+bool Tag::parse_value<bool>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    if (!strcasecmp(value.c_str(),"true")) return true;
    if (!strcasecmp(value.c_str(),"false")) return false;
@@ -101,13 +101,13 @@ bool Tag::parse_value<bool>(const std::string &value) throw(std::out_of_range)
 }
 
 template <>
-long Tag::parse_value<long>(const std::string &value) throw(std::out_of_range)
+long Tag::parse_value<long>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    return atol(value.c_str());
 } 
 
 template <>
-double Tag::parse_value<double>(const std::string &value) throw(std::out_of_range)
+double Tag::parse_value<double>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    /* Make sure we do NOT honor the locale for numeric input */
    /* since the database gives the standard decimal point */
@@ -119,12 +119,12 @@ double Tag::parse_value<double>(const std::string &value) throw(std::out_of_rang
 }
 
 template <>
-float Tag::parse_value<float>(const std::string &value) throw(std::out_of_range)
+float Tag::parse_value<float>(const std::string &value)
 {  return parse_value<double>(value);
 }
 
 template <>
-std::string Tag::parse_value<std::string>(const std::string &value) throw(std::out_of_range)
+std::string Tag::parse_value<std::string>(const std::string &value)
 {  return value;
 }
 

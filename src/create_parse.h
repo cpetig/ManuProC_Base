@@ -26,7 +26,7 @@
 
 namespace ManuProC
 {       template <class T>
-    	 T parse(const std::string &val) throw(std::out_of_range);
+    	 T parse(const std::string &val);
     	template <class T>
     	 static T parse_def(const std::string &val, const T &def=T());
     	template <class T>
@@ -40,13 +40,13 @@ namespace ManuProC {
 template <> std::string create<int>(const int &val);
 template <> std::string create<double>(const double &val);
 template <> std::string create<bool>(const bool &val);
-template <> int parse<int>(const std::string &value) throw(std::out_of_range);
-template <> bool parse<bool>(const std::string &value) throw(std::out_of_range);
-template <> long parse<long>(const std::string &value) throw(std::out_of_range);
-template <> double parse<double>(const std::string &value) throw(std::out_of_range);
-template <> float parse<float>(const std::string &value) throw(std::out_of_range);
-template <> std::string parse<std::string>(const std::string &value) throw(std::out_of_range);
-template <> EntryValue_easy::nil parse<EntryValue_easy::nil>(const std::string &value) throw(std::out_of_range);
+template <> int parse<int>(const std::string &value);
+template <> bool parse<bool>(const std::string &value);
+template <> long parse<long>(const std::string &value);
+template <> double parse<double>(const std::string &value);
+template <> float parse<float>(const std::string &value);
+template <> std::string parse<std::string>(const std::string &value);
+template <> EntryValue_easy::nil parse<EntryValue_easy::nil>(const std::string &value);
 }
 
 // g++ 2.95 does not like these inlined

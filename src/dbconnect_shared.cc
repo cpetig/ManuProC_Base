@@ -73,7 +73,7 @@ void ManuProC::dbdisconnect_nt(const std::string &name) throw()
    }
 }
 
-Handle<ManuProC::Connection_base> ManuProC::dbconnect(const Connection &c) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::dbconnect(const Connection &c)
 {
 	Handle<Connection_base> res;
 	switch(c.Type())
@@ -102,7 +102,7 @@ const char* ManuProC::Connection::Password() const
 	return password.c_str();	
 }
 
-void ManuProC::dbdisconnect(const std::string &name) throw(SQLerror)
+void ManuProC::dbdisconnect(const std::string &name)
 {
 	Global_Settings::database_connected(false);
 	Handle<Connection_base> h=get_database(name);
@@ -116,7 +116,7 @@ void ManuProC::Connection_base::make_default() const throw()
 	active_connection=const_cast<ManuProC::Connection_base*>(this);
 }
 
-Handle<ManuProC::Connection_base> ManuProC::dbdefault(std::string const& name) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::dbdefault(std::string const& name)
 {
 	active_connection= get_database(name);
 	return active_connection;
@@ -143,7 +143,7 @@ void ManuProC::unregister_db(Handle<Connection_base> const& c)
 		}
 }
 
-Handle<ManuProC::Connection_base> ManuProC::get_database(std::string const& name) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::get_database(std::string const& name)
 {
 	if (name.empty()) return active_connection;
 	for (std::vector<Handle<ManuProC::Connection_base> >::const_iterator i=connections.begin();i!=connections.end();++i)
@@ -152,13 +152,13 @@ Handle<ManuProC::Connection_base> ManuProC::get_database(std::string const& name
 	throw SQLerror("get_database",100,"Database not found");
 }
 
-void ManuProC::Connection_base::setDTstyle(char const*) throw(SQLerror)
+void ManuProC::Connection_base::setDTstyle(char const*)
 {
 
 }
 
 // until implemented
-Handle<ManuProC::Connection_base> ManuProC::dbconnect_ECPG(ManuProC::Connection const&) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::dbconnect_ECPG(ManuProC::Connection const&)
 {
 	throw SQLerror("dbconnect_ECPG", 100, "not implemented");
 }

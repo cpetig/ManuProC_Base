@@ -230,7 +230,7 @@ class Query : public Query_types
 	Query(const Query &);
 
 	// perform it
-	void Execute() throw(SQLerror);
+	void Execute();
 	void Execute_if_complete();
 	void raise(std::string const& state, int code, std::string const& message, std::string const& detail=std::string());
 	void raise(char const* state, int code, char const* message, char const* detail=0);
@@ -261,12 +261,12 @@ public:
 //	{ return !eof; }
 	void ThrowOnBad(const char *where) const;
 
-	static void Execute(const std::string &command) throw(SQLerror);
-	static void Execute(Handle<ManuProC::Connection_base> const&, const std::string &command) throw(SQLerror);
+	static void Execute(const std::string &command);
+	static void Execute(Handle<ManuProC::Connection_base> const&, const std::string &command);
 	int Result() const { return error; }
 	unsigned LinesAffected() const { return lines; }
 
-	void Check100() const throw(SQLerror);
+	void Check100() const;
 	int last_insert_rowid() const;
 	ManuProC::Connection::CType_t getDBType() const { return backend->Type(); }
 

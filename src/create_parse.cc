@@ -33,14 +33,14 @@
 #define DE
 
 template <>
-int ManuProC::parse<int>(const std::string &value) throw(std::out_of_range)
+int ManuProC::parse<int>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    // 2do: check
    return atoi(value.c_str());
 }
 
 template <>
-bool ManuProC::parse<bool>(const std::string &value) throw(std::out_of_range)
+bool ManuProC::parse<bool>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    if (!strcasecmp(value.c_str(),"true")) return true;
    if (!strcasecmp(value.c_str(),"false")) return false;
@@ -58,13 +58,13 @@ bool ManuProC::parse<bool>(const std::string &value) throw(std::out_of_range)
 }
 
 template <>
-long ManuProC::parse<long>(const std::string &value) throw(std::out_of_range)
+long ManuProC::parse<long>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    return atol(value.c_str());
 } 
 
 template <>
-double ManuProC::parse<double>(const std::string &value) throw(std::out_of_range)
+double ManuProC::parse<double>(const std::string &value)
 {  if (value.empty()) throw std::out_of_range(value);
    /* Make sure we do NOT honor the locale for numeric input */
    /* since the database gives the standard decimal point */
@@ -76,12 +76,12 @@ double ManuProC::parse<double>(const std::string &value) throw(std::out_of_range
 }
 
 template <>
-float ManuProC::parse<float>(const std::string &value) throw(std::out_of_range)
+float ManuProC::parse<float>(const std::string &value)
 {  return parse<double>(value);
 }
 
 template <>
-std::string ManuProC::parse<std::string>(const std::string &value) throw(std::out_of_range)
+std::string ManuProC::parse<std::string>(const std::string &value)
 {  return value;
 }
 

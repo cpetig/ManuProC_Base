@@ -96,7 +96,7 @@ void Query_Row::mythrow(const SQLerror &e)
    throw e;
 }
 
-void Query::Check100() const throw(SQLerror)
+void Query::Check100() const
 {
 	if (!backend || !implementation_specific || !implementation_specific->complete())
 		 Query_Row::mythrow(SQLerror(query,ECPG_TOO_FEW_ARGUMENTS,"to few input parameter"));
@@ -521,7 +521,7 @@ int Query_Row::getIndicator() const
 	return impl->indicator(naechstesFeld);
 }
 
-void Query::Execute() throw(SQLerror)
+void Query::Execute()
 {
 	// pass all parameters
 	if(!backend)
@@ -679,12 +679,12 @@ int Query::last_insert_rowid() const
 	return implementation_specific->last_insert_rowid();
 }
 
-void Query::Execute(const std::string &command) throw(SQLerror)
+void Query::Execute(const std::string &command)
 {
    Execute(ManuProC::get_database(), command);
 }
 
-void Query::Execute(Handle<ManuProC::Connection_base> const& backend, const std::string &command) throw(SQLerror)
+void Query::Execute(Handle<ManuProC::Connection_base> const& backend, const std::string &command)
 {
    backend->execute(command.c_str());
 }

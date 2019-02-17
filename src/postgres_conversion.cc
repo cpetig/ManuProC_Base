@@ -23,7 +23,7 @@
 //#include <cassert>
 #include <Misc/string0.h>
 
-void ManuProC::Datum::write_postgres(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)
+void ManuProC::Datum::write_postgres(char *buf,unsigned int size) const
 {	teste();
 	snprintf0(buf,size,"%04d-%d-%d",jahr,monat,tag);
 }

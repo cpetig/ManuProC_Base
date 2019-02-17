@@ -82,39 +82,39 @@ woche(),woche_jahrdiff(),quart()
    jahr=tm->tm_year+1900;
 }
 
-std::string ManuProC::Datum::write_euro() const throw(ManuProC::Datumsfehler)
+std::string ManuProC::Datum::write_euro() const
 {	static char ret[16];
 	write_euro(ret,sizeof ret);
 	return ret;
 }
 
 // TODO: This is not internationalized!
-const char *ManuProC::Datum::c_str_filled() const throw(ManuProC::Datumsfehler)
+const char *ManuProC::Datum::c_str_filled() const
 {	static char ret[11];
 	teste();
 	snprintf0(ret,sizeof ret,"%02d.%02d.%04d",tag,monat,jahr);
 	return ret;
 }
 
-void ManuProC::Datum::write_euro(char *buf,unsigned int size) const throw(ManuProC::Datumsfehler)
+void ManuProC::Datum::write_euro(char *buf,unsigned int size) const
 {	teste();
 	snprintf0(buf,size,"%d.%d.%04d",tag,monat,jahr);
 }
 
-const std::string ManuProC::Datum::Short() const throw(Datumsfehler)
+const std::string ManuProC::Datum::Short() const
 {
   teste();
   return itos(Tag())+"."+itos(Monat())+".";
 }
 
-std::string ManuProC::Datum::to_iso() const throw(Datumsfehler)
+std::string ManuProC::Datum::to_iso() const
 {
  teste();
  return itos(Jahr())+"-"+itos(Monat())+"-"+itos(Tag());
 }
 
 
-std::string ManuProC::Datum::ISO() const throw(Datumsfehler)
+std::string ManuProC::Datum::ISO() const
 {
  teste();
  return itos0pad(Jahr(),4)+"-"+itos0pad(Monat(),2)+"-"+itos0pad(Tag(),2);
@@ -133,7 +133,7 @@ std::string ManuProC::Datum::postgres_null_if_invalid() const
 
 
 
-void ManuProC::Datum::teste() const throw (ManuProC::Datumsfehler)
+void ManuProC::Datum::teste() const
 {  int falsch=0;
    if (tag<1 || tag>Tage_in_Monat()) falsch|=Datumsfehler::tagfalsch;
    if (monat<1 || monat>12) falsch|=Datumsfehler::monatfalsch;
@@ -154,7 +154,7 @@ bool ManuProC::Datum::valid() const throw ()
    return true;
 }
 
-bool ManuProC::Datum::operator<(const Datum &b) const throw(Datumsfehler)
+bool ManuProC::Datum::operator<(const Datum &b) const
 {  teste(); b.teste();
    if (jahr<b.jahr) return true;
    if (jahr>b.jahr) return false;
@@ -163,7 +163,7 @@ bool ManuProC::Datum::operator<(const Datum &b) const throw(Datumsfehler)
    return tag<b.tag;
 }
 
-int ManuProC::Datum::Julian() const throw(Datumsfehler)
+int ManuProC::Datum::Julian() const
 {  teste();
    static const int monatsbeginn[10]=
 	{ /* 0,31, */ 59,90,120,151,181,212,243,273,304,334 };
@@ -171,7 +171,7 @@ int ManuProC::Datum::Julian() const throw(Datumsfehler)
    return tag+monatsbeginn[monat-3]+(Schaltjahr(jahr)?1:0);
 }
 
-int ManuProC::Datum::Internal() const throw(Datumsfehler)
+int ManuProC::Datum::Internal() const
 {  teste();
 //const TageProVierJahre=1461; this uses integer arithmetic
    //return ((jahr-1900)*TageProVierJahre)/4+Julian();
@@ -181,12 +181,12 @@ int ManuProC::Datum::Internal() const throw(Datumsfehler)
    // zum 1.3.1900 wird falsch gerechnet ...
 }
 
-int ManuProC::Datum::IntRepresentation() const throw(Datumsfehler)
+int ManuProC::Datum::IntRepresentation() const
 {  teste();
    return jahr*10000+monat*100+tag;
 }
 
-int ManuProC::Datum::operator-(const Datum &b) const throw(Datumsfehler)
+int ManuProC::Datum::operator-(const Datum &b) const
 {  return Internal()-b.Internal();
 }
 
@@ -232,7 +232,7 @@ ManuProC::Datum ManuProC::Datum::operator++(int)
    return temp;
 }
 
-ManuProC::Datum ManuProC::Datum::operator+(unsigned int tage) const throw(Datumsfehler)
+ManuProC::Datum ManuProC::Datum::operator+(unsigned int tage) const
 {  teste();
    Datum ret(*this);
    unsigned int ret_tag=ret.tag+tage;
@@ -249,7 +249,7 @@ ManuProC::Datum ManuProC::Datum::operator+(unsigned int tage) const throw(Datums
    return ret;
 }
 
-ManuProC::Datum ManuProC::Datum::operator+(Months const& m) const throw(Datumsfehler)
+ManuProC::Datum ManuProC::Datum::operator+(Months const& m) const
 {
   teste();
   Datum ret(*this);
@@ -274,7 +274,7 @@ ManuProC::Datum ManuProC::Datum::operator+(Months const& m) const throw(Datumsfe
   return ret;
 }
 
-ManuProC::Datum ManuProC::Datum::TruncJahr() const throw(Datumsfehler)
+ManuProC::Datum ManuProC::Datum::TruncJahr() const
 {
  teste();
  Datum ret(*this);
@@ -283,7 +283,7 @@ ManuProC::Datum ManuProC::Datum::TruncJahr() const throw(Datumsfehler)
  return ret;
 }
 
-ManuProC::Datum ManuProC::Datum::AddJahr(int jahre) const throw(Datumsfehler)
+ManuProC::Datum ManuProC::Datum::AddJahr(int jahre) const
 {
  teste();
  Datum ret(*this);
@@ -294,7 +294,7 @@ ManuProC::Datum ManuProC::Datum::AddJahr(int jahre) const throw(Datumsfehler)
  return ret;
 }
 
-ManuProC::Datum ManuProC::Datum::operator-(unsigned int tage) const throw(Datumsfehler)
+ManuProC::Datum ManuProC::Datum::operator-(unsigned int tage) const
 {  teste();
    Datum ret(*this);
    signed int ret_tag=ret.tag-tage;
@@ -336,7 +336,7 @@ std::ostream &ManuProC::operator<<(std::ostream&o,const ManuProC::Datumsfehler &
 const static int seconds_per_day=60*60*24;
 const static int seconds_per_week=7*seconds_per_day;
 
-ManuProC::Datum::Datum(const Kalenderwoche &kw) throw(Datumsfehler)
+ManuProC::Datum::Datum(const Kalenderwoche &kw)
 : woche(),woche_jahrdiff(),quart()
 {  struct tm tm;
    memset(&tm,0,sizeof tm);
@@ -360,7 +360,7 @@ ManuProC::Datum::Datum(const Kalenderwoche &kw) throw(Datumsfehler)
 //#define DEBUG(x) std::cout << x
 #define DEBUG(x)
 
-Kalenderwoche ManuProC::Datum::KW() const throw(Datumsfehler)
+Kalenderwoche ManuProC::Datum::KW() const
 {   teste();
 
    if (jahr<1970 || jahr>=2038) throw Datumsfehler(Datumsfehler::jahrfalsch);
@@ -414,7 +414,7 @@ previous_year:
    return Kalenderwoche(woche,tm.tm_year+1900);
 }
 
-int ManuProC::Datum::Wochentag(void) const throw(Datumsfehler)
+int ManuProC::Datum::Wochentag(void) const
 {  teste();
    struct tm tm;
    memset(&tm,0,sizeof tm);
@@ -429,7 +429,7 @@ int ManuProC::Datum::Wochentag(void) const throw(Datumsfehler)
 }
 
 
-ManuProC::Datum::Datum(int t, int m, int j,bool expandyear) throw(Datumsfehler)
+ManuProC::Datum::Datum(int t, int m, int j,bool expandyear)
   : woche(),woche_jahrdiff(),quart(),tag(t),monat(m),jahr(j)
 {  if (expandyear && jahr<100)
    {  if (jahr<70) jahr+=100;
@@ -468,7 +468,7 @@ ArgumentList &operator<<(ArgumentList &q, const ManuProC::Datum &v)
 #endif
 
 // there seems to be no real rule on how this is to be stored
-ManuProC::Datum ManuProC::Datum::from_access(char const* f) throw(Datumsfehler,Formatfehler)
+ManuProC::Datum ManuProC::Datum::from_access(char const* f)
 {
   if (!*f) return Datum();
 #if 0

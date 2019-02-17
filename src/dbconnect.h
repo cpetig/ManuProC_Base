@@ -162,7 +162,7 @@ public:
    struct Prepared_Statement_base
    {
 	   // execution is delayed until last parameter is passed
-	   virtual Query_result_base* execute() throw(SQLerror)=0;
+	   virtual Query_result_base* execute()=0;
 	   virtual ~Prepared_Statement_base() {}
 	   /// check prepared statement against this connection (might re-prepare), true indicates new connection
 	   virtual bool check_connection(Connection_base const&) { return true; }
@@ -175,27 +175,27 @@ public:
      error testing */
    public:
 #if 0 // in all databases identical to execute("BEGIN") etc
-     virtual void open_transaction() throw(SQLerror)=0;
-     virtual void commit_transaction() throw(SQLerror)=0;
-     virtual void rollback_transaction() throw(SQLerror)=0;
+     virtual void open_transaction()=0;
+     virtual void commit_transaction()=0;
+     virtual void rollback_transaction()=0;
 #endif
      virtual void make_default() const throw();
-     virtual void setDTstyle(char const* style="ISO") throw(SQLerror);
+     virtual void setDTstyle(char const* style="ISO");
      //virtual Query_base
      virtual void disconnect() throw()=0;
      virtual std::string const& Name() const throw()=0;
      virtual Connection::CType_t Type() const throw()=0;
- 	 virtual void execute(char const*) throw(SQLerror)=0;
+ 	 virtual void execute(char const*)=0;
  	 // with results
- 	 virtual Query_result_base* execute2(char const*) throw(SQLerror)=0;
+ 	 virtual Query_result_base* execute2(char const*)=0;
  	 // execution is delayed until last parameter is passed
- 	 virtual Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror)=0;
+ 	 virtual Query_result_base* execute_param(char const* q, unsigned num)=0;
 
  	 // Cursors (fetch a few lines at a time)
- 	 virtual Query_result_base* open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror)=0;
+ 	 virtual Query_result_base* open_cursor(char const* name, char const* q, unsigned num)=0;
 
- 	 virtual Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)=0;
-// 	 virtual Query_result_base* execute_prepared(char const* name, unsigned numparam) throw(SQLerror)=0;
+ 	 virtual Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types)=0;
+// 	 virtual Query_result_base* execute_prepared(char const* name, unsigned numparam)=0;
 
  	 // prepared queries?
  	 virtual int LastError() const throw()=0;
@@ -206,21 +206,21 @@ public:
 
    Handle<Connection_base> dbconnect_nt(const Connection &c=Connection()) throw();
    void dbdisconnect_nt(const std::string &name=std::string()) throw();
-   Handle<Connection_base> dbconnect(const Connection &c=Connection()) throw(SQLerror);
-   void dbdisconnect(const std::string &name=std::string()) throw(SQLerror);
+   Handle<Connection_base> dbconnect(const Connection &c=Connection());
+   void dbdisconnect(const std::string &name=std::string());
    void dbdisconnect_nt(Connection_base&) throw();
-   void dbdisconnect(Connection_base&) throw(SQLerror);
-   void setDTstyle(char const*style="ISO") throw(SQLerror);
-   Handle<Connection_base> dbdefault(const std::string &name=std::string()) throw(SQLerror);
-   void dbdefault(Connection_base&) throw(SQLerror);
-   Handle<Connection_base> get_database(std::string const& name=std::string()) throw(SQLerror);
+   void dbdisconnect(Connection_base&);
+   void setDTstyle(char const*style="ISO");
+   Handle<Connection_base> dbdefault(const std::string &name=std::string());
+   void dbdefault(Connection_base&);
+   Handle<Connection_base> get_database(std::string const& name=std::string());
    void register_db(Handle<Connection_base> const& c);
    void unregister_db(Handle<Connection_base> const& c);
 
    // internal:
-   Handle<Connection_base> dbconnect_SQLite3(const Connection &c) throw(SQLerror);
-   Handle<Connection_base> dbconnect_ECPG(const Connection &c) throw(SQLerror);
-   Handle<Connection_base> dbconnect_PQ(const Connection &c) throw(SQLerror);
+   Handle<Connection_base> dbconnect_SQLite3(const Connection &c);
+   Handle<Connection_base> dbconnect_ECPG(const Connection &c);
+   Handle<Connection_base> dbconnect_PQ(const Connection &c);
 };
 
 namespace Petig

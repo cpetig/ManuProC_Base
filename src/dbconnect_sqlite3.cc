@@ -33,17 +33,17 @@ struct sqliteConnection : ManuProC::Connection_base
 
 	virtual void disconnect() throw();
 	virtual std::string const& Name() const throw() { return name; }
-	virtual void execute(char const*) throw(SQLerror);
+	virtual void execute(char const*);
 	virtual ManuProC::Connection::CType_t Type() const throw() { return ManuProC::Connection::C_SQLite; }
-	virtual ManuProC::Query_result_base* execute2(char const*) throw(SQLerror);
+	virtual ManuProC::Query_result_base* execute2(char const*);
 	virtual int LastError() const throw() { return last_code; }
-	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num) throw(SQLerror);
-	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror);
-	virtual ManuProC::Query_result_base* open_cursor(char const* name, char const* q, unsigned num) throw(SQLerror)
+	virtual ManuProC::Query_result_base* execute_param(char const* q, unsigned num);
+	virtual ManuProC::Prepared_Statement_base* prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types);
+	virtual ManuProC::Query_result_base* open_cursor(char const* name, char const* q, unsigned num)
 	{ return execute_param(q,num); } // using cursors by default
 };
 
-Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c)
 {  sqlite3 *db_connection=0;
    if (Query::debugging.on) std::cerr << "SQLite3 connect: " << c.Name() << " " << c.Dbase() << '\n';
 
@@ -70,7 +70,7 @@ void sqliteConnection::disconnect() throw()
 }
 
 // TODO: Lines affected ?
-void sqliteConnection::execute(char const* query) throw(SQLerror)
+void sqliteConnection::execute(char const* query)
 {
 	//char **local_result=0;
 	   char *msgbuf=0;
@@ -389,7 +389,7 @@ void resultsSQ_params::execute()
 	fetch();
 }
 
-ManuProC::Query_result_base* sqliteConnection::execute2(char const* query) throw(SQLerror)
+ManuProC::Query_result_base* sqliteConnection::execute2(char const* query)
 {
 	char **local_result=0;
 	   char *msgbuf=0;
@@ -421,7 +421,7 @@ ManuProC::Query_result_base* sqliteConnection::execute2(char const* query) throw
 	   return res;
 }
 
-ManuProC::Query_result_base* sqliteConnection::execute_param(char const* q, unsigned num) throw(SQLerror)
+ManuProC::Query_result_base* sqliteConnection::execute_param(char const* q, unsigned num)
 {
 	if (!num) return execute2(q);
 
@@ -453,7 +453,7 @@ struct SQ_Prepared_Statement : ManuProC::Prepared_Statement_base
 	sqliteConnection *conn;
 
     // execution is delayed until last parameter is passed
-	virtual ManuProC::Query_result_base* execute() throw(SQLerror);
+	virtual ManuProC::Query_result_base* execute();
 	SQ_Prepared_Statement() : stmt(), conn() {}
 	virtual ~SQ_Prepared_Statement();
 };
@@ -463,7 +463,7 @@ SQ_Prepared_Statement::~SQ_Prepared_Statement()
 	if (stmt) sqlite3_finalize(stmt);
 }
 
-ManuProC::Query_result_base* SQ_Prepared_Statement::execute() throw(SQLerror)
+ManuProC::Query_result_base* SQ_Prepared_Statement::execute()
 {
 	resultsSQ_params* res2= new resultsSQ_params;
 	res2->conn= conn;
@@ -476,7 +476,7 @@ ManuProC::Query_result_base* SQ_Prepared_Statement::execute() throw(SQLerror)
 	return res2;
 }
 
-ManuProC::Prepared_Statement_base* sqliteConnection::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types) throw(SQLerror)
+ManuProC::Prepared_Statement_base* sqliteConnection::prepare(char const* name, char const* q, unsigned numparam, ManuProC::Oid const* types)
 {
 	SQ_Prepared_Statement* res2= new SQ_Prepared_Statement;
 	res2->conn= this;
@@ -492,7 +492,7 @@ ManuProC::Prepared_Statement_base* sqliteConnection::prepare(char const* name, c
 
 #else
 
-Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c) throw(SQLerror)
+Handle<ManuProC::Connection_base> ManuProC::dbconnect_SQLite3(const Connection &c)
 {
 	throw SQLerror("dbconnect_SQLite3", 100, "Database type not implemented");
 }
