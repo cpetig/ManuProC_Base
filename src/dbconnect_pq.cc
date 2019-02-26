@@ -46,14 +46,14 @@ Handle<ManuProC::Connection_base> ManuProC::dbconnect_PQ(const Connection &c)
 {
 	char pgport[20];
 	snprintf(pgport,sizeof pgport, "%d", c.Port());
-	const char *pghost= c.Host().c_str();
-	const char *dbName= c.Dbase().c_str();
-	const char *login= c.User().c_str();
+	std::string pghost= c.Host();
+	std::string dbName= c.Dbase();
+	std::string login= c.User();
 	const char *password= c.Password();
 
-	if (Query::debugging.on) std::cerr << "CONNECT: " << pghost << ':' << pgport << '\t' << dbName << '\n';
+	if (Query::debugging.on) std::cerr << "CONNECT: " << pghost.c_str() << ':' << pgport << '\t' << dbName.c_str() << '\n';
 
-	PGconn * conn= PQsetdbLogin(pghost, pgport, 0, 0, dbName, login, password);
+	PGconn * conn= PQsetdbLogin(pghost.c_str(), pgport, 0, 0, dbName.c_str(), login.c_str(), password);
 
 	if (conn && PQstatus(conn) != CONNECTION_OK)
 	{
