@@ -37,7 +37,7 @@ protected:
 public:
 
 #if !defined(__MINGW32__)
- static constexpr ID none_id = static_cast<ID>(-1);
+ static const ID none_id;
 #else
  static const ID none_id = static_cast<ID>(-1);
 #endif
@@ -56,5 +56,7 @@ public:
  std::string strId() const { return itos0pad(entityid,6);}
 
 };
+
+template <typename T> constexpr typename ManuProcEntity<T>::ID ManuProcEntity<T>::none_id = static_cast<ID>(-1);
 
 #endif
