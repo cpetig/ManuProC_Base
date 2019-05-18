@@ -136,15 +136,21 @@ public:
 };
 
 struct Query_types
-{	typedef ManuProC::Oid Oid;
+{
+    typedef ManuProC::Oid Oid;
 	typedef ManuProC::null_s null_s;
 	template <class T>
-	 struct NullIf_s
-	{	T data;
+    struct NullIf_s
+	{
+        T data;
 		bool null;
 		static const Oid postgres_type;
 
-		template <class U> NullIf_s(const T &a,const U &b) : data(a), null(a==b) {}
+		template <class U>
+        NullIf_s(const T &a, const U &b)
+            : data(a)
+            , null(a==b)
+        {}
 	};
 	typedef null_s null_s_t;
 	template <class T> static null_s_t null()
