@@ -57,6 +57,10 @@ public:
 
 };
 
+#if __cplusplus < 201103L
+template <typename T> const typename ManuProcEntity<T>::ID ManuProcEntity<T>::none_id = static_cast<ID>(-1);
+#else
 template <typename T> constexpr typename ManuProcEntity<T>::ID ManuProcEntity<T>::none_id = static_cast<ID>(-1);
+#endif
 
 #endif
