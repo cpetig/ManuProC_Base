@@ -24,10 +24,10 @@ libManuProC_Base_pg_sqlite3.def: libManuProC_Base.def libManuProC_Base_pg_sqlite
 libManuProC_Base_pg.def: libManuProC_Base.def libManuProC_Base_pg.defadd \
 		libManuProC_Base_sigc@SIGC_MAJOR@.defadd
 	cat >$@ $^
-	
+
 libManuProC_Base_res.o: libManuProC_Base.rc
 	i586-mingw32msvc-windres $^ $@
-	
+
 #libManuProC_Base_res.o: libManuProC_Base.rc
 #	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
@@ -43,48 +43,114 @@ includedir=@includedir@/ManuProC_Base
 AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@ $(WIN_LDFLAGS)
 
 if DATABASE
-DB_SRCES=SQLerror_postgres.cc Transaction.cc Query.cc \
-	Event.cc Global_Settings_db.cc dbconnect_shared.cc \
-	FetchIStream_common.cc SQLerror_sqlite.cc ExtraColumns.cc \
-	Transaction_sqlite.cc pg_type.cc dbconnect_pq.cc dbconnect_sqlite3.cc \
+DB_SRCES= \
+	Event.cc \
+	Global_Settings_db.cc \
+	dbconnect_shared.cc \
+	FetchIStream_common.cc \
+	SQLerror_sqlite.cc \
+	ExtraColumns.cc \
+	Transaction_sqlite.cc \
+	pg_type.cc  \
+	dbconnect_pq.cc \
+	dbconnect_sqlite3.cc \
 	SQLerror_base.cc
 else 
 DB_SRCES=
 endif
 
-libManuProC_Base_la_SOURCES=Ausgabe_neu.cc Datum.cc IOerror.cc \
-		postgres_conversion.cc Zeitpunkt_new.cc \
-		Zeitpunkt_new_ostr.cc \
-		Zeitpunkt_new_write.cc string0.c mystring.cc \
-		auto_conversion.cc \
-		exception.cc itos.cc \
-		time_t_ostr.cc EntryValueBase.cc Handles.cc \
-		EntryValueIntString.cc EntryValueIntGermanString.cc \
-		EntryValueDatum.cc $(DB_SRCES) Trace.cc \
-		germanstring.cc TagStream.cc Tag.cc EntryValueTimeStamp.cc \
-		Global_Settings.cc EntryValueSort.cc create_parse.cc \
-		TS_base64.cc $(DLL_DEF) Interval.cc fixedpoint.cc \
-		ManuProcEntity.cc EntryValue_easy.cc EntryValueDouble.cc \
-		i18n.cc Datum_i18n.cc fixedpoint_null.cc \
-		DllObject_caller.cc DllObject_dll.cc win32_utf8.cc \
-		getuid.cc md5/md5string.cc md5/md5.c
+libManuProC_Base_la_SOURCES= \
+	Ausgabe_neu.cc \
+	Datum.cc IOerror.cc \
+	postgres_conversion.cc \
+	Zeitpunkt_new.cc \
+	Zeitpunkt_new_ostr.cc \
+	Zeitpunkt_new_write.cc \
+	string0.c \
+	mystring.cc \
+	auto_conversion.cc \
+	exception.cc itos.cc \
+	time_t_ostr.cc \
+	EntryValueBase.cc \
+	Handles.cc \
+	EntryValueIntString.cc \
+	EntryValueIntGermanString.cc \
+	EntryValueDatum.cc \
+	$(DB_SRCES) \
+	Trace.cc \
+	germanstring.cc \
+	TagStream.cc \
+	Tag.cc \
+	EntryValueTimeStamp.cc \
+	Global_Settings.cc \
+	EntryValueSort.cc \
+	create_parse.cc \
+	TS_base64.cc \
+	$(DLL_DEF) \
+	Interval.cc \
+	fixedpoint.cc \
+	ManuProcEntity.cc \
+	EntryValue_easy.cc \
+	EntryValueDouble.cc \
+	i18n.cc \
+	Datum_i18n.cc \
+	fixedpoint_null.cc \
+	DllObject_caller.cc \
+	DllObject_dll.cc \
+	win32_utf8.cc \
+	getuid.cc \
+	md5/md5string.cc \
+	md5/md5.c
 
-EXTRA_DIST=SQLerror_postgres.pgcc Transaction.pgcc Query.pgcc
+EXTRA_DIST=
 
 BUILT_SOURCES=Misc ostream $(DLL_DEF)
 
-noinst_HEADERS=Ausgabe_neu.h CacheStatic.h Cache_Pointer.h Datum.h Handles.h \
-	IOerror.h Kalenderwoche.h Pointer.h Postgres.h Rundungsmacros.h \
-	SQLerror.h SQLerror_postgres.h Transaction.h Zeitpunkt_new.h \
-	dbconnect.h exception.h fixedpoint.h itos.h \
-	safemap.h string0.h mystring.h \
-	c++ostream.h mystream.h FetchIStream.h ctime_assert.h \
-	EntryValueBase.h EntryValueIntString.h EntryValueEmptyInt.h \
-	EntryValueDatum.h EmptyInt_4TeX.h Long.h Model.h \
-	germanstring.h TagStream.h Tag.h recodestream.h \
-	callbackbuf.h TraceNV.h EntryValueTimeStamp.h \
-	Event.h bitmask.h Global_Settings.h algorithm.h \
-	ManuProcEintrag.h ManuProcEntity.h ManuProcVorgang.h
+noinst_HEADERS= \
+	Ausgabe_neu.h \
+	CacheStatic.h \
+	Cache_Pointer.h \
+	Datum.h Handles.h \
+	IOerror.h \
+	Kalenderwoche.h \
+	Pointer.h \
+	Postgres.h \
+	Rundungsmacros.h \
+	SQLerror.h \
+	SQLerror_postgres.h \
+	Transaction.h \
+	Zeitpunkt_new.h \
+	dbconnect.h \
+	exception.h \
+	fixedpoint.h \
+	itos.h \
+	safemap.h
+	string0.h \
+	mystring.h \
+	c++ostream.h \
+	mystream.h \
+	FetchIStream.h \
+	ctime_assert.h \
+	EntryValueBase.h \
+	EntryValueIntString.h \
+	EntryValueEmptyInt.h \
+	EntryValueDatum.h \
+	EmptyInt_4TeX.h \
+	Long.h Model.h \
+	germanstring.h \
+	TagStream.h \
+	Tag.h \
+	recodestream.h \
+	callbackbuf.h \
+	TraceNV.h \
+	EntryValueTimeStamp.h \
+	Event.h \
+	bitmask.h \
+	Global_Settings.h \
+	algorithm.h \
+	ManuProcEintrag.h \
+	ManuProcEntity.h \
+	ManuProcVorgang.h
 
 CLEANFILES= *~ $(BUILT_SOURCES)
 
