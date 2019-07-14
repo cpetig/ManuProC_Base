@@ -1,5 +1,5 @@
 # $Id: Makefile.am,v 1.26 2005/09/13 08:01:03 christof Exp $
-	
+
 if WINDOWS
 WIN_LDADD=-lintl
 else
@@ -22,9 +22,23 @@ DB_PRGS=
 B_SRCES=
 endif
 
-EXTRA_PROGRAMS=FetchIStream test_pgsql_conv testHandles testKW fixedpoint \
-	Zeitpunkt mvc trace rexml tagstream tag_speed algorithm extra_cols \
-	interval Query datetest Query2 Query_test
+EXTRA_PROGRAMS=FetchIStream \
+	test_pgsql_conv \
+	testHandles \
+	testKW \
+	fixedpoint \
+	Zeitpunkt \
+	mvc \
+	trace \
+	rexml \
+	tagstream \
+	tag_speed \
+	algorithm extra_cols \
+	interval \
+	Query \
+	datetest \
+	Query2 \
+	Query_test
 
 test_pgsql_conv_SOURCES=test_pgsql_conv.cc
 testHandles_SOURCES=testHandles.cc
@@ -48,7 +62,7 @@ datetest_SOURCES=datetest.cc
 tagstream.res: tagstream$(EXEEXT)
 	./tagstream | sed -e 's/P0x[0-9a-fA-F]*/P*/' \
 		-e 's/@0x[0-9a-fA-F]*/@*/' >tagstream.res
-		
+
 test_tagstream: tagstream.res
 	diff -u tagstream.out tagstream.res | less
 
