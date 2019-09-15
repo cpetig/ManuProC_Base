@@ -34,250 +34,336 @@
 #define MPC_HANDLE_MAGIC 0xf3c66e37
 
 #if defined(DEBUG_HANDLES) || defined(MPC_HANDLE_MAGIC)
-# include <cassert>
+#include <cassert>
 #endif
 #ifdef HANDLES_NOISY
-# include <iostream>
-# define NOISE(x) std::cerr << x
+#include <iostream>
+#define NOISE(x) std::cerr << x
 #else
-# define NOISE(x) 
+#define NOISE(x)
 #endif
 #ifdef MPC_HANDLE_MAGIC
-# define MPC_HANDLE_CHECK_MAGIC(hc) assert(!(hc) || (hc)->_magic==MPC_HANDLE_MAGIC)
+#define MPC_HANDLE_CHECK_MAGIC(hc)                                               \
+    assert(!(hc) || (hc)->_magic == MPC_HANDLE_MAGIC)
 #else
-# define MPC_HANDLE_CHECK_MAGIC(hc)
+#define MPC_HANDLE_CHECK_MAGIC(hc)
 #endif
 
-template <class T> class Handle;
+template<class T>
+class Handle;
 
 class HandleContent
-{	template<class T> friend class Handle;
+{
+    template<class T>
+    friend class Handle;
 #ifdef MPC_HANDLE_MAGIC
 protected:
-	unsigned _magic;
+    unsigned _magic;
 #endif
 private:
-	// is using a bit field here a performance killer (?)
-	mutable unsigned int _references:24;
-	bool _is_static:1;
+    // is using a bit field here a performance killer (?)
+    mutable unsigned int _references : 24;
+    bool _is_static : 1;
 #ifdef DEBUG_HANDLE_CONTENT
-	mutable bool _watch_me:1;
-#endif	
-protected:	
-	HandleContent() : 
+    mutable bool _watch_me : 1;
+#endif
+protected:
+    HandleContent()
+        :
 #ifdef MPC_HANDLE_MAGIC
-			  		_magic(MPC_HANDLE_MAGIC),
+        _magic(MPC_HANDLE_MAGIC)
+        ,
 #endif
-			  _references(0), _is_static(false)
+        _references(0)
+        , _is_static(false)
 #ifdef DEBUG_HANDLE_CONTENT
-					, _watch_me(false)
+        , _watch_me(false)
 #endif
-	{}
-	// a virtual destructor is vital for heterogenous Handles
+    {
+    }
+    // a virtual destructor is vital for heterogenous Handles
 #if defined DEBUG_HANDLE_CONTENT || defined DEBUG_HANDLES
-	virtual ~HandleContent();
+    virtual ~HandleContent();
 #elif defined(MPC_HANDLE_MAGIC)
-	virtual ~HandleContent() { _magic=0; }
+    virtual ~HandleContent()
+    {
+        _magic = 0;
+    }
 #endif
 
 public:
 #ifdef DEBUG_HANDLE_CONTENT
-	// emit message on destruction
-	void WatchMe() const
-	{ MPC_HANDLE_CHECK_MAGIC(this); 
-	  _watch_me=true; }
-#endif	
-	void *ref()
-	{  MPC_HANDLE_CHECK_MAGIC(this);
-	   if (this) _references++;
-	   return this;
-	}
+    // emit message on destruction
+    void WatchMe() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        _watch_me = true;
+    }
+#endif
+    void *ref()
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        if (this)
+            _references++;
+        return this;
+    }
 
-	// HACK to return void* from const element
-	void *ref() const
-	{  MPC_HANDLE_CHECK_MAGIC(this);
-	   return const_cast<HandleContent*>(this)->ref();
-	}
+    // HACK to return void* from const element
+    void *ref() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        return const_cast<HandleContent *>(this)->ref();
+    }
 
-	void unref() const
-	{  MPC_HANDLE_CHECK_MAGIC(this);
-	   if (this)
-	   {  _references--;
-              if (!is_static() && !_references) delete this;
-           }
-	}
+    void unref() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        if (this)
+        {
+            _references--;
+            if (!is_static() && !_references)
+                delete this;
+        }
+    }
 
-	// the return value is handy to call it right after object construction	
-	// (static initializers)
-	bool is_static(bool b)
-	{  MPC_HANDLE_CHECK_MAGIC(this);
-	   _is_static=b;
-	   return b;
-	}
+    // the return value is handy to call it right after object construction
+    // (static initializers)
+    bool is_static(bool b)
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        _is_static = b;
+        return b;
+    }
 
-	bool is_static() const
-	{  MPC_HANDLE_CHECK_MAGIC(this);
-	   return _is_static;
-	}
+    bool is_static() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        return _is_static;
+    }
 
-	// this would have been impossible with Stroustrup's handles	
-	static void unref(void *ptr)
-	{  static_cast<HandleContent*>(ptr)->unref();
-	}
+    // this would have been impossible with Stroustrup's handles
+    static void unref(void *ptr)
+    {
+        static_cast<HandleContent *>(ptr)->unref();
+    }
 
 private:
-	// das darf gar nicht vorkommen, schlieﬂlich sollen diese Objekte
-	// eigentlich nicht dupliziert werden
-	const HandleContent &operator=(const HandleContent &b);
-	HandleContent(const HandleContent &b);
+    // das darf gar nicht vorkommen, schlieﬂlich sollen diese Objekte
+    // eigentlich nicht dupliziert werden
+    const HandleContent &operator=(const HandleContent &b);
+    HandleContent(const HandleContent &b);
 };
 
 class HandleContentCopyable : public HandleContent
-{  public:
-	HandleContentCopyable() {}
-	HandleContentCopyable(const HandleContentCopyable &b) : HandleContent() { MPC_HANDLE_CHECK_MAGIC(&b); }
-	const HandleContentCopyable &operator=(const HandleContentCopyable &b)
-	{ MPC_HANDLE_CHECK_MAGIC(this);
-	  MPC_HANDLE_CHECK_MAGIC(&b); 
-	  return *this;
-	}
+{
+public:
+    HandleContentCopyable() {}
+    HandleContentCopyable(const HandleContentCopyable &b)
+        : HandleContent()
+    {
+        MPC_HANDLE_CHECK_MAGIC(&b);
+    }
+    const HandleContentCopyable &operator=(const HandleContentCopyable &b)
+    {
+        MPC_HANDLE_CHECK_MAGIC(this);
+        MPC_HANDLE_CHECK_MAGIC(&b);
+        return *this;
+    }
 };
 
-template <class T> class Handle
-{public:
-	typedef T ContentType;
-private:
-	ContentType *_data;
-	typedef class Handle<ContentType> _this_t;
+template<class T>
+class Handle
+{
 public:
-	_this_t &operator=(const _this_t &b)
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(b._data);
-	   NOISE("Handle @" << _data << '.' << (_data?_data->_references:0) << "= @" << b._data << '.' << (b._data?b._data->_references:0) << '\n');
-	   if (b._data) b._data->ref();
-	   if (_data) _data->unref();
- 	   _data=b._data;
- 	   return *this;
-	}
-	
-	// this STL functions do strange things, under investigation
-	Handle(const _this_t &b) : _data(b._data)
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   NOISE("Handle(@" << b._data << '.' << (b._data?b._data->_references:0) << ")\n");
-	   if (_data) _data->ref();
-	}
-	
-	// replace this default value FAST via *this=Something !!!
-	// usually this is only needed for cached values
-	Handle() : _data(0) { NOISE("Handle()\n"); }
+    typedef T ContentType;
 
-	template <typename X>
-	 Handle(const Handle<X> &b) : _data(b.operator->())
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   NOISE("Handle(from " << b << '.' << (b?b->_references:0) << ")\n");
-	   if (_data) _data->ref();
-	}
-	
-	Handle(ContentType *b) : _data(b)
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   NOISE("Handle(from " << b << '.' << (b?b->_references:0) << ")\n");
-	   if (_data) _data->ref();
-	}
+private:
+    ContentType *_data;
+    typedef class Handle<ContentType> _this_t;
 
-	// without this test any std::exception in T::T(...) would kill your program
-	~Handle()
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   NOISE("~Handle" << _data << '.' << (_data?_data->_references:0) << '\n');
-	   if (_data) _data->unref();
-	}
-	
-	bool operator==(const _this_t &s) const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(s._data);
-	   return (*_data)==(*s);
-	}
-	bool operator!=(const _this_t &s) const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(s._data);
-	   return (*_data)!=(*s);
-	}
-	bool operator<(const _this_t &s) const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(s._data);
-	   return (*_data)<(*s);
-	}
-	bool operator>(const _this_t &s) const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(s._data);
-	   return (*_data)>(*s);
-	}
-	bool operator<=(const _this_t &s) const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(s._data);
-	   return (*_data)<=(*s);
-	}
-	bool operator>=(const _this_t &s) const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   MPC_HANDLE_CHECK_MAGIC(s._data);
-	   return (*_data)>=(*s);
-	}
-	
-	// Ich hoffe, diese Konversion tut niemandem weh? Sonst bitte Meldung
-	operator bool() const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   return _data!=0;
-	}
-	bool operator!() const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   return _data==0;
-	}
+public:
+    _this_t &operator=(const _this_t &b)
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(b._data);
+        NOISE("Handle @" << _data << '.' << (_data ? _data->_references : 0)
+                         << "= @" << b._data << '.'
+                         << (b._data ? b._data->_references : 0) << '\n');
+        if (b._data)
+            b._data->ref();
+        if (_data)
+            _data->unref();
+        _data = b._data;
+        return *this;
+    }
 
-	ContentType *operator->() const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   NOISE("*Handle" << _data << '.' << (_data?_data->_references:0) << '\n');
-	   return _data;
-	}
-	
-	ContentType &operator*() const
-	{  MPC_HANDLE_CHECK_MAGIC(_data);
-	   return *_data;
-	}
-	
-	// geht auch ¸ber ctor?
-	template <typename X>
-	 operator Handle<X>() const { MPC_HANDLE_CHECK_MAGIC(_data); return _data; }
-	 
-	// Variant:  base.cast_static<Derived>();
-	template <typename X>
-	 Handle<X> cast_static() const { MPC_HANDLE_CHECK_MAGIC(_data); return static_cast<X*>(_data); }
-	template <typename X>
-	 Handle<X> cast_dynamic() const { MPC_HANDLE_CHECK_MAGIC(_data); return dynamic_cast<X*>(_data); }
-	template <typename X>
-	 Handle<X> cast_const() const { MPC_HANDLE_CHECK_MAGIC(_data); return const_cast<X*>(_data); }
+    // this STL functions do strange things, under investigation
+    Handle(const _this_t &b)
+        : _data(b._data)
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        NOISE("Handle(@" << b._data << '.' << (b._data ? b._data->_references : 0)
+                         << ")\n");
+        if (_data)
+            _data->ref();
+    }
 
-	 
-	// Variant: Handle<Derived>::cast_static(base);
-#if ! defined(__GNUC__) || __GNUC__>2
-	template <class X>
-	 static inline _this_t cast_static(const Handle<X>& src)
-	{  return static_cast<T*>(src.operator->()); }
-	template <class X>
-	 static inline _this_t cast_dynamic(const Handle<X>& src)
-	{  return dynamic_cast<T*>(src.operator->()); }
-	template <class X>
-	 static inline _this_t cast_const(const Handle<X>& src)
-	{  return const_cast<T*>(src.operator->()); }
-#endif	
+    // replace this default value FAST via *this=Something !!!
+    // usually this is only needed for cached values
+    Handle()
+        : _data(0)
+    {
+        NOISE("Handle()\n");
+    }
 
-//	ContentType &operator ContentType() { return *_data; } ???
+    template<typename X>
+    Handle(const Handle<X> &b)
+        : _data(b.operator->())
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        NOISE("Handle(from " << b << '.' << (b ? b->_references : 0) << ")\n");
+        if (_data)
+            _data->ref();
+    }
+
+    Handle(ContentType *b)
+        : _data(b)
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        NOISE("Handle(from " << b << '.' << (b ? b->_references : 0) << ")\n");
+        if (_data)
+            _data->ref();
+    }
+
+    // without this test any std::exception in T::T(...) would kill your program
+    ~Handle()
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        NOISE("~Handle" << _data << '.' << (_data ? _data->_references : 0)
+                        << '\n');
+        if (_data)
+            _data->unref();
+    }
+
+    bool operator==(const _this_t &s) const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(s._data);
+        return (*_data) == (*s);
+    }
+    bool operator!=(const _this_t &s) const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(s._data);
+        return (*_data) != (*s);
+    }
+    bool operator<(const _this_t &s) const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(s._data);
+        return (*_data) < (*s);
+    }
+    bool operator>(const _this_t &s) const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(s._data);
+        return (*_data) > (*s);
+    }
+    bool operator<=(const _this_t &s) const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(s._data);
+        return (*_data) <= (*s);
+    }
+    bool operator>=(const _this_t &s) const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        MPC_HANDLE_CHECK_MAGIC(s._data);
+        return (*_data) >= (*s);
+    }
+
+    // Ich hoffe, diese Konversion tut niemandem weh? Sonst bitte Meldung
+    operator bool() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return _data != 0;
+    }
+    bool operator!() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return _data == 0;
+    }
+
+    ContentType *operator->() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        NOISE("*Handle" << _data << '.' << (_data ? _data->_references : 0)
+                        << '\n');
+        return _data;
+    }
+
+    ContentType &operator*() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return *_data;
+    }
+
+    // geht auch ¸ber ctor?
+    template<typename X>
+    operator Handle<X>() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return _data;
+    }
+
+    // Variant:  base.cast_static<Derived>();
+    template<typename X>
+    Handle<X> cast_static() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return static_cast<X *>(_data);
+    }
+    template<typename X>
+    Handle<X> cast_dynamic() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return dynamic_cast<X *>(_data);
+    }
+    template<typename X>
+    Handle<X> cast_const() const
+    {
+        MPC_HANDLE_CHECK_MAGIC(_data);
+        return const_cast<X *>(_data);
+    }
+
+    // Variant: Handle<Derived>::cast_static(base);
+#if !defined(__GNUC__) || __GNUC__ > 2
+    template<class X>
+    static inline _this_t cast_static(const Handle<X> &src)
+    {
+        return static_cast<T *>(src.operator->());
+    }
+    template<class X>
+    static inline _this_t cast_dynamic(const Handle<X> &src)
+    {
+        return dynamic_cast<T *>(src.operator->());
+    }
+    template<class X>
+    static inline _this_t cast_const(const Handle<X> &src)
+    {
+        return const_cast<T *>(src.operator->());
+    }
+#endif
+
+    //	ContentType &operator ContentType() { return *_data; } ???
 
 private: // deprecated, use cH->Foo() !
-	void *ref() const;
-	void *ref_from_const() const;
-	void unref() const;
-	static void unref(void *ptr);
-	// to make it clear that this won't work
-	operator int() const;
+    void *ref() const;
+    void *ref_from_const() const;
+    void unref() const;
+    static void unref(void *ptr);
+    // to make it clear that this won't work
+    operator int() const;
 };
 
 #undef NOISE

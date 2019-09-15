@@ -19,44 +19,61 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
-
 #ifndef MANU_PROC_ENTITY
 #define MANU_PROC_ENTITY
 
 #include <Misc/itos.h>
 
-template <class T=long int> class ManuProcEntity
+template<class T = long int>
+class ManuProcEntity
 {
 public:
- typedef T ID;
- 
-protected:
- ID entityid;
- 
-public:
+    typedef T ID;
 
+protected:
+    ID entityid;
+
+public:
 #if !defined(__MINGW32__)
- static const ID none_id;
+    static const ID none_id;
 #else
- static const ID none_id = static_cast<ID>(-1);
+    static const ID none_id = static_cast<ID>(-1);
 #endif
 
- ManuProcEntity() : entityid(none_id) {}
- ManuProcEntity(const ID i) : entityid(i) {}
- virtual ID Id() const = 0;
- virtual void setId(ID _id) { entityid=_id;}
- virtual ~ManuProcEntity() {}
- 
- static bool Valid(ID i) {
-      if(i==none_id) return false;
-      return true;
-      }
+    ManuProcEntity()
+        : entityid(none_id)
+    {
+    }
 
- std::string strId() const { return itos0pad(entityid,6);}
+    ManuProcEntity(const ID i)
+        : entityid(i)
+    {
+    }
 
+    virtual ID Id() const = 0;
+
+    virtual void setId(ID _id)
+    {
+        entityid = _id;
+    }
+
+    virtual ~ManuProcEntity() {}
+
+    static bool Valid(ID i)
+    {
+        if (i == none_id)
+            return false;
+        return true;
+    }
+
+    std::string strId() const
+    {
+        return itos0pad(entityid, 6);
+    }
 };
 
-template <typename T> constexpr typename ManuProcEntity<T>::ID ManuProcEntity<T>::none_id = static_cast<ID>(-1);
+template<typename T>
+constexpr typename ManuProcEntity<T>::ID ManuProcEntity<T>::none_id =
+    static_cast<ID>(-1);
 
 #endif
