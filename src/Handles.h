@@ -43,7 +43,7 @@
 # define NOISE(x) 
 #endif
 #ifdef MPC_HANDLE_MAGIC
-# define MPC_HANDLE_CHECK_MAGIC(hc) assert(!(hc) || (hc)->_magic==MPC_HANDLE_MAGIC)
+# define MPC_HANDLE_CHECK_MAGIC(hc) assert( (((void*)(hc)) == nullptr) || (hc)->_magic==MPC_HANDLE_MAGIC)
 #else
 # define MPC_HANDLE_CHECK_MAGIC(hc)
 #endif
