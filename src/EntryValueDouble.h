@@ -39,6 +39,7 @@ public:
 
  virtual bool operator==(const EntryValueBase &v) const;
  virtual bool operator<(const EntryValueBase &v) const;
+ virtual operator double() const;
 };
 
 #endif

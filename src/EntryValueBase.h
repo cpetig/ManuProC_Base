@@ -57,9 +57,7 @@ static LIBMPC_BASE_API const int int_NaN=-1;
 // type we define
 // a string and operator< are needed for proper display, these are not needed
 
- __deprecated virtual double getDoubleVal() const { return double_NaN; }
  __deprecated virtual bool getBoolVal() const { return false; }
- __deprecated virtual operator double() const;
  __deprecated virtual operator bool() const;
 
 // CP: I'm not happy with these either 

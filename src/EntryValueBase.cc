@@ -43,9 +43,6 @@ bool EntryValueBase::operator<(const EntryValueBase &v) const
    return getStrVal()<v.getStrVal();
 }
 
-EntryValueBase::operator double() const
-{ return getDoubleVal(); }
-
 #if __cplusplus < 201103L
 	#if defined(__GNUC__) && __GNUC__>=3 
 	// needed for g++ 4.0

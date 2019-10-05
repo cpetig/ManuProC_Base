@@ -44,3 +44,8 @@ bool EntryValueDouble::operator<(const EntryValueBase &v) const
    {  return false;
    }
 }
+
+EntryValueDouble::operator double() const
+{ 
+ return getDoubleVal(); 
+}

@@ -24,6 +24,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <locale.h>
+#include <inttypes.h>
 
 #ifdef __MINGW32__
 //extern "C" { int snprintf(char *str, size_t size, const  char  *format, ...); }
@@ -92,7 +93,7 @@ std::string ulltos(unsigned long long i)
 std::string lltos(int64_t i)
 {
  char buffer[100];
- snprintf(buffer,sizeof buffer,"%lld",i);
+ snprintf(buffer,sizeof buffer,"%" PRId64,i);
  return(buffer);
 }
 
