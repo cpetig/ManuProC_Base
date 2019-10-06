@@ -14,13 +14,13 @@ AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@
 
 %.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
-if DATABASE
+#if DATABASE
 DB_PRGS=FetchIStream Query Query2
 B_SRCES=FetchIStream.cc
-else
-DB_PRGS=
-B_SRCES=
-endif
+#else
+#	DB_PRGS=
+#	B_SRCES=
+#endif
 
 EXTRA_PROGRAMS=FetchIStream \
 	test_pgsql_conv \
@@ -68,6 +68,6 @@ test_tagstream: tagstream.res
 
 CLEANFILES= *~ $(EXTRA_PROGRAMS)
 
-BUILT_SOURCES=$(B_SRCES)
+BUILT_SOURCES=$(DB_PRGS) $(B_SRCES)
 
 EXTRA_DIST=FetchIStream.pgcc
