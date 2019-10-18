@@ -1,5 +1,3 @@
-
-
 if WINDOWS
 WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def 
 DLL_LDADD=@SIGC_LIBS@ @ECPG_LIBS@ -lintl -ladvapi32 -lsecur32
@@ -32,8 +30,6 @@ libManuProC_Base_res.o: libManuProC_Base.rc
 #	i586-mingw32msvc-windres -i $< -o $@ -D BUILDNUMBER=0
 
 AM_CXXFLAGS=@ECPG_INCLUDES@ @SIGC_CFLAGS@ -DlibManuProC_Base_COMPILATION $(WIN_CXXFLAGS)
-
-%.cc: %.pgcc ; @ECPG@ -o $*.cc $<
 
 lib_LTLIBRARIES=libManuProC_Base.la
 libManuProC_Base_la_LIBADD=$(DLL_LDADD)
@@ -101,8 +97,6 @@ libManuProC_Base_la_SOURCES= \
 	getuid.cc \
 	md5/md5string.cc \
 	md5/md5.c
-
-EXTRA_DIST=
 
 BUILT_SOURCES=Misc ostream $(DLL_DEF)
 

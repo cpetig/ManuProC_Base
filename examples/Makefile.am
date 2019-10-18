@@ -12,15 +12,8 @@ AM_CXXFLAGS=@CXXFLAGS@ -I$(top_srcdir)/src @ECPG_INCLUDES@ @SIGC_CFLAGS@
 
 AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@
 
-%.cc: %.pgcc ; @ECPG@ -o $*.cc $<
-
-#if DATABASE
 DB_PRGS=FetchIStream Query Query2
 B_SRCES=FetchIStream.cc
-#else
-#	DB_PRGS=
-#	B_SRCES=
-#endif
 
 EXTRA_PROGRAMS=FetchIStream \
 	test_pgsql_conv \
@@ -69,5 +62,3 @@ test_tagstream: tagstream.res
 CLEANFILES= *~ $(EXTRA_PROGRAMS)
 
 BUILT_SOURCES=$(DB_PRGS) $(B_SRCES)
-
-EXTRA_DIST=FetchIStream.pgcc
