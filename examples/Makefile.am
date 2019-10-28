@@ -6,11 +6,11 @@ else
 WIN_LDADD=
 endif
 
-LDADD=$(top_srcdir)/src/libManuProC_Base.la @ECPG_LIBS@ @SIGC_LIBS@ $(WIN_LDADD)
+LDADD=$(top_srcdir)/src/libManuProC_Base.la @MPC_DB_LIBS@ @SIGC_LIBS@ $(WIN_LDADD)
 
-AM_CXXFLAGS=@CXXFLAGS@ -I$(top_srcdir)/src @ECPG_INCLUDES@ @SIGC_CFLAGS@
+AM_CXXFLAGS=@CXXFLAGS@ -I$(top_srcdir)/src @MPC_DB_CFLAGS@ @SIGC_CFLAGS@
 
-AM_LDFLAGS=@LDFLAGS@ @ECPG_LDFLAGS@
+AM_LDFLAGS=@LDFLAGS@
 
 DB_PRGS=FetchIStream Query Query2
 B_SRCES=FetchIStream.cc
