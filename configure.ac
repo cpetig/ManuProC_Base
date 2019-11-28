@@ -34,7 +34,7 @@ GETTEXT_PACKAGE=ManuProC_Base
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[the gettext domain])
 
-AM_GNU_GETTEXT_VERSION([0.19.7])
+AM_GNU_GETTEXT_VERSION([0.19.8])
 if test x$mingw = xtrue ; then
   AM_GLIB_GNU_GETTEXT([])
 else
@@ -81,65 +81,28 @@ then
 fi
 AC_SUBST(SIGC_MAJOR)
 
- if test "${with_postgresdir}" != "no"
- then
-  ECPG=`which ecpg`
-  if test "${with_postgresdir+set}" = "set" -o ! -z "$ECPG"
-  then
-   PETIG_CHECK_POSTGRES
-   
-   AC_MSG_CHECKING(for ecpg version)
-   tmp_CXXFLAGS="$CXXFLAGS"
-   tmp_LIBS="$LIBS"
-   tmp_LDFLAGS="$LDFLAGS"
-   CXXFLAGS="$CXXFLAGS $ECPG_INCLUDES"
-   LIBS="$LIBS $ECPG_LIBS"
-   LDFLAGS="$LDFLAGS $ECPG_LDFLAGS"
-   AC_COMPILE_IFELSE([AC_LANG_SOURCE(
-[
-	#include <ecpgtype.h>
-	#include <ecpglib.h>
-	int main() {  ECPGdo(20, "test", "select true",ECPGt_EOIT, ECPGt_EORT); }])],
-[AC_DEFINE(OLD_ECPG, 1, [Define to 1 if you use ecpg 2.9.])
-	AC_MSG_RESULT([old (-2.9.0)])],
-	[AC_MSG_RESULT([new (3.0.0+)])])
-    if test ! -e NoQueryParams
-    then
-      AC_MSG_CHECKING(for PQprepare)
-      AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+MPC_CHECK_DB
+
+if test ! -e NoQueryParams
+then
+  AC_MSG_CHECKING(for PQprepare)
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([
       #include <libpq-fe.h>
       int main() {  PQprepare((PGconn*)NULL,"name","select true",0,NULL); }
-            ])],[AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.])
-                    AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
-    fi
-
-   AC_MSG_CHECKING(for libecpg 6+)
-   AC_TRY_LINK_FUNC([ECPGdescriptor_lvalue], [ac_no_descriptor_lvalue=no
-		], [ac_no_descriptor_lvalue=yes; AC_DEFINE(HAVE_LIBECPG6_UP, 1, [Define to 1 if using 8.3+ ecpg (no ECPGdescriptor_lvalue).])])
-   AC_MSG_RESULT($ac_no_descriptor_lvalue)
-   CXXFLAGS="$tmp_CXXFLAGS"
-   LDFLAGS="$tmp_LDFLAGS"
-   LIBS="$tmp_LIBS"
-
-   AC_MSG_CHECKING(for standard database name)
-   DEFAULT_DB="$USER"
-   DEFAULT_DBHOST="localhost"
-   AC_DEFINE_UNQUOTED([DEFAULT_DB], ["$DEFAULT_DB"], [default db name])
-   AC_DEFINE_UNQUOTED([DEFAULT_DBHOST], ["$DEFAULT_DBHOST"], [default db host])
-   AC_MSG_RESULT($DEFAULT_DB@$DEFAULT_DBHOST)
-
-   LIBS="$LIBS $ECPG_LIBS"
-   DATABASE_TYPE="_pg"
-  fi
- fi
-
-if test -z "$ECPG_INCLUDES"
-then
-AC_MSG_CHECKING([for sqlite3])
-AC_COMPILE_IFELSE( [AC_LANG_SOURCE ([[#include <sqlite3.h>]])] , [has_sqlite=1], [has_sqlite=0] )
-AC_MSG_RESULT($has_sqlite)
+    ])],
+    [AC_DEFINE(HAVE_PQPREPARE, 1, [Define to 1 if PQprepare is available in libpq.]) AC_MSG_RESULT(yes)],
+    [AC_MSG_RESULT(no)])
 fi
 
+AC_MSG_CHECKING([for standard database name])
+DEFAULT_DB="$MPC_DEFAULT_DB"
+DEFAULT_DBHOST="$MPC_DEFAULT_DBHOST"
+AC_DEFINE_UNQUOTED([DEFAULT_DB], ["$DEFAULT_DB"], [default db name])
+AC_DEFINE_UNQUOTED([DEFAULT_DBHOST], ["$DEFAULT_DBHOST"], [default db host])
+AC_MSG_RESULT($DEFAULT_DB@$DEFAULT_DBHOST)
+
+LIBS="$LIBS $MPC_DB_LIBS"
+DATABASE_TYPE="_pg"
 
 AC_MSG_CHECKING(check if SQLite is explicitely disabled)
 AC_ARG_ENABLE(sqlite,[  --disable-sqlite       Disable SQLite support], use_sqlite="$enableval", use_sqlite="yes")
@@ -152,25 +115,7 @@ fi
 if test "$use_sqlite" != "no" 
 then
   AC_DEFINE(MPC_SQLITE, 1, [Define to 1 if you want to use the SQLite backend])
-  ECPG_LIBS="${ECPG_LIBS} -lsqlite3"
-  AC_SUBST(ECPG_LIBS)
-  if test -z "${ECPG}" ; then ECPG="/bin/touch --" ; fi
-  AC_SUBST(ECPG)
-  ECPG_INCLUDES="${ECPG_INCLUDES}"
-  ECPG_LDFLAGS="${ECPG_LDFLAGS}"
-  AC_SUBST(ECPG_INCLUDES)
-  ECPG_CFLAGS="$ECPG_INCLUDES"
-  AC_SUBST(ECPG_CFLAGS)
-  AC_SUBST(ECPG_LDFLAGS)
   DATABASE_TYPE="${DATABASE_TYPE}_sqlite3"
-  if test -z "${DEFAULT_DB}"
-  then
-   AC_MSG_CHECKING(for standard SQLite database name)
-   DEFAULT_DB="$USER"
-   AC_DEFINE_UNQUOTED([DEFAULT_DB], ["$DEFAULT_DB"], [default db name] )
-   AC_DEFINE_UNQUOTED([DEFAULT_DBHOST], ["$DEFAULT_DBHOST"], [default db host] )
-   AC_MSG_RESULT($DEFAULT_DB)
-  fi
 fi
 
 AC_MSG_CHECKING(for handle debug code)
@@ -184,11 +129,11 @@ else
 fi
 
 # perhaps deprecated
-if test ! -z "$ECPG_LIBS"
+if test ! -z "$LIBS"
 then
   AC_DEFINE(MANUPROC_WITH_DATABASE,1,[a database is present])
 fi
-AM_CONDITIONAL(DATABASE, test \! -z "$ECPG_LIBS" )
+AM_CONDITIONAL(DATABASE, test \! -z "$LIBS" )
 AC_SUBST(DATABASE_TYPE)
 
 AC_OUTPUT(Makefile src/Makefile examples/Makefile src/libManuProC_Base.rc po/Makefile.in)
