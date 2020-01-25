@@ -43,8 +43,7 @@
 #define NOISE(x)
 #endif
 #ifdef MPC_HANDLE_MAGIC
-#define MPC_HANDLE_CHECK_MAGIC(hc)                                               \
-    assert(!(hc) || (hc)->_magic == MPC_HANDLE_MAGIC)
+# define MPC_HANDLE_CHECK_MAGIC(hc) assert( (((void*)(hc)) == NULL) || (hc)->_magic==MPC_HANDLE_MAGIC)
 #else
 #define MPC_HANDLE_CHECK_MAGIC(hc)
 #endif
@@ -148,7 +147,7 @@ public:
     }
 
 private:
-    // das darf gar nicht vorkommen, schließlich sollen diese Objekte
+    // das darf gar nicht vorkommen, schlieï¿½lich sollen diese Objekte
     // eigentlich nicht dupliziert werden
     const HandleContent &operator=(const HandleContent &b);
     HandleContent(const HandleContent &b);
@@ -308,7 +307,7 @@ public:
         return *_data;
     }
 
-    // geht auch über ctor?
+    // geht auch ï¿½ber ctor?
     template<typename X>
     operator Handle<X>() const
     {
