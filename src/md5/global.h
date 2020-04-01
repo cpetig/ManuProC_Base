@@ -6,6 +6,9 @@
 The following makes PROTOTYPES default to 0 if it has not already
   been defined with C compiler flags.
  */
+ 
+#include <stdint.h>
+
 #ifndef PROTOTYPES
 #define PROTOTYPES 1
 #endif
@@ -14,13 +17,13 @@ The following makes PROTOTYPES default to 0 if it has not already
 typedef unsigned char *POINTER;
 
 /* UINT2 defines a two byte word */
-typedef unsigned short int UINT2;
+typedef uint16_t UINT2;
 
 /* UINT4 defines a four byte word */
-typedef unsigned int UINT4;
+typedef uint32_t UINT4;
 
 /* INT4 defines a four byte word signed */
-typedef int INT4;
+typedef int32_t INT4;
 
 /* PROTO_LIST is defined depending on how PROTOTYPES is defined above.
 If using PROTOTYPES, then PROTO_LIST returns the list, otherwise it
