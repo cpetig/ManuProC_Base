@@ -31,7 +31,8 @@ EXTRA_PROGRAMS=FetchIStream \
 	Query \
 	datetest \
 	Query2 \
-	Query_test
+	Query_test \
+	md5test
 
 test_pgsql_conv_SOURCES=test_pgsql_conv.cc
 testHandles_SOURCES=testHandles.cc
@@ -51,6 +52,7 @@ interval_SOURCES=interval.cc
 Query_SOURCES=Query.cc
 Query_test_SOURCES=Query_test.cc
 datetest_SOURCES=datetest.cc
+md5test_SOURCES=md5test.cc
 
 tagstream.res: tagstream$(EXEEXT)
 	./tagstream | sed -e 's/P0x[0-9a-fA-F]*/P*/' \
