@@ -23,3 +23,10 @@
   _ZNK5Query10ThrowOnBadEPKc
   _ZNK5Query4goodEv
   _ZNK9Query_Row12getIndicatorEv
+    _ZN12ArgumentListlsEN8ManuProC6null_sE
+    _ZN5QueryC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+    _ZN5QueryC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_
+    _ZN8ManuProC12dbdisconnectERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+    _ZN9Query_RowrsERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+    _ZN8ManuProC10ConnectionC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_S8_S8_i
+    _ZNK9Query_Row4goodEv

@@ -12,11 +12,9 @@ AM_CXXFLAGS=@CXXFLAGS@ -I$(top_srcdir)/src @MPC_DB_CFLAGS@ @SIGC_CFLAGS@
 
 AM_LDFLAGS=@LDFLAGS@
 
-DB_PRGS=FetchIStream Query Query2
-B_SRCES=FetchIStream.cc
+DB_PRGS=Query Query2
 
-EXTRA_PROGRAMS=FetchIStream \
-	test_pgsql_conv \
+EXTRA_PROGRAMS=test_pgsql_conv \
 	testHandles \
 	testKW \
 	fixedpoint \
@@ -41,7 +39,6 @@ fixedpoint_SOURCES=fixedpoint.cc
 Zeitpunkt_SOURCES=Zeitpunkt.cc
 trace_SOURCES=trace.cc
 Query2_SOURCES=Query2.cc
-FetchIStream_SOURCES=$(B_SRCES)
 mvc_SOURCES=mvc.cc
 rexml_SOURCES=rexml.cc
 tagstream_SOURCES=tagstream.cc
