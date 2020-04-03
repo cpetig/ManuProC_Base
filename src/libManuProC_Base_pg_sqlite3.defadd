@@ -1,28 +1,22 @@
 	_ZN5QueryD1Ev
   _ZN11Query_types8NullIf_sIiE13postgres_typeE
-  _ZN11TransactionC1ERKSsb
+  _ZN11TransactionC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEb
   _ZN11TransactionD1Ev
-  _ZN12ArgumentListlsEN11Query_types6null_sE
+  _ZN12ArgumentListlsERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
   _ZN12ArgumentListlsERKS_
-  _ZN12ArgumentListlsERKSs
   _ZN12ArgumentListlsEb
   _ZN12ArgumentListlsEl
-  _ZN13PreparedQueryC1ERKSs
+  _ZN13PreparedQueryC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
   _ZN13PreparedQueryD1Ev
-  _ZN13SQLerror_base5printERKSsi
+  _ZN13SQLerror_base5printERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi
   _ZN5Query19Execute_if_completeEv
   _ZN5Query8FetchOneEv
   _ZN5QueryC1ER13PreparedQuery
-  _ZN5QueryC1ERKSs
-  _ZN5QueryC1ERKSsS1_
   _ZN5QueryrsER9Query_Row
   _ZN5QueryrsERKNS_8check100E
-  _ZN8ManuProC10ConnectionC1ERKSsS2_S2_S2_i
-  _ZN8ManuProC12dbdisconnectERKSs
   _ZN8ManuProC9dbconnectERKNS_10ConnectionE
   _ZN9Query_Row15ThrowIfNotEmptyEPKc
   _ZN9Query_RowC1Ev
-  _ZN9Query_RowrsERSs
   _ZN9Query_RowrsERb
   _ZN9Query_RowrsERf
   _ZN9Query_RowrsERi

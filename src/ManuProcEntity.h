@@ -34,7 +34,7 @@ protected:
     ID entityid;
 
 public:
-#if !defined(__MINGW32__)
+#if !defined(__MINGW32__) || __cplusplus >= 201103L
     static const ID none_id;
 #else
     static const ID none_id = static_cast<ID>(-1);

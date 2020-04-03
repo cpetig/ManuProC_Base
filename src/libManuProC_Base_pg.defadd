@@ -1,7 +1,4 @@
-	_ZN8ManuProC10ConnectionC1ERKSsS2_S2_S2_i
 	_ZN8ManuProC9dbconnectERKNS_10ConnectionE
-	_ZN8ManuProC12dbdisconnectERKSs
-	_ZN5QueryC1ERKSs
 	_ZN5QueryD1Ev
 	_ZN5QueryD1Ev
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
@@ -9,15 +6,11 @@
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
-	_ZN5QueryC1ERKSs
 	_ZN9Query_RowrsERi
-	_ZN9Query_RowrsERSs
 	_ZN5QueryrsER9Query_Row
 	_ZN5QueryD1Ev
 	_ZN5QueryD1Ev
-	_ZN5QueryC1ERKSs
 	_ZN9Query_RowrsERi
-	_ZN9Query_RowrsERSs
 	_ZN5QueryrsER9Query_Row
 	_ZN5QueryD1Ev
 	_ZN5QueryD1Ev

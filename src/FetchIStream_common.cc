@@ -27,8 +27,8 @@
 #include <Misc/itos.h>
 #include <Misc/pg_type.h>
 #include <cstdlib>
- #include <ecpgerrno.h>
- #include <ecpgerrno.h>
+// #include <ecpgerrno.h>
+// #include <ecpgerrno.h>
 
 #ifdef MPC_SQLITE
 #include <sqlite3.h>

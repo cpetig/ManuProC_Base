@@ -5,7 +5,6 @@
 	_ZN11Query_types8NullIf_sISsE13postgres_typeE
 	_ZN11Transaction4openERKSs
 	_ZN11Transaction5closeEv
-	_ZN11TransactionC1ERKSsb
 	_ZN11TransactionD1Ev
 	_ZN12ArgumentList11next_insertEPKc 
 	_ZN12ArgumentListlsEb 
@@ -13,9 +12,7 @@
 	_ZN12ArgumentListlsEd 
 	_ZN12ArgumentListlsEl 
 	_ZN12ArgumentListlsEm 
-	_ZN12ArgumentListlsEN11Query_types6null_sE
 	_ZN12ArgumentListlsERKS_ 
-	_ZN12ArgumentListlsERKSs 
 	_ZN12ArgumentListlsEy 
 	_ZN15Global_Settings13database_loadEiRKSsS1_ 
 	_ZN15Global_Settings13database_saveEiRKSsS1_S1_ 
@@ -36,14 +33,11 @@
 	_ZN5Query7ExecuteEv 
 	_ZN5Query8FetchOneEv 
 	_ZN5Query9debuggingE  DATA
-	_ZN5QueryC1ERKSs 
 	_ZN5QueryC2ERKSs 
 	_ZN5QueryD1Ev 
 	_ZN5QueryD2Ev 
 	_ZN5QueryrsER9Query_Row
-	_ZN8ManuProC10ConnectionC1ERKSsS2_S2_S2_i
 	_ZN8ManuProC12dbconnect_ntERKNS_10ConnectionE 
-	_ZN8ManuProC12dbdisconnectERKSs 
 	_ZN8ManuProC13db_connectionE  DATA
 	_ZN8ManuProC15dbdisconnect_ntERKSs 
 	_ZN8ManuProC5Event12PGconnectionE  DATA
@@ -65,7 +59,6 @@
 	_ZN9Query_RowrsERj
 	_ZN9Query_RowrsERl
 	_ZN9Query_RowrsERm
-	_ZN9Query_RowrsERSs
 	_ZNK13Zeitpunkt_new5writeEv 
 	_ZNK14fixedpoint_dynIdlE6StringEbjPKcS2_c
 	_ZNK15SQLerror_sqlite4whatEv 

@@ -2,65 +2,47 @@ EXPORTS
 	getuid_ManuProC
 	snprintf0 
 	strncpy0 
-	_Z10FormatieremjjPKcS0_c 
+	_Z10FormatiereB5cxx11mjjPKcS0_c
+	_Z10FormatiereB5cxx11yjjPKcS0_c
 	_Z10FormatiereRSomjjPKcS1_c 
 	_Z10FormatiereRSoyjjPKcS1_c 
-	_Z10FormatiereyjjPKcS0_c 
-	_Z10string2TeXSsi 
+	_Z10string2TeXNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEi
 	_Z15setuid_ManuProCi
-	_Z18FormatiereEmptyIntl 
-	_Z19FormatiereTeX_PreisILi2EdlEKSsRK10fixedpointIXT_ET0_T1_E 
-	_Z19FormatiereTeX_PreisILi3EdlEKSsRK10fixedpointIXT_ET0_T1_E 
-	_Z3md5RKSs
-	_Z4btosb 
-	_Z4dtosd 
-	_Z4itosi 
-	_Z4utosj
-	_Z6itos0piib 
-	_Z6ulltosy 
-	_Z8itos0padii 
+	_Z18FormatiereEmptyIntB5cxx11l 
+	_Z19FormatiereTeX_PreisILi2EdlEKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERK10fixedpointIXT_ET0_T1_E
+	_Z19FormatiereTeX_PreisILi3EdlEKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERK10fixedpointIXT_ET0_T1_E 
+	_Z3md5RKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+	_Z4btosB5cxx11b
+	_Z4dtosB5cxx11d 
+	_Z4itosB5cxx11i 
+	_Z4utosB5cxx11j
+	_Z6itos0pB5cxx11iib 
+	_Z6ulltosB5cxx11y 
+	_Z8itos0padB5cxx11ii 
 	_ZlsRSoRK13Zeitpunkt_new 
 	_ZlsRSoRK14time_t_wrapper 
 	_ZlsRSoRK2tm 
 	_ZlsRSoRKN8ManuProC12DatumsfehlerE 
 	_ZlsRSoRKN8ManuProC5DatumE 
-	_ZN13HandleContentD0Ev 
-	_ZN13HandleContentD1Ev 
 	_ZN13Kalenderwoche5errorD0Ev 
 	_ZN13Kalenderwoche5errorD1Ev 
-	_ZN13Zeitpunkt_newC1El 
 	_ZN13Zeitpunkt_newC1EPKc 
-	_ZN13Zeitpunkt_newC2El 
 	_ZN13Zeitpunkt_newC2EPKc 
-	_ZN13Zeitpunkt_newcvlEv 
 	_ZN14EntryValueBaseD0Ev 
 	_ZN14EntryValueBaseD1Ev 
 	_ZN14EntryValueSortD0Ev 
 	_ZN14EntryValueSortD1Ev 
-	_ZN14fixedpoint_dynIdlEC1ERKSsPKcS4_
 	_ZN15EntryValueDatumD0Ev 
 	_ZN15EntryValueDatumD1Ev 
 	_ZN15EntryValue_easy6createERKb
 	_ZN15EntryValue_easy6createERKi
 	_ZN15EntryValue_easy6createERKNS_3nilE
-	_ZN15EntryValue_easy6createERKSs
 	_ZN15EntryValueMonatD0Ev 
 	_ZN15EntryValueMonatD1Ev 
-	_ZN15Global_Settings12default_loadEiRKSsS1_ 
-	_ZN15Global_Settings12default_saveEiRKSsS1_S1_ 
-	_ZN15Global_Settings6createEiRKSsS1_S1_ 
-	_ZN15Global_Settings8set_implEPFSsiRKSsS1_EPFviS1_S1_S1_E 
-	_ZN15Global_Settings8set_WertERKSs 
-	_ZN15Global_Settings9load_implE DATA
-	_ZN15Global_Settings9save_implE DATA
-	_ZN15Global_SettingsC1EiRKSsS1_ 
-	_ZN15Global_SettingsC2EiRKSsS1_ 
 	_ZN17EntryValueQuartalD0Ev 
 	_ZN17EntryValueQuartalD1Ev 
 	_ZN19EntryValueIntStringC1Ei 
-	_ZN19EntryValueIntStringC1ERKSs 
 	_ZN19EntryValueIntStringC2Ei 
-	_ZN19EntryValueIntStringC2ERKSs 
 	_ZN19EntryValueIntStringD0Ev 
 	_ZN19EntryValueIntStringD1Ev 
 	_ZN19EntryValueTimeStampD0Ev 
@@ -71,39 +53,15 @@ EXPORTS
 	_ZN23EntryValueKalenderwocheD1Ev 
 	_ZN25EntryValueIntGermanStringD0Ev 
 	_ZN25EntryValueIntGermanStringD1Ev 
-	_ZN3Tag10setAttr_llERKSsS1_
-	_ZN3Tag11parse_valueIbEET_RKSs 
-	_ZN3Tag11parse_valueIdEET_RKSs 
-	_ZN3Tag11parse_valueIfEET_RKSs 
-	_ZN3Tag11parse_valueIiEET_RKSs 
-	_ZN3Tag11parse_valueIlEET_RKSs 
-	_ZN3Tag11parse_valueISsEET_RKSs 
-	_ZN3Tag12create_valueIbEESsRKT_ 
-	_ZN3Tag12create_valueIdEESsRKT_ 
-	_ZN3Tag12create_valueIiEESsRKT_ 
 	_ZN3Tag19repair_back_pointerEv 
-	_ZN3Tag4findERKSs 
-	_ZN3Tag7attfindERKSs 
-	_ZN3Tag8setValueERKSsS1_ 
 	_ZN3Tag9push_backES_ 
-	_ZN7IOerrorC1ERKSs 
-	_ZN7IOerrorC1ERKSsi 
 	_ZN7IOerrorC1Ev 
-	_ZN7IOerrorC2ERKSs 
-	_ZN7IOerrorC2ERKSsi 
 	_ZN7IOerrorC2Ev 
 	_ZN7IOerrorD0Ev 
 	_ZN7IOerrorD1Ev 
-	_ZN8ManuProC10un_wstringERKSbIwSt11char_traitsIwESaIwEE
-	_ZN8ManuProC11GetRealNameEv
-	_ZN8ManuProC12DatumsfehlerC1EiSs 
-	_ZN8ManuProC12DatumsfehlerC2EiSs 
 	_ZN8ManuProC12DatumsfehlerD0Ev 
 	_ZN8ManuProC12DatumsfehlerD1Ev 
-	_ZN8ManuProC12GetUserNameAEv
-	_ZN8ManuProC12make_wstringERKSs
 	_ZN8ManuProC15IsAdministratorEv
-	_ZN8ManuProC16remove_last_fromERSsRKSs 
 	_ZN8ManuProC23PrintUncaughtExceptionsEv 
 	_ZN8ManuProC5Datum12FormatfehlerD0Ev 
 	_ZN8ManuProC5Datum12FormatfehlerD1Ev 
@@ -113,51 +71,29 @@ EXPORTS
 	_ZN8ManuProC5Datum8InfinityEv 
 	_ZN8ManuProC5Datum9from_autoEPKcPS2_ 
 	_ZN8ManuProC5DatumC1Eiiib 
-	_ZN8ManuProC5DatumC1El 
 	_ZN8ManuProC5DatumC1ERK13Kalenderwoche 
 	_ZN8ManuProC5DatumC2Eiiib 
-	_ZN8ManuProC5DatumC2El 
 	_ZN8ManuProC5DatumC2ERK13Kalenderwoche 
 	_ZN8ManuProC5DatummmEi 
 	_ZN8ManuProC5DatummmEv 
 	_ZN8ManuProC5DatumppEi 
 	_ZN8ManuProC5DatumppEv 
-	_ZN8ManuProC5parseIbEET_RKSs 
-	_ZN8ManuProC5parseIdEET_RKSs 
-	_ZN8ManuProC5parseIfEET_RKSs 
-	_ZN8ManuProC5parseIiEET_RKSs 
-	_ZN8ManuProC5parseIlEET_RKSs 
-	_ZN8ManuProC5parseIN15EntryValue_easy3nilEEET_RKSs
-	_ZN8ManuProC5parseISsEET_RKSs 
-	_ZN8ManuProC6createIbEESsRKT_ 
-	_ZN8ManuProC6createIdEESsRKT_ 
-	_ZN8ManuProC6createIiEESsRKT_ 
-	_ZN8ManuProC6Tracer11EnvironmentC1ERKSsj 
-	_ZN8ManuProC6Tracer11EnvironmentC2ERKSsj 
 	_ZN8ManuProC6Tracer11FunctionEndEv 
-	_ZN8ManuProC6Tracer13FunctionStartERKSs 
 	_ZN8ManuProC6Tracer6EnableEjb 
 	_ZN8ManuProC6Tracer7enabledEj 
 	_ZN8ManuProC6Tracer8channelsE DATA
 	_ZN9TagStream10getContentEv 
-	_ZN9TagStream11setEncodingERKSs 
 	_ZN9TagStream12find_tagend2EPc 
 	_ZN9TagStream12find_wordendEPc 
 	_ZN9TagStream13find_wordend2EPc 
-	_ZN9TagStream13host_encodingE DATA
 	_ZN9TagStream16next_tag_pointerEP3Tag 
 	_ZN9TagStream17load_project_fileEP3Tag 
 	_ZN9TagStream4goodEv 
-	_ZN9TagStream5writeERKSsS1_ 
-	_ZN9TagStream6de_xmlERSs 
 	_ZN9TagStream8next_tagEP3Tag 
-	_ZN9TagStream8utf82isoERSs
 	_ZN9TagStreamC1EPKc 
-	_ZN9TagStreamC1ERKSs 
 	_ZN9TagStreamC1ERSi 
 	_ZN9TagStreamC1Ev 
 	_ZN9TagStreamC2EPKc 
-	_ZN9TagStreamC2ERKSs 
 	_ZN9TagStreamC2ERSi 
 	_ZN9TagStreamC2Ev 
 	_ZN9TagStreamD1Ev 
@@ -174,70 +110,48 @@ EXPORTS
 	_ZNK13Zeitpunkt_newplERKNS_4DaysE 
 	_ZNK13Zeitpunkt_newplERKNS_7MinutesE 
 	_ZNK14EntryValueBase10getBoolValEv 
-	_ZNK14EntryValueBase12getDoubleValEv 
 	_ZNK14EntryValueBase9getIntValEv 
-	_ZNK14EntryValueBase9getStrValEv 
 	_ZNK14EntryValueBasecvbEv 
-	_ZNK14EntryValueBasecvdEv 
 	_ZNK14EntryValueBasecviEv 
-	_ZNK14EntryValueBasecvKSsEv 
 	_ZNK14EntryValueBaseeqERKS_ 
 	_ZNK14EntryValueBaseltERKS_ 
 	_ZNK14EntryValueSort9getIntValEv 
-	_ZNK14EntryValueSort9getStrValEv 
 	_ZNK14EntryValueSorteqERK14EntryValueBase 
 	_ZNK14EntryValueSortltERK14EntryValueBase 
 	_ZNK14fixedpoint_dynIdlE8as_floatEv
 	_ZNK15EntryValueDatum9getIntValEv 
-	_ZNK15EntryValueDatum9getStrValEv 
 	_ZNK15EntryValueDatumeqERK14EntryValueBase 
 	_ZNK15EntryValueDatumltERK14EntryValueBase 
 	_ZNK15EntryValueMonat9getIntValEv 
-	_ZNK15EntryValueMonat9getStrValEv 
 	_ZNK15EntryValueMonateqERK14EntryValueBase 
 	_ZNK15EntryValueMonatltERK14EntryValueBase 
-	_ZNK15Global_Settings8get_WertERKSsi 
-	_ZNK15Global_Settings9get_Wert0ERKSsi 
 	_ZNK17EntryValueQuartal9getIntValEv 
-	_ZNK17EntryValueQuartal9getStrValEv 
 	_ZNK17EntryValueQuartaleqERK14EntryValueBase 
 	_ZNK17EntryValueQuartalltERK14EntryValueBase 
 	_ZNK19EntryValueIntString10getBoolValEv 
 	_ZNK19EntryValueIntString9getIntValEv 
-	_ZNK19EntryValueIntString9getStrValEv 
 	_ZNK19EntryValueTimeStamp9getIntValEv 
-	_ZNK19EntryValueTimeStamp9getStrValEv 
 	_ZNK19EntryValueTimeStampeqERK14EntryValueBase 
 	_ZNK19EntryValueTimeStampltERK14EntryValueBase 
 	_ZNK21EntryValueReverseSort9getIntValEv 
-	_ZNK21EntryValueReverseSort9getStrValEv 
 	_ZNK21EntryValueReverseSorteqERK14EntryValueBase 
 	_ZNK21EntryValueReverseSortltERK14EntryValueBase 
 	_ZNK23EntryValueKalenderwoche9getIntValEv 
-	_ZNK23EntryValueKalenderwoche9getStrValEv 
 	_ZNK23EntryValueKalenderwocheeqERK14EntryValueBase 
 	_ZNK23EntryValueKalenderwocheltERK14EntryValueBase 
 	_ZNK25EntryValueIntGermanStringltERK14EntryValueBase 
-	_ZNK3Tag4findERKSs 
 	_ZNK3Tag5debugEii 
-	_ZNK3Tag6hasTagERKSs 
-	_ZNK3Tag7attfindERKSs 
-	_ZNK3Tag7hasAttrERKSs 
 	_ZNK7IOerror4whatEv 
-	_ZNK7IOerror8toStringEv 
 	_ZNK8ManuProC12Datumsfehler4whatEv 
 	_ZNK8ManuProC5Datum10write_euroEPcj 
 	_ZNK8ManuProC5Datum12c_str_filledEv 
 	_ZNK8ManuProC5Datum12Formatfehler4whatEv 
 	_ZNK8ManuProC5Datum14write_postgresEPcj 
-	_ZNK8ManuProC5Datum24postgres_null_if_invalidEv 
 	_ZNK8ManuProC5Datum2KWEv 
 	_ZNK8ManuProC5Datum5c_strEv 
-	_ZNK8ManuProC5Datum5ShortEv 
 	_ZNK8ManuProC5Datum5testeEv 
 	_ZNK8ManuProC5Datum5validEv 
 	_ZNK8ManuProC5Datum6JulianEv 
-	_ZNK8ManuProC5Datum6to_isoEv 
 	_ZNK8ManuProC5Datum8InternalEv 
 	_ZNK8ManuProC5Datum9WochentagEv 
 	_ZNK8ManuProC5DatumltERKS0_ 

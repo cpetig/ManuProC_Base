@@ -1,10 +1,10 @@
 if WINDOWS
-	WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def 
-	DLL_LDADD=@SIGC_LIBS@ @MPC_DB_LIBS@ -lintl -ladvapi32 -lsecur32
+WIN_LDFLAGS=-no-undefined -export-symbols libManuProC_Base@DATABASE_TYPE@.def 
+DLL_LDADD=@SIGC_LIBS@ @MPC_DB_LIBS@ -lintl -ladvapi32 -lsecur32
 #libManuProC_Base_res.o
-	DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
-	WIN_CXXFLAGS=
-	PLATFORM=w32
+DLL_DEF=libManuProC_Base@DATABASE_TYPE@.def
+WIN_CXXFLAGS= -I@includedir@
+PLATFORM=w32
 else
 	WIN_LDFLAGS=
 	DLL_LDADD=@SIGC_LIBS@ @MPC_DB_LIBS@
@@ -36,7 +36,7 @@ libManuProC_Base_la_LIBADD=$(DLL_LDADD)
 
 includedir=@includedir@/ManuProC_Base
 
-AM_LDFLAGS=@LDFLAGS@ @MPC_DB_LDFLAGS@ $(WIN_LDFLAGS)
+AM_LDFLAGS=@LDFLAGS@ $(WIN_LDFLAGS)
 
 if DATABASE
 DB_SRCES= \
