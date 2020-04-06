@@ -185,7 +185,7 @@ public:
 	operator fixedpoint_dyn<Ftype,Itype>() const
 	{ return fixedpoint_dyn<Ftype,Itype>(scaled,decimals);
         }
-	std::string String(bool _short=false, unsigned int Ziellaenge=0,
+	inline std::string String(bool _short=false, unsigned int Ziellaenge=0,
 		const char *TausenderTrennzeichen="",const char *Komma=".",
 		char fuehrendesZeichen=' ') const
         { return fixedpoint_dyn<Ftype,Itype>(*this)
